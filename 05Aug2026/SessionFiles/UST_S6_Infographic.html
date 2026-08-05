@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File S6 — Masterclass: What Good Context Looks Like</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bitter:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1E8D5;
+    --paper2:#E7D8B8;
+    --paper3:#DCCBA3;
+    --ink:#241D14;
+    --ink-soft:#5A4C3A;
+    --retail:#A8631B;
+    --retail-soft:#F0D9AF;
+    --health:#2F6F62;
+    --health-soft:#CFE3DC;
+    --quiz:#A23B2E;
+    --quiz-soft:#F1D3CC;
+    --break:#2B4570;
+    --break-soft:#D6E0EE;
+    --fw:#6B4FA0;
+    --fw-soft:#E6DEF2;
+    --s2:#C8551F;
+    --s2-soft:#F3D9C4;
+    --s3:#1C33C4;
+    --s3-soft:#DCE1FA;
+    --devops:#455568;
+    --devops-soft:#DDE3E9;
+    --finance:#7A6A1C;
+    --finance-soft:#EDE7C9;
+    --live:#1E7B4D;
+    --live-soft:#D2E8DA;
+    --dead-cat:#5A4C3A;
+    --dead-cat-soft:#E4DDC9;
+    --vestigial:#B5791E;
+    --vestigial-soft:#F1DFB8;
+    --zombie:#A23B2E;
+    --zombie-soft:#F1D3CC;
+    --line: rgba(36,29,20,0.22);
+    --gold:#C79A2E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05), transparent 45%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 80px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1.5px;background:var(--ink-soft);display:inline-block;}
+  h1,h2,h3{font-family:'Bitter', serif; margin:0; color:var(--ink);}
+
+  /* ---------- STAMP ---------- */
+  .stamp{
+    display:inline-block;
+    font-family:'Special Elite', monospace;
+    text-transform:uppercase;
+    border:3px solid currentColor;
+    border-radius:6px;
+    padding:6px 16px;
+    letter-spacing:.08em;
+    transform:rotate(-4deg);
+    position:relative;
+  }
+  .stamp::after{
+    content:"";
+    position:absolute; inset:3px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    opacity:.55;
+  }
+  .stamp.quiz{color:var(--quiz);}
+  .stamp.break{color:var(--break);}
+
+  /* ---------- TOP BANNER (session identity strip) ---------- */
+  .s2-banner{
+    background:var(--s2); color:#fff; padding:14px 28px;
+    font-family:'Bitter',serif; font-weight:700; font-size:15px; letter-spacing:.03em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s2-banner .dot{width:8px; height:8px; border-radius:50%; background:#fff; opacity:.85;}
+  .s3-banner{background:var(--s3);}
+
+  /* ---------- PRACTITIONER BYLINE ---------- */
+  .practitioner{
+    margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.3s;
+  }
+  .practitioner .p-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--s3); font-weight:700; margin-bottom:6px;
+  }
+  .practitioner .p-desc{font-style:italic; color:var(--ink-soft); font-size:14.5px;}
+  .voice-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase;
+    letter-spacing:.05em; padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .voice-tag.external{background:var(--s3-soft); color:var(--s3);}
+  .voice-tag.internal{background:var(--retail-soft); color:var(--retail);}
+
+  /* ---------- GHERKIN / POSTMORTEM / 5 WHYS ---------- */
+  .gherkin{
+    background:#10151C; color:#D7E1EA; border-radius:10px; padding:16px 20px;
+    font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.9; margin:14px 0;
+    overflow-x:auto; white-space:pre-wrap;
+  }
+  .gherkin .kw{color:#5FD9C4; font-weight:700;}
+  .gherkin .cm{color:#7A8A99; font-style:italic;}
+  .pm-timeline{list-style:none; margin:14px 0; padding:0;}
+  .pm-timeline li{display:grid; grid-template-columns:98px 1fr; gap:14px; padding:9px 0; border-top:1px dashed var(--line); font-size:14px; line-height:1.5;}
+  .pm-timeline li:first-child{border-top:none;}
+  .pm-timeline .day{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--s3); font-weight:700; padding-top:1px;}
+  .whys-chain{list-style:none; margin:14px 0; padding:0;}
+  .whys-chain li{padding:11px 0; border-top:1px dashed var(--line); font-size:14.5px; line-height:1.55;}
+  .whys-chain li:first-child{border-top:none;}
+  .whys-chain .why-q{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700;
+    color:var(--s3); text-transform:uppercase; letter-spacing:.06em;
+    display:inline-block; margin-bottom:5px; background:var(--s3-soft); padding:3px 9px; border-radius:20px;
+  }
+  .fw-subhead{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-soft); margin:26px 0 4px; padding-top:20px; border-top:1px solid var(--line);
+  }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:60px 28px;
+    border-bottom:6px double var(--ink);
+    overflow:hidden;
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(36,29,20,0.035) 0px, rgba(36,29,20,0.035) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+  .cover-inner{max-width:980px;margin:0 auto; width:100%; position:relative; z-index:1;}
+  .folder-tabs{display:flex; gap:8px; margin-bottom:28px;}
+  .folder-tabs span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.1em;
+    background:var(--paper3);
+    border:1px solid var(--line);
+    border-bottom:none;
+    padding:5px 12px 8px;
+    border-radius:6px 6px 0 0;
+    color:var(--ink-soft);
+    opacity:0; transform:translateY(10px);
+    animation:tabIn .5s ease forwards;
+  }
+  .folder-tabs span:nth-child(1){animation-delay:.05s;}
+  .folder-tabs span:nth-child(2){animation-delay:.15s;}
+  .folder-tabs span:nth-child(3){animation-delay:.25s;}
+  .folder-tabs span:nth-child(4){animation-delay:.35s;}
+  .folder-tabs span:nth-child(5){animation-delay:.42s;}
+  @keyframes tabIn{to{opacity:1; transform:translateY(0);}}
+
+  .case-no{
+    font-family:'Special Elite', monospace;
+    color:var(--quiz);
+    font-size:15px;
+    letter-spacing:.05em;
+    margin-bottom:14px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards; animation-delay:.4s;
+  }
+  .cover h1{
+    font-size:clamp(40px, 7vw, 84px);
+    line-height:0.98;
+    font-weight:900;
+    margin:6px 0 18px;
+    opacity:0;
+    transform:scale(.9) rotate(-1deg);
+    animation:stampIn .7s cubic-bezier(.2,1.6,.4,1) forwards;
+    animation-delay:.55s;
+  }
+  .cover h1 em{font-style:normal; color:var(--retail);}
+  @keyframes stampIn{
+    0%{opacity:0; transform:scale(1.35) rotate(-3deg);}
+    60%{opacity:1;}
+    100%{opacity:1; transform:scale(1) rotate(-1deg);}
+  }
+  .cover .sub{
+    font-size:clamp(16px,2.1vw,20px);
+    max-width:640px; color:var(--ink-soft); line-height:1.5;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:.95s;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-top:34px;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.15s;
+  }
+  .meta-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); background:rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:20px; color:var(--ink);
+  }
+  .meta-chip b{color:var(--ink);}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  .seal{
+    position:absolute; top:56px; right:40px;
+    width:118px; height:118px;
+    border:3px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; font-family:'Special Elite',monospace;
+    font-size:11px; color:var(--gold); letter-spacing:.05em;
+    transform:rotate(12deg) scale(0);
+    animation:sealIn .6s cubic-bezier(.3,1.7,.4,1) forwards; animation-delay:1.3s;
+  }
+  .seal::before{content:""; position:absolute; inset:8px; border:1px dashed var(--gold); border-radius:50%;}
+  @keyframes sealIn{to{transform:rotate(12deg) scale(1);}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block{padding:56px 0 8px; border-bottom:1px solid var(--line);}
+  .tag-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .idx{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    color:#fff; background:var(--ink); border-radius:5px; padding:4px 9px;
+  }
+  h2.title{font-size:clamp(26px,3.6vw,38px); font-weight:700; margin-top:6px;}
+  .lead{color:var(--ink-soft); font-size:16.5px; max-width:680px; margin-top:8px; line-height:1.55;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{display:flex; flex-direction:column; gap:0; margin-top:26px;}
+  .t-row{
+    display:grid; grid-template-columns:96px 1px 1fr auto;
+    align-items:center; gap:18px; padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .t-row:first-child{border-top:none;}
+  .t-time{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-soft);}
+  .t-bar{width:1px; height:34px; background:var(--line);}
+  .t-label{font-weight:600; font-size:16px;}
+  .t-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    padding:5px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
+  }
+  .tag-mod{background:var(--paper3); color:var(--ink-soft);}
+  .tag-retail{background:var(--retail-soft); color:var(--retail);}
+  .tag-health{background:var(--health-soft); color:var(--health);}
+  .tag-quiz{background:var(--quiz-soft); color:var(--quiz);}
+  .tag-break{background:var(--break-soft); color:var(--break);}
+  .tag-fw{background:var(--fw-soft); color:var(--fw);}
+  .tag-s2{background:var(--s2-soft); color:var(--s2);}
+  .tag-s3{background:var(--s3-soft); color:var(--s3);}
+  .tag-devops{background:var(--devops-soft); color:var(--devops);}
+  .tag-finance{background:var(--finance-soft); color:var(--finance);}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:rgba(255,255,255,.4);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 28px;
+    margin-top:22px;
+    position:relative;
+  }
+  .card .pin{
+    position:absolute; top:-10px; left:26px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--gold); box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .points{margin:14px 0 0; padding:0; list-style:none;}
+  .points li{
+    padding:8px 0 8px 22px; position:relative; line-height:1.5; font-size:15.5px;
+  }
+  .points li::before{content:"—"; position:absolute; left:0; color:var(--ink-soft);}
+
+  /* ---------- ICEBREAKER / QUIZ CARDS ---------- */
+  .interject{
+    margin-top:26px; border-radius:12px; padding:26px 28px 24px;
+    border:2px dashed currentColor;
+  }
+  .interject.break{color:var(--break); background:var(--break-soft);}
+  .interject.quiz{color:var(--quiz); background:var(--quiz-soft);}
+  .interject-head{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .interject h3{color:var(--ink); font-size:20px;}
+  .interject p, .interject .opts{color:var(--ink); font-size:15.5px;}
+  .timer{
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    background:rgba(255,255,255,.6); padding:4px 10px; border-radius:20px; color:var(--ink);
+  }
+  .opts{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:8px;}
+  .opts li{
+    background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.12);
+    border-radius:8px; padding:9px 14px; font-size:15px;
+    transition:background .25s ease, border-color .25s ease, opacity .25s ease;
+  }
+  .opts li b{font-family:'IBM Plex Mono',monospace; margin-right:8px;}
+  .reveal-btn{
+    margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+    background:var(--ink); color:#fff; border:none; border-radius:20px;
+    padding:9px 18px; transition:transform .15s ease;
+  }
+  .reveal-btn:hover{transform:translateY(-1px);}
+  /* correct option + explanation stay neutral until the quiz container is marked revealed */
+  .interject.revealed .opts li.correct{
+    background:#DCF3E3; border-color:#2F7D4F; color:#1C4D31; font-weight:600;
+  }
+  .interject.revealed .opts li.correct::after{
+    content:" ✓ Correct"; font-weight:800; color:#2F7D4F; margin-left:6px;
+  }
+  .interject.revealed .opts li:not(.correct){opacity:.5;}
+  .answer{
+    margin-top:14px; padding:12px 16px; border-radius:8px;
+    background:rgba(255,255,255,.7); border-left:4px solid var(--ink);
+    font-size:15px; display:none;
+  }
+  .interject.revealed .answer{display:block; animation:fadeUp .35s ease;}
+  .answer b{color:var(--quiz);}
+
+  /* ---------- DEMO / CASE FOLDER ---------- */
+  .folder{
+    margin-top:24px; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+  }
+  .folder-top{padding:20px 26px; display:flex; align-items:center; gap:14px; color:#fff;}
+  .folder.retail .folder-top{background:var(--retail);}
+  .folder.health .folder-top{background:var(--health);}
+  .folder.s3 .folder-top{background:var(--s3);}
+  .folder.devops .folder-top{background:var(--devops);}
+  .folder.finance .folder-top{background:var(--finance);}
+  .folder-top .case-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em;
+    background:rgba(255,255,255,.22); padding:4px 10px; border-radius:20px;
+  }
+  .folder-body{background:rgba(255,255,255,.45); padding:24px 26px;}
+  .kv{display:grid; grid-template-columns:140px 1fr; gap:8px 16px; font-size:15px; margin-bottom:16px;}
+  .kv .k{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; padding-top:2px;}
+  .steps{counter-reset:step; list-style:none; margin:14px 0 0; padding:0;}
+  .steps li{
+    counter-increment:step; position:relative; padding:9px 0 9px 34px; font-size:15px; line-height:1.5;
+    border-top:1px dashed var(--line);
+  }
+  .steps li:first-child{border-top:none;}
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:8px;
+    width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; display:flex; align-items:center; justify-content:center;
+  }
+  .verdict{
+    margin-top:16px; padding:14px 18px; border-radius:8px; font-size:15px;
+    background:rgba(0,0,0,.05); border-left:4px solid var(--ink);
+  }
+  .verdict b{font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-size:12px; letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);}
+
+  /* ---------- STEP DETAIL (prompts inside demo steps) ---------- */
+  .steps li{padding-bottom:16px;}
+  .step-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15.5px; margin-bottom:8px;}
+  .step-time{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); background:rgba(0,0,0,.06); padding:2px 9px; border-radius:10px; white-space:nowrap;}
+  .prompt-chip{
+    background:rgba(255,255,255,.75); border-radius:7px; padding:10px 14px;
+    font-size:14px; margin:0 0 8px; line-height:1.5;
+    border-left:3px solid currentColor;
+  }
+  .folder.retail .prompt-chip{color:var(--retail);}
+  .folder.health .prompt-chip{color:var(--health);}
+  .folder.s3 .prompt-chip{color:var(--s3);}
+  .folder.devops .prompt-chip{color:var(--devops);}
+  .folder.finance .prompt-chip{color:var(--finance);}
+  .prompt-label{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:10.5px; letter-spacing:.07em; margin-right:8px;}
+  .prompt-chip .prompt-text{color:var(--ink); font-style:italic;}
+  .expect{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:2px;}
+  .expect b{color:var(--ink); font-weight:700;}
+  .fw-used{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.04em;
+    background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.12);
+    padding:6px 12px; border-radius:20px; color:var(--ink);
+  }
+  .fw-used b{color:var(--fw); text-transform:uppercase;}
+  .handson-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:rgba(255,255,255,.9); color:var(--s2); border:1px solid var(--s2);
+    padding:3px 9px; border-radius:20px;
+  }
+  .feature-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:var(--s3); color:#fff;
+    padding:4px 11px; border-radius:20px;
+  }
+  .class-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700;
+    padding:3px 10px; border-radius:20px;
+  }
+  .class-tag.live{background:var(--live-soft); color:var(--live);}
+  .class-tag.dead{background:var(--dead-cat-soft); color:var(--dead-cat);}
+  .class-tag.vestigial{background:var(--vestigial-soft); color:var(--vestigial);}
+  .class-tag.zombie{background:var(--zombie-soft); color:var(--zombie);}
+  .class-table{width:100%; border-collapse:collapse; margin-top:14px; font-size:13.5px;}
+  .class-table td{padding:9px 10px; border-top:1px solid var(--line); vertical-align:top;}
+  .class-table tr:first-child td{border-top:none;}
+  .class-table td.fn{font-family:'IBM Plex Mono',monospace; font-size:12px;}
+
+  /* ---------- FIELD GUIDE ---------- */
+  .fw-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px;}
+  .fw-card{
+    background:rgba(255,255,255,.5); border:1px solid var(--line); border-radius:12px;
+    padding:22px 24px; position:relative;
+  }
+  .fw-cat{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--fw);
+    background:var(--fw-soft); padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .fw-name{font-family:'Bitter',serif; font-weight:700; font-size:19px; margin-bottom:6px;}
+  .fw-def{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:12px;}
+  .fw-example{
+    font-size:13px; margin-bottom:12px; padding:9px 12px;
+    background:rgba(0,0,0,.045); border-radius:7px; line-height:1.5;
+  }
+  .fw-example b{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);
+  }
+  .fw-card .prompt-chip{color:var(--fw);}
+  @media (max-width:720px){.fw-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CLOSING ---------- */
+  .closing{padding:70px 0 40px; text-align:center;}
+  .closing .stamp{font-size:26px; padding:14px 30px;}
+  .closing p{max-width:600px; margin:22px auto 0; color:var(--ink-soft); font-size:16px; line-height:1.6;}
+
+  @media (max-width:640px){
+    .t-row{grid-template-columns:70px 1px 1fr; grid-template-areas:"time bar label" ". . tag"; }
+    .t-tag{grid-area:tag; justify-self:start; margin-top:6px;}
+    .seal{display:none;}
+    .kv{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="s2-banner s3-banner"><span class="dot"></span>S6 · MASTERCLASS <span class="dot"></span> What Good Context Looks Like — And How To Build It</div>
+
+<header class="cover">
+  <div class="seal">CLAUDE<br>×<br>UST</div>
+  <div class="cover-inner">
+    <div class="folder-tabs">
+      <span>DEAD CODE</span><span>3 LAYERS</span><span>THE LENS</span><span>4 LABS</span><span>ALL FEATURES</span>
+    </div>
+    <div class="case-no">CASE FILE NO. S6 — OPENED 0:00</div>
+    <h1>Dead Code Is What<br><em>Broken Context Looks Like</em></h1>
+    <p class="sub">Fully hands-on, start to finish. You'll upload real files, run real static analysis, build a real dashboard, search the real web, and reason through a genuinely hard judgment call — using every core capability Claude Desktop has, on one real codebase, in one session.</p>
+    <div class="meta-row">
+      <div class="meta-chip"><b>Duration</b> · 120 min, fully hands-on</div>
+      <div class="meta-chip"><b>Tools</b> · Claude Desktop only</div>
+      <div class="meta-chip"><b>Builds on</b> · Session 4 (session4-demo repo)</div>
+      <div class="meta-chip"><b>Features used</b> · Upload, Code Execution, Artifacts, Web Search, Extended Thinking</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- AGENDA -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">00</span><span class="eyebrow">Evidence log</span></div>
+    <h2 class="title">The 120-Minute Build</h2>
+    <p class="lead">Every lab below produces a real, checkable result on the same repo — nothing here is a walkthrough of what Claude <i>could</i> do.</p>
+    <div class="timeline">
+      <div class="t-row"><div class="t-time">0:00</div><div class="t-bar"></div><div class="t-label">Welcome & Session Frame</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:05</div><div class="t-bar"></div><div class="t-label">Icebreaker — Would You Delete This?</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:10</div><div class="t-bar"></div><div class="t-label">Concept — Dead Code = Broken Context</div><div class="t-tag tag-mod">8 min</div></div>
+      <div class="t-row"><div class="t-time">0:18</div><div class="t-bar"></div><div class="t-label">Concept — The Diagnostic Lens</div><div class="t-tag tag-mod">8 min</div></div>
+      <div class="t-row"><div class="t-time">0:26</div><div class="t-bar"></div><div class="t-label">LAB 1 — Upload & Triage</div><div class="t-tag tag-s3">20 min</div></div>
+      <div class="t-row"><div class="t-time">0:46</div><div class="t-bar"></div><div class="t-label">Pop Quiz #1</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">0:49</div><div class="t-bar"></div><div class="t-label">Break</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:54</div><div class="t-bar"></div><div class="t-label">LAB 2 — Prove It With Code Execution</div><div class="t-tag tag-s3">25 min</div></div>
+      <div class="t-row"><div class="t-time">1:19</div><div class="t-bar"></div><div class="t-label">Pop Quiz #2</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:22</div><div class="t-bar"></div><div class="t-label">LAB 3 — Build the Context Health Dashboard</div><div class="t-tag tag-s3">20 min</div></div>
+      <div class="t-row"><div class="t-time">1:42</div><div class="t-bar"></div><div class="t-label">Pop Quiz #3</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:45</div><div class="t-bar"></div><div class="t-label">LAB 4 — Verify Against Reality + The Hard Judgment Call</div><div class="t-tag tag-s3">10 min</div></div>
+      <div class="t-row"><div class="t-time">1:55</div><div class="t-bar"></div><div class="t-label">Pop Quiz #4</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:58</div><div class="t-bar"></div><div class="t-label">Synthesis & Close</div><div class="t-tag tag-mod">2 min</div></div>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER -->
+  <section class="block">
+    <div class="interject break">
+      <div class="interject-head"><span class="stamp break">Icebreaker</span><span class="timer">⏱ 5 min · whole room</span></div>
+      <h3>Would You Delete This?</h3>
+      <p>Facilitator shows one function, no other context: a private method that's never called anywhere in its own file. Show of hands: delete it, or leave it? Then: how confident are you, 1–5? Hold that vote — you'll find out at the end of Lab 2 whether the room was right, and Lab 4 will complicate the answer either way.</p>
+    </div>
+  </section>
+
+  <!-- CONCEPT 1 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">01</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">Dead Code = Broken Context</h2>
+    <p class="lead">Nobody sets out to write dead code. It accumulates because deleting anything requires confidence that nothing depends on it — and confidence requires context. When context is broken, the safe default is to never delete anything, and dead code piles up as the visible symptom of an invisible problem.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li>Good context is what makes deletion <b>safe</b>. Bad context is what makes every deletion feel like a gamble — so nobody takes it, and the codebase only ever grows.</li>
+        <li>This isn't only a cleanliness problem. Every dead or half-dead function is a place a future reader — or a future agent — will misjudge what the system actually does.</li>
+        <li>Today's target: <b>notification-service</b>, the same repo from Session 4. Same codebase, new question — not "does the doc match the code," but "does every piece of this code still deserve to exist?"</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CONCEPT 2 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">02</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">The Diagnostic Lens</h2>
+    <p class="lead">Four categories, built from the same three context layers as Session 4 — Functional, System, Data — now applied as a classification tool instead of a mining method.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k"><span class="class-tag live">LIVE</span></div><div>Called, and still serving a real capability. Leave it alone.</div>
+        <div class="k"><span class="class-tag dead">DEAD</span></div><div>Defined, never called, no external reason to exist. Safe to delete.</div>
+        <div class="k"><span class="class-tag vestigial">VESTIGIAL</span></div><div>Reachable in principle, but permanently gated off (a feature flag that will never flip back). Safe to delete once the flag's fate is confirmed.</div>
+        <div class="k"><span class="class-tag zombie">ZOMBIE</span></div><div>Looks dead to internal analysis — but alive via something outside the repo: an external caller, a scheduled job, a public API contract. <b>Do not delete without more context.</b></div>
+      </div>
+      <p class="lead" style="margin-top:12px;">The lens is applying all three context layers before you trust any single signal: <b>Functional</b> (does a real use case still need this?), <b>System</b> (is it reachable in the real call graph, including callers outside this repo?), <b>Data</b> (does it operate on structures still in production use?).</p>
+    </div>
+  </section>
+
+  <!-- LAB 1 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">L1</span><span class="eyebrow">Lab 1 · 20 min</span><span class="feature-badge">📎 File Upload</span></div>
+    <h2 class="title">Upload & Triage</h2>
+    <p class="lead">Drag four files into Claude Desktop at once and reason across all of them before writing a single line of code.</p>
+    <div class="folder s3">
+      <div class="folder-top"><h3 style="color:#fff;">Files to Upload</h3><span class="case-tag">src/notification_service.py · src/rate_limiter.py · CHANGELOG.md · tests/test_notification_service.py</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Upload all four files in one message<span class="step-time">3 min</span></div>
+            <div class="expect"><b>Why this matters:</b> Claude Desktop can hold and reason across multiple files at once — this is the whole point of the lab. Don't paste code inline; use the actual attach/upload action.</div>
+          </li>
+          <li>
+            <div class="step-title">Ask for a first-pass triage<span class="step-time">10 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Using the four files I've uploaded, apply the Diagnostic Lens: classify every function in notification_service.py and rate_limiter.py as LIVE, DEAD, VESTIGIAL, or ZOMBIE. Use the CHANGELOG for Functional context and the tests file for System context. Explain your reasoning per function — don't just output a label."</span></div>
+            <div class="expect"><b>Expect:</b> Claude should correctly use the CHANGELOG to identify the legacy retry function as superseded, and the tests file to confirm send() is actually called — reasoning across files, not just summarizing one.</div>
+          </li>
+          <li>
+            <div class="step-title">Pressure-test the hardest call<span class="step-time">7 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Which of your classifications are you least confident about, and why? Is there a function where you genuinely can't tell LIVE from ZOMBIE from what I've given you?"</span></div>
+            <div class="expect"><b>Expect:</b> Claude should flag get_notification_status() as uncertain — nothing in the four uploaded files proves it's called anywhere, but nothing proves it's safe to delete either. That's the correct answer at this stage: an honest "I don't know yet," not a guess.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A first-pass classification of all 7 functions, with reasoning, and at least one function explicitly flagged as unresolved. You have not run any code yet — this was pure multi-file reasoning.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 1 -->
+  <section class="block">
+    <div class="interject quiz" id="q1">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 1</span></div>
+      <h3>Why upload all four files together instead of one at a time?</h3>
+      <ul class="opts">
+        <li><b>A.</b> It's faster to type</li>
+        <li class="correct"><b>B.</b> The classification requires reasoning across files — Functional context from the CHANGELOG, System context from the tests — that no single file contains alone</li>
+        <li><b>C.</b> Claude can only read one file per conversation otherwise</li>
+        <li><b>D.</b> It doesn't matter, order and grouping are irrelevant</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q1')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> The whole exercise depends on synthesizing evidence that's scattered across files — exactly why Lab 2's single-file scan gets the wrong answer for send().</div>
+    </div>
+  </section>
+
+  <!-- LAB 2 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">L2</span><span class="eyebrow">Lab 2 · 25 min</span><span class="feature-badge">⚙ Code Execution</span></div>
+    <h2 class="title">Prove It With Code Execution</h2>
+    <p class="lead">Turn Lab 1's reasoning into a number. Ask Claude to actually write and run real static analysis — not describe what analysis would show.</p>
+    <div class="folder s3">
+      <div class="folder-top"><h3 style="color:#fff;">Run: dead_code_scan.py</h3><span class="case-tag">Real AST-based scan · verified output below</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Naive scan — one file<span class="step-time">6 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Using code execution, write a Python script that parses notification_service.py with the ast module, finds every function defined, finds every name called anywhere in the file, and reports which defined functions are never called. Run it."</span></div>
+            <div class="expect"><b>Verified output:</b> 5 of 6 functions flagged dead, including send() — which we already confirmed is LIVE in Lab 1. This is the naive scanner being wrong, on purpose.</div>
+          </li>
+          <li>
+            <div class="step-title">Widen the scope<span class="step-time">8 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Now run the same analysis across notification_service.py, rate_limiter.py, AND tests/test_notification_service.py together. Does the answer change for send()?"</span></div>
+            <div class="expect"><b>Verified:</b> send() is now correctly cleared — it's called from the test file. But 5 functions are still flagged, because scope alone doesn't fix everything.</div>
+          </li>
+          <li>
+            <div class="step-title">Find the scanner's blind spot<span class="step-time">7 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"_provider_send() is still flagged as dead. Read how send() actually calls it — is this a real gap in our scan method, or a real dead function?"</span></div>
+            <div class="expect"><b>Verified finding:</b> send_fn = self._provider_send assigns it to a variable, then calls send_fn(...) — a real, honest limitation of name-based static analysis. _provider_send() is genuinely LIVE; the scanner just can't see indirect calls.</div>
+          </li>
+          <li>
+            <div class="step-title">Reconcile with Lab 1<span class="step-time">4 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Compare this scan's results with our Lab 1 classification. Where did they agree, and where did the code execution result change our answer?"</span></div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Verified numbers</b> 7 functions total. Naive single-file scan flags 5 as dead (71%). Whole-repo scan still flags 5 — scope alone doesn't catch the indirect-call blind spot. Diagnostic Lens correctly narrows this to 2 genuinely DEAD, 1 VESTIGIAL, 1 false positive (actually LIVE), and 1 ZOMBIE needing a human call.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 2 -->
+  <section class="block">
+    <div class="interject quiz" id="q2">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 2</span></div>
+      <h3>Why did _provider_send() stay flagged as "dead" even after widening the scan to the whole repo?</h3>
+      <ul class="opts">
+        <li><b>A.</b> It really is dead — the scanner is correct</li>
+        <li class="correct"><b>B.</b> It's called indirectly through a variable (send_fn), which name-based static analysis can't see</li>
+        <li><b>C.</b> The scan only checks one file at a time no matter what</li>
+        <li><b>D.</b> _provider_send() doesn't exist in the file</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q2')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> Widening scope fixed the send() false positive but not this one — a different, real limitation of the tool. Automated results are hypotheses, not verdicts.</div>
+    </div>
+  </section>
+
+  <!-- LAB 3 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">L3</span><span class="eyebrow">Lab 3 · 20 min</span><span class="feature-badge">📄 Artifacts / File Creation</span></div>
+    <h2 class="title">Build the Context Health Dashboard</h2>
+    <p class="lead">Everything from Labs 1–2 becomes one shareable artifact — not a chat transcript someone has to scroll through later.</p>
+    <div class="folder s3">
+      <div class="folder-top"><h3 style="color:#fff;">Build: context_health_dashboard.html</h3><span class="case-tag">Reference version included in session4-demo/</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Ask for the dashboard, not a summary<span class="step-time">12 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Create a single self-contained HTML file called context_health_dashboard.html — no external dependencies. Show: stat cards for Live/Dead/Vestigial/Zombie counts, a table comparing what the naive scan said vs. what the Diagnostic Lens actually confirmed, and a full per-function classification table with reasoning. Use our real numbers from Labs 1 and 2."</span></div>
+            <div class="expect"><b>Expect:</b> a real, working HTML file Claude creates directly — open it and it should render immediately, no setup.</div>
+          </li>
+          <li>
+            <div class="step-title">Stress-test it<span class="step-time">5 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"If I showed this dashboard to someone who wasn't in this session, could they tell which functions are actually safe to delete today? Fix anything that's ambiguous."</span></div>
+          </li>
+          <li>
+            <div class="step-title">Open and compare<span class="step-time">3 min</span></div>
+            <div class="expect"><b>Expect:</b> your dashboard should land on the same core numbers as the reference version — 3 Live, 2 Dead, 1 Vestigial, 1 Zombie, out of 7 — even if the design differs.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A real, openable dashboard file — the artifact you'd actually attach to a cleanup ticket or a PR description.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 3 -->
+  <section class="block">
+    <div class="interject quiz" id="q3">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 3</span></div>
+      <h3>What's the real test of whether the dashboard succeeded?</h3>
+      <ul class="opts">
+        <li><b>A.</b> It looks visually polished</li>
+        <li><b>B.</b> It's shorter than the chat conversation that produced it</li>
+        <li class="correct"><b>C.</b> Someone who wasn't in the room could act on it correctly without asking a follow-up question</li>
+        <li><b>D.</b> It uses more colors than the naive scan output</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q3')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> An artifact that requires the room's shared context to interpret hasn't actually captured the context — it's just moved it somewhere prettier.</div>
+    </div>
+  </section>
+
+  <!-- LAB 4 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">L4</span><span class="eyebrow">Lab 4 · 10 min</span><span class="feature-badge">🌐 Web Search</span><span class="feature-badge" style="background:var(--fw);">🧠 Extended Thinking</span></div>
+    <h2 class="title">Verify Against Reality + The Hard Judgment Call</h2>
+    <p class="lead">Two more moves: check your method against the outside world, then sit with the one classification that genuinely can't be resolved from this repo alone.</p>
+    <div class="folder s3">
+      <div class="folder-top"><h3 style="color:#fff;">Web Search + Extended Thinking</h3><span class="case-tag">get_notification_status() — the ZOMBIE case</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Verify the method against real tools<span class="step-time">4 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Search the web for how real dead-code detection tools like vulture or coverage.py work. Does our AST approach match how they actually operate, and do they have the same indirect-call blind spot we found?"</span></div>
+            <div class="expect"><b>Expect:</b> confirmation that name-based / coverage-based dead-code tools share this exact limitation — you didn't just build a toy, you rediscovered a known, real constraint of the whole tool category.</div>
+          </li>
+          <li>
+            <div class="step-title">Sit with the hard case<span class="step-time">6 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Think carefully, step by step: get_notification_status() has no caller anywhere in this repo, but it's documented as a public API entry point for external partner systems. Walk through every piece of evidence for and against deleting it, and tell me what additional information — outside this repo — would actually resolve this."</span></div>
+            <div class="expect"><b>Expect:</b> Claude should explicitly reason through the uncertainty rather than picking a side quickly, and land on a concrete next step — e.g. "check the API gateway logs for real traffic to this endpoint" — not a guess dressed up as an answer.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Verdict</b> The icebreaker vote gets its answer here: the function most rooms vote to delete on sight is exactly the kind of case where the right move is refusing to guess. Context that lives outside the repo is still context — and "I need more information" is a correct diagnosis, not a failure to reach one.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 4 -->
+  <section class="block">
+    <div class="interject quiz" id="q4">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 4</span></div>
+      <h3>What's the correct next step for a ZOMBIE-classified function?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Delete it — if nothing in the repo calls it, it's safe</li>
+        <li><b>B.</b> Keep it forever, just in case</li>
+        <li class="correct"><b>C.</b> Go find the specific piece of context outside the repo that would actually resolve the question — e.g. real traffic logs</li>
+        <li><b>D.</b> Ask the original author, if you can find them</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q4')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> Not "never delete" and not "delete anyway" — identify exactly what evidence would settle it, and go get that evidence.</div>
+    </div>
+  </section>
+
+  <!-- FIELD GUIDE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--fw);">FG</span><span class="eyebrow">Field guide · reference, not counted in the 120 min</span></div>
+    <h2 class="title">Claude Desktop Features Used Today</h2>
+    <p class="lead">Every core capability, mapped to exactly where it earned its place in this session — not a feature tour, a working session that happened to need all five.</p>
+    <div class="fw-grid">
+      <div class="fw-card">
+        <span class="fw-cat">Lab 1</span>
+        <div class="fw-name">📎 File Upload (multi-file)</div>
+        <div class="fw-def">Attach several real files in one message and reason across all of them at once — the mechanism that let Lab 1 catch what any single file would have hidden.</div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Lab 2</span>
+        <div class="fw-name">⚙ Code Execution</div>
+        <div class="fw-def">Claude writes and actually runs real Python — not pseudocode — turning a qualitative guess into a verifiable, re-runnable result with real numbers.</div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Lab 3</span>
+        <div class="fw-name">📄 Artifacts / File Creation</div>
+        <div class="fw-def">A real, standalone file you can open, share, and attach to a ticket — the difference between a finding and a deliverable.</div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Lab 4</span>
+        <div class="fw-name">🌐 Web Search</div>
+        <div class="fw-def">Check your own method against the outside world — confirms your approach matches (or doesn't) how real, established tools work.</div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Lab 4</span>
+        <div class="fw-name">🧠 Extended / Careful Thinking</div>
+        <div class="fw-def">For the one classification that can't be resolved quickly — deliberate, visible step-by-step reasoning instead of a fast, confident-sounding guess.</div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">All Labs</span>
+        <div class="fw-name">The Diagnostic Lens</div>
+        <div class="fw-def">Live / Dead / Vestigial / Zombie — four categories built from Functional, System, and Data context, the same three layers from Session 4, now used to classify instead of mine.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <span class="stamp" style="color:var(--ink);">Case Closed</span>
+    <p>You uploaded real files, ran real analysis, built a real dashboard, checked your method against the real world, and reasoned through a case with no clean answer — on one repo, in one session. That's the whole toolkit. Everything after this is the same five moves, on a codebase that matters.</p>
+  </section>
+
+</div>
+
+<script>
+function toggleAnswer(id){
+  document.getElementById(id).classList.toggle('revealed');
+}
+</script>
+</body>
+</html>

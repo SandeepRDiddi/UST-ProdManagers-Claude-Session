@@ -1,0 +1,71 @@
+SAMPLE PRIOR-AUTHORIZATION POLICY (SYNTHETIC / TRAINING USE ONLY)
+Fictional Payer: "Meridian Health Plan" — this document is written for classroom demo
+purposes and does not represent any real insurer's policy.
+
+--------------------------------------------------------------------------
+1. MRI Brain, with and without contrast (CPT 70553)
+--------------------------------------------------------------------------
+Required for approval:
+  - Clinical notes from the ordering provider documenting presenting symptoms
+  - Proof that conservative treatment was attempted and failed, OR
+  - A completed red-flag symptom form (e.g. new neurological deficit,
+    suspected mass, post-trauma with red flags)
+Clinical criteria: at least one red-flag indication must be present, or
+conservative treatment must have been tried for a minimum of 4 weeks without
+improvement.
+
+--------------------------------------------------------------------------
+2. MRI Lumbar Spine, without contrast (CPT 72148)
+--------------------------------------------------------------------------
+Required for approval:
+  - Clinical notes documenting duration and severity of symptoms
+  - Proof that conservative treatment (physical therapy, medication, or
+    both) was attempted for at least 6 weeks without adequate improvement
+Clinical criteria: absence of red-flag symptoms shifts this to a
+conservative-treatment-first pathway; presence of red flags allows
+immediate approval.
+
+--------------------------------------------------------------------------
+3. Therapeutic Exercise / Physical Therapy (CPT 97110)
+--------------------------------------------------------------------------
+Required for approval:
+  - Clinical notes describing functional limitation
+  - A written treatment plan with goals and expected duration
+  - A baseline functional assessment score
+Clinical criteria: functional assessment score must fall below the plan's
+threshold for medical necessity; requests beyond the standard visit cap
+require additional justification of continued functional deficit.
+
+--------------------------------------------------------------------------
+4. Respiratory Assist Device (HCPCS E0470)
+--------------------------------------------------------------------------
+Required for approval:
+  - Clinical notes documenting the respiratory diagnosis
+  - A qualifying sleep study report
+  - A signed physician order specifying device settings
+Clinical criteria: sleep study must show qualifying event index above the
+plan's threshold; requests without a qualifying study are referred for
+clinical review rather than automatic denial.
+
+--------------------------------------------------------------------------
+5. Specialty Injectable Drug (HCPCS J3490)
+--------------------------------------------------------------------------
+Required for approval:
+  - Clinical notes confirming diagnosis and treatment history
+  - Recent lab results relevant to the diagnosis
+  - Proof of step therapy (that lower-cost alternatives were tried first),
+    unless a documented contraindication is on file
+Clinical criteria: step therapy must be documented as tried-and-failed, or
+a contraindication must be clearly stated by the prescriber.
+
+--------------------------------------------------------------------------
+NOTE FOR AUTOMATION DESIGN
+--------------------------------------------------------------------------
+Two very different failure modes get routed to the same "denied" queue:
+  (a) Procedural gaps — one or more required documents were never
+      submitted. These are objectively checkable against the required-docs
+      list above and safe to flag automatically for provider follow-up.
+  (b) Clinical judgment calls — all documents were submitted, but the
+      clinical picture does not clearly meet criteria. These require a
+      licensed reviewer's judgment and should NOT be auto-denied or
+      auto-approved.

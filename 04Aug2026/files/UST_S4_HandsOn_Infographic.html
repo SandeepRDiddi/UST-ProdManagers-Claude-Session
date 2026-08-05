@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File S4 — Hands-On + Value Articulation: Context-Aware Agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bitter:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1E8D5;
+    --paper2:#E7D8B8;
+    --paper3:#DCCBA3;
+    --ink:#241D14;
+    --ink-soft:#5A4C3A;
+    --retail:#A8631B;
+    --retail-soft:#F0D9AF;
+    --health:#2F6F62;
+    --health-soft:#CFE3DC;
+    --quiz:#A23B2E;
+    --quiz-soft:#F1D3CC;
+    --break:#2B4570;
+    --break-soft:#D6E0EE;
+    --fw:#6B4FA0;
+    --fw-soft:#E6DEF2;
+    --s2:#C8551F;
+    --s2-soft:#F3D9C4;
+    --s3:#1C33C4;
+    --s3-soft:#DCE1FA;
+    --s4:#0E7C7B;
+    --s4-soft:#D3E9E8;
+    --devops:#455568;
+    --devops-soft:#DDE3E9;
+    --finance:#7A6A1C;
+    --finance-soft:#EDE7C9;
+    --line: rgba(36,29,20,0.22);
+    --gold:#C79A2E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05), transparent 45%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 80px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1.5px;background:var(--ink-soft);display:inline-block;}
+  h1,h2,h3{font-family:'Bitter', serif; margin:0; color:var(--ink);}
+
+  /* ---------- STAMP ---------- */
+  .stamp{
+    display:inline-block;
+    font-family:'Special Elite', monospace;
+    text-transform:uppercase;
+    border:3px solid currentColor;
+    border-radius:6px;
+    padding:6px 16px;
+    letter-spacing:.08em;
+    transform:rotate(-4deg);
+    position:relative;
+  }
+  .stamp::after{
+    content:"";
+    position:absolute; inset:3px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    opacity:.55;
+  }
+  .stamp.quiz{color:var(--quiz);}
+  .stamp.break{color:var(--break);}
+
+  /* ---------- TOP BANNER (session identity strip) ---------- */
+  .s2-banner{
+    background:var(--s2); color:#fff; padding:14px 28px;
+    font-family:'Bitter',serif; font-weight:700; font-size:15px; letter-spacing:.03em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s2-banner .dot{width:8px; height:8px; border-radius:50%; background:#fff; opacity:.85;}
+  .s3-banner{background:var(--s3);}
+  .s4-banner{background:var(--s4);}
+
+  /* ---------- PRACTITIONER BYLINE ---------- */
+  .practitioner{
+    margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.3s;
+  }
+  .practitioner .p-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--s3); font-weight:700; margin-bottom:6px;
+  }
+  .practitioner .p-desc{font-style:italic; color:var(--ink-soft); font-size:14.5px;}
+  .voice-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase;
+    letter-spacing:.05em; padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .voice-tag.external{background:var(--s3-soft); color:var(--s3);}
+  .voice-tag.internal{background:var(--retail-soft); color:var(--retail);}
+
+  /* ---------- GHERKIN / POSTMORTEM / 5 WHYS ---------- */
+  .gherkin{
+    background:#10151C; color:#D7E1EA; border-radius:10px; padding:16px 20px;
+    font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.9; margin:14px 0;
+    overflow-x:auto; white-space:pre-wrap;
+  }
+  .gherkin .kw{color:#5FD9C4; font-weight:700;}
+  .gherkin .cm{color:#7A8A99; font-style:italic;}
+  .pm-timeline{list-style:none; margin:14px 0; padding:0;}
+  .pm-timeline li{display:grid; grid-template-columns:98px 1fr; gap:14px; padding:9px 0; border-top:1px dashed var(--line); font-size:14px; line-height:1.5;}
+  .pm-timeline li:first-child{border-top:none;}
+  .pm-timeline .day{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--s3); font-weight:700; padding-top:1px;}
+  .whys-chain{list-style:none; margin:14px 0; padding:0;}
+  .whys-chain li{padding:11px 0; border-top:1px dashed var(--line); font-size:14.5px; line-height:1.55;}
+  .whys-chain li:first-child{border-top:none;}
+  .whys-chain .why-q{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700;
+    color:var(--s3); text-transform:uppercase; letter-spacing:.06em;
+    display:inline-block; margin-bottom:5px; background:var(--s3-soft); padding:3px 9px; border-radius:20px;
+  }
+  .fw-subhead{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-soft); margin:26px 0 4px; padding-top:20px; border-top:1px solid var(--line);
+  }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:60px 28px;
+    border-bottom:6px double var(--ink);
+    overflow:hidden;
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(36,29,20,0.035) 0px, rgba(36,29,20,0.035) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+  .cover-inner{max-width:980px;margin:0 auto; width:100%; position:relative; z-index:1;}
+  .folder-tabs{display:flex; gap:8px; margin-bottom:28px;}
+  .folder-tabs span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.1em;
+    background:var(--paper3);
+    border:1px solid var(--line);
+    border-bottom:none;
+    padding:5px 12px 8px;
+    border-radius:6px 6px 0 0;
+    color:var(--ink-soft);
+    opacity:0; transform:translateY(10px);
+    animation:tabIn .5s ease forwards;
+  }
+  .folder-tabs span:nth-child(1){animation-delay:.05s;}
+  .folder-tabs span:nth-child(2){animation-delay:.15s;}
+  .folder-tabs span:nth-child(3){animation-delay:.25s;}
+  .folder-tabs span:nth-child(4){animation-delay:.35s;}
+  .folder-tabs span:nth-child(5){animation-delay:.42s;}
+  @keyframes tabIn{to{opacity:1; transform:translateY(0);}}
+
+  .case-no{
+    font-family:'Special Elite', monospace;
+    color:var(--quiz);
+    font-size:15px;
+    letter-spacing:.05em;
+    margin-bottom:14px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards; animation-delay:.4s;
+  }
+  .cover h1{
+    font-size:clamp(40px, 7vw, 84px);
+    line-height:0.98;
+    font-weight:900;
+    margin:6px 0 18px;
+    opacity:0;
+    transform:scale(.9) rotate(-1deg);
+    animation:stampIn .7s cubic-bezier(.2,1.6,.4,1) forwards;
+    animation-delay:.55s;
+  }
+  .cover h1 em{font-style:normal; color:var(--retail);}
+  @keyframes stampIn{
+    0%{opacity:0; transform:scale(1.35) rotate(-3deg);}
+    60%{opacity:1;}
+    100%{opacity:1; transform:scale(1) rotate(-1deg);}
+  }
+  .cover .sub{
+    font-size:clamp(16px,2.1vw,20px);
+    max-width:640px; color:var(--ink-soft); line-height:1.5;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:.95s;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-top:34px;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.15s;
+  }
+  .meta-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); background:rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:20px; color:var(--ink);
+  }
+  .meta-chip b{color:var(--ink);}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  .seal{
+    position:absolute; top:56px; right:40px;
+    width:118px; height:118px;
+    border:3px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; font-family:'Special Elite',monospace;
+    font-size:11px; color:var(--gold); letter-spacing:.05em;
+    transform:rotate(12deg) scale(0);
+    animation:sealIn .6s cubic-bezier(.3,1.7,.4,1) forwards; animation-delay:1.3s;
+  }
+  .seal::before{content:""; position:absolute; inset:8px; border:1px dashed var(--gold); border-radius:50%;}
+  @keyframes sealIn{to{transform:rotate(12deg) scale(1);}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block{padding:56px 0 8px; border-bottom:1px solid var(--line);}
+  .tag-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .idx{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    color:#fff; background:var(--ink); border-radius:5px; padding:4px 9px;
+  }
+  h2.title{font-size:clamp(26px,3.6vw,38px); font-weight:700; margin-top:6px;}
+  .lead{color:var(--ink-soft); font-size:16.5px; max-width:680px; margin-top:8px; line-height:1.55;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{display:flex; flex-direction:column; gap:0; margin-top:26px;}
+  .t-row{
+    display:grid; grid-template-columns:96px 1px 1fr auto;
+    align-items:center; gap:18px; padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .t-row:first-child{border-top:none;}
+  .t-time{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-soft);}
+  .t-bar{width:1px; height:34px; background:var(--line);}
+  .t-label{font-weight:600; font-size:16px;}
+  .t-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    padding:5px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
+  }
+  .tag-mod{background:var(--paper3); color:var(--ink-soft);}
+  .tag-retail{background:var(--retail-soft); color:var(--retail);}
+  .tag-health{background:var(--health-soft); color:var(--health);}
+  .tag-quiz{background:var(--quiz-soft); color:var(--quiz);}
+  .tag-break{background:var(--break-soft); color:var(--break);}
+  .tag-fw{background:var(--fw-soft); color:var(--fw);}
+  .tag-s2{background:var(--s2-soft); color:var(--s2);}
+  .tag-s3{background:var(--s3-soft); color:var(--s3);}
+  .tag-s4{background:var(--s4-soft); color:var(--s4);}
+  .tag-devops{background:var(--devops-soft); color:var(--devops);}
+  .tag-finance{background:var(--finance-soft); color:var(--finance);}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:rgba(255,255,255,.4);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 28px;
+    margin-top:22px;
+    position:relative;
+  }
+  .card .pin{
+    position:absolute; top:-10px; left:26px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--gold); box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .points{margin:14px 0 0; padding:0; list-style:none;}
+  .points li{
+    padding:8px 0 8px 22px; position:relative; line-height:1.5; font-size:15.5px;
+  }
+  .points li::before{content:"—"; position:absolute; left:0; color:var(--ink-soft);}
+
+  /* ---------- ICEBREAKER / QUIZ CARDS ---------- */
+  .interject{
+    margin-top:26px; border-radius:12px; padding:26px 28px 24px;
+    border:2px dashed currentColor;
+  }
+  .interject.break{color:var(--break); background:var(--break-soft);}
+  .interject.quiz{color:var(--quiz); background:var(--quiz-soft);}
+  .interject-head{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .interject h3{color:var(--ink); font-size:20px;}
+  .interject p, .interject .opts{color:var(--ink); font-size:15.5px;}
+  .timer{
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    background:rgba(255,255,255,.6); padding:4px 10px; border-radius:20px; color:var(--ink);
+  }
+  .opts{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:8px;}
+  .opts li{
+    background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.12);
+    border-radius:8px; padding:9px 14px; font-size:15px;
+    transition:background .25s ease, border-color .25s ease, opacity .25s ease;
+  }
+  .opts li b{font-family:'IBM Plex Mono',monospace; margin-right:8px;}
+  .reveal-btn{
+    margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+    background:var(--ink); color:#fff; border:none; border-radius:20px;
+    padding:9px 18px; transition:transform .15s ease;
+  }
+  .reveal-btn:hover{transform:translateY(-1px);}
+  /* correct option + explanation stay neutral until the quiz container is marked revealed */
+  .interject.revealed .opts li.correct{
+    background:#DCF3E3; border-color:#2F7D4F; color:#1C4D31; font-weight:600;
+  }
+  .interject.revealed .opts li.correct::after{
+    content:" ✓ Correct"; font-weight:800; color:#2F7D4F; margin-left:6px;
+  }
+  .interject.revealed .opts li:not(.correct){opacity:.5;}
+  .answer{
+    margin-top:14px; padding:12px 16px; border-radius:8px;
+    background:rgba(255,255,255,.7); border-left:4px solid var(--ink);
+    font-size:15px; display:none;
+  }
+  .interject.revealed .answer{display:block; animation:fadeUp .35s ease;}
+  .answer b{color:var(--quiz);}
+
+  /* ---------- DEMO / CASE FOLDER ---------- */
+  .folder{
+    margin-top:24px; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+  }
+  .folder-top{padding:20px 26px; display:flex; align-items:center; gap:14px; color:#fff;}
+  .folder.retail .folder-top{background:var(--retail);}
+  .folder.s2 .folder-top{background:var(--s2);}
+  .folder.health .folder-top{background:var(--health);}
+  .folder.s3 .folder-top{background:var(--s3);}
+  .folder.s4 .folder-top{background:var(--s4);}
+  .folder.devops .folder-top{background:var(--devops);}
+  .folder.finance .folder-top{background:var(--finance);}
+  .folder-top .case-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em;
+    background:rgba(255,255,255,.22); padding:4px 10px; border-radius:20px;
+  }
+  .folder-body{background:rgba(255,255,255,.45); padding:24px 26px;}
+  .kv{display:grid; grid-template-columns:140px 1fr; gap:8px 16px; font-size:15px; margin-bottom:16px;}
+  .kv .k{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; padding-top:2px;}
+  .steps{counter-reset:step; list-style:none; margin:14px 0 0; padding:0;}
+  .steps li{
+    counter-increment:step; position:relative; padding:9px 0 9px 34px; font-size:15px; line-height:1.5;
+    border-top:1px dashed var(--line);
+  }
+  .steps li:first-child{border-top:none;}
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:8px;
+    width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; display:flex; align-items:center; justify-content:center;
+  }
+  .verdict{
+    margin-top:16px; padding:14px 18px; border-radius:8px; font-size:15px;
+    background:rgba(0,0,0,.05); border-left:4px solid var(--ink);
+  }
+  .verdict b{font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-size:12px; letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);}
+
+  /* ---------- STEP DETAIL (prompts inside demo steps) ---------- */
+  .steps li{padding-bottom:16px;}
+  .step-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15.5px; margin-bottom:8px;}
+  .step-time{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); background:rgba(0,0,0,.06); padding:2px 9px; border-radius:10px; white-space:nowrap;}
+  .prompt-chip{
+    background:rgba(255,255,255,.75); border-radius:7px; padding:10px 14px;
+    font-size:14px; margin:0 0 8px; line-height:1.5;
+    border-left:3px solid currentColor;
+  }
+  .folder.retail .prompt-chip{color:var(--retail);}
+  .folder.s2 .prompt-chip{color:var(--s2);}
+  .folder.health .prompt-chip{color:var(--health);}
+  .folder.s3 .prompt-chip{color:var(--s3);}
+  .folder.s4 .prompt-chip{color:var(--s4);}
+  .folder.devops .prompt-chip{color:var(--devops);}
+  .folder.finance .prompt-chip{color:var(--finance);}
+  .prompt-label{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:10.5px; letter-spacing:.07em; margin-right:8px;}
+  .prompt-chip .prompt-text{color:var(--ink); font-style:italic;}
+  .expect{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:2px;}
+  .expect b{color:var(--ink); font-weight:700;}
+  .fw-used{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.04em;
+    background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.12);
+    padding:6px 12px; border-radius:20px; color:var(--ink);
+  }
+  .fw-used b{color:var(--fw); text-transform:uppercase;}
+  .handson-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:rgba(255,255,255,.9); color:var(--s2); border:1px solid var(--s2);
+    padding:3px 9px; border-radius:20px;
+  }
+
+  /* ---------- FIELD GUIDE ---------- */
+  .fw-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px;}
+  .fw-card{
+    background:rgba(255,255,255,.5); border:1px solid var(--line); border-radius:12px;
+    padding:22px 24px; position:relative;
+  }
+  .fw-cat{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--fw);
+    background:var(--fw-soft); padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .fw-name{font-family:'Bitter',serif; font-weight:700; font-size:19px; margin-bottom:6px;}
+  .fw-def{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:12px;}
+  .fw-example{
+    font-size:13px; margin-bottom:12px; padding:9px 12px;
+    background:rgba(0,0,0,.045); border-radius:7px; line-height:1.5;
+  }
+  .fw-example b{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);
+  }
+  .fw-card .prompt-chip{color:var(--fw);}
+  @media (max-width:720px){.fw-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CLOSING ---------- */
+  .closing{padding:70px 0 40px; text-align:center;}
+  .closing .stamp{font-size:26px; padding:14px 30px;}
+  .closing p{max-width:600px; margin:22px auto 0; color:var(--ink-soft); font-size:16px; line-height:1.6;}
+
+  @media (max-width:640px){
+    .t-row{grid-template-columns:70px 1px 1fr; grid-template-areas:"time bar label" ". . tag"; }
+    .t-tag{grid-area:tag; justify-self:start; margin-top:6px;}
+    .seal{display:none;}
+    .kv{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="s2-banner"><span class="dot"></span>S4 · HANDS-ON + VALUE ARTICULATION <span class="dot"></span> Context-Aware Agents on a Hypothesis</div>
+
+<header class="cover">
+  <div class="seal">CLAUDE<br>×<br>UST</div>
+  <div class="cover-inner">
+    <div class="folder-tabs">
+      <span>HYPOTHESIS</span><span>AGENT</span><span>VALUE STREAM</span><span>NARRATIVE</span><span>SCQA</span>
+    </div>
+    <div class="case-no">CASE FILE NO. S4 (HANDS-ON) — OPENED 0:00</div>
+    <h1>Configure It.<br><em>Map It. Say Why It Matters.</em></h1>
+    <p class="sub">The Context Layers session taught you to find drift by hand. This session builds the agent that finds it automatically — then maps what that's actually worth to the business, and writes the narrative that gets it funded.</p>
+    <div class="meta-row">
+      <div class="meta-chip"><b>Duration</b> · 120 min, fully hands-on</div>
+      <div class="meta-chip"><b>Tools</b> · Claude Code CLI + Claude Desktop</div>
+      <div class="meta-chip"><b>Builds on</b> · Session 4 Concept + Demo</div>
+      <div class="meta-chip"><b>Program</b> · UST Technical Onboarding Track</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- AGENDA -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">00</span><span class="eyebrow">Evidence log</span></div>
+    <h2 class="title">The 120-Minute Build</h2>
+    <p class="lead">Same repo as the Concept + Demo session, one layer further: from finding drift manually to building the thing that finds it for you, then proving why that was worth building.</p>
+    <div class="timeline">
+      <div class="t-row"><div class="t-time">0:00</div><div class="t-bar"></div><div class="t-label">Welcome & Session Frame</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:05</div><div class="t-bar"></div><div class="t-label">Icebreaker — Name Your Hypothesis</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:10</div><div class="t-bar"></div><div class="t-label">Concept — Hypothesis-Driven, Context-Aware Agents</div><div class="t-tag tag-mod">8 min</div></div>
+      <div class="t-row"><div class="t-time">0:18</div><div class="t-bar"></div><div class="t-label">LAB 1 — Configure drift_watcher on Your Hypothesis (Claude Code CLI)</div><div class="t-tag tag-s2">22 min</div></div>
+      <div class="t-row"><div class="t-time">0:40</div><div class="t-bar"></div><div class="t-label">Pop Quiz #1</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">0:43</div><div class="t-bar"></div><div class="t-label">Concept — Value Stream Mapping</div><div class="t-tag tag-mod">8 min</div></div>
+      <div class="t-row"><div class="t-time">0:51</div><div class="t-bar"></div><div class="t-label">LAB 2 — Map the System to the Value Stream (Claude Desktop)</div><div class="t-tag tag-s2">20 min</div></div>
+      <div class="t-row"><div class="t-time">1:11</div><div class="t-bar"></div><div class="t-label">Pop Quiz #2</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:14</div><div class="t-bar"></div><div class="t-label">Break</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">1:19</div><div class="t-bar"></div><div class="t-label">Concept — SCQA / The Minto Pyramid Principle</div><div class="t-tag tag-mod">8 min</div></div>
+      <div class="t-row"><div class="t-time">1:27</div><div class="t-bar"></div><div class="t-label">LAB 3 — Articulate Value in the Build Narrative (Claude Desktop)</div><div class="t-tag tag-s2">20 min</div></div>
+      <div class="t-row"><div class="t-time">1:47</div><div class="t-bar"></div><div class="t-label">Pop Quiz #3</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:50</div><div class="t-bar"></div><div class="t-label">Field Guide + Share-Out</div><div class="t-tag tag-s2">6 min</div></div>
+      <div class="t-row"><div class="t-time">1:56</div><div class="t-bar"></div><div class="t-label">Synthesis & Close</div><div class="t-tag tag-mod">4 min</div></div>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER -->
+  <section class="block">
+    <div class="interject break">
+      <div class="interject-head">
+        <span class="stamp break">Icebreaker</span>
+        <span class="timer">⏱ 5 min · pairs</span>
+      </div>
+      <h3>Name Your Hypothesis</h3>
+      <p>From the S4 Concept + Demo session, you found three real discrepancies in notification-service by hand. In pairs: if you had to automate finding just <b>one</b> of them, which would you pick first, and why? That answer is the hypothesis your Lab 1 agent will be configured to test.</p>
+    </div>
+  </section>
+
+  <!-- CONCEPT 1 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">01</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">Hypothesis-Driven, Context-Aware Agents</h2>
+    <p class="lead">A context-aware agent isn't one that "knows things." It's one that's explicitly configured on a hypothesis — a claim, and where the real answer to that claim actually lives — and never trusts the claim itself as its own evidence.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li>The hypothesis: <b>"The documented claim is still true of the real system."</b> The agent's whole job is to try to disprove it, using Rank 1–3 sources on the Trust Hierarchy — never Rank 6 (the doc itself).</li>
+        <li>This is the same discipline from the Concept + Demo session, just no longer manual: instead of you typing the prompts each time, the hypothesis and its check live in one config file, and the agent runs it on every merge.</li>
+        <li>Today's build target: <b>drift_watcher.py</b> — reads a hypothesis file (context_claims.yaml), checks each claim against real source, and exits non-zero if anything's drifted, so it can gate a CI pipeline.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- LAB 1 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L1</span><span class="eyebrow">Lab 1 · Claude Code CLI · 22 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Configure drift_watcher on Your Hypothesis</h2>
+    <p class="lead">Same repo as the Concept + Demo session — now you configure and run the agent that automates it, and verify it against real, running code.</p>
+    <div class="folder s2">
+      <div class="folder-top"><h3 style="color:#fff;">Build: Context-Aware Drift Agent</h3><span class="case-tag">Uses session4-demo/ · drift_watcher.py + context_claims.yaml</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Framework used: <b>Trust Hierarchy</b> → <b>Hypothesis-as-Config</b></div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Read the hypothesis file<span class="step-time">4 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Read context_claims.yaml. For each claim, tell me what README.md says, and exactly which real source (which file, which attribute or path) the agent will check it against."</span></div>
+            <div class="expect"><b>Expect:</b> three claims — supported_channels, max_retries, rate_limit_rps — each mapped to either a Python attribute or a YAML config path. Notice none of them point back at README.md.</div>
+          </li>
+          <li>
+            <div class="step-title">Run the agent<span class="step-time">4 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">RUN</span><span class="prompt-text">python3 drift_watcher.py</span></div>
+            <div class="expect"><b>Verified output:</b> 3 of 3 claims flagged DRIFT — channels ['email','sms'] vs real ['email','sms','push']; max_retries 3 vs real 2; rate_limit_rps 100 vs real 50. Exit code 1.</div>
+          </li>
+          <li>
+            <div class="step-title">Prove it isn't rigged to always say DRIFT<span class="step-time">4 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">RUN</span><span class="prompt-text">python3 -m pytest test_drift_watcher.py -v</span></div>
+            <div class="expect"><b>Verified:</b> 3/3 tests pass — one proves a true claim reports MATCH, one proves a false claim reports DRIFT, one proves the real claims file finds exactly the 3 known drifts. This is the difference between a demo and a tool.</div>
+          </li>
+          <li>
+            <div class="step-title">Add your own hypothesis<span class="step-time">6 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Add a new claim to context_claims.yaml: README.md doesn't currently state anything about the burst_allowance in the rate limiter — add a claim asserting burst_allowance is 5, and let's see whether that's actually true."</span></div>
+            <div class="expect"><b>Expect:</b> a 4th DRIFT (real burst_allowance is 10, not 5) — proof the pattern generalizes to any claim you can name, not just the three pre-built ones.</div>
+          </li>
+          <li>
+            <div class="step-title">Wire it as a CI gate<span class="step-time">4 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Write a 3-line GitHub Actions step that runs drift_watcher.py on every pull request and fails the build on drift."</span></div>
+            <div class="expect"><b>Expect:</b> a minimal workflow step using the script's non-zero exit code — the mechanism that makes this a guardrail, not just a report someone might read.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A running drift_watcher.py that correctly reports MATCH and DRIFT, a passing self-test suite, and a CI step ready to gate merges on it.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 1 -->
+  <section class="block">
+    <div class="interject quiz" id="q1">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 1</span></div>
+      <h3>What makes drift_watcher a "context-aware agent" rather than just a script?</h3>
+      <ul class="opts">
+        <li><b>A.</b> It uses AI to guess the right values</li>
+        <li class="correct"><b>B.</b> It's configured on an explicit hypothesis and checks it against Rank 1–3 truth sources, never the docs themselves</li>
+        <li><b>C.</b> It runs in the cloud</li>
+        <li><b>D.</b> It was built using Claude</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q1')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> "Context-aware" means it's grounded in verified reality by construction — not that it happened to be AI-assisted or cloud-hosted.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 2 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">02</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">Value Stream Mapping</h2>
+    <p class="lead">A real Lean/DevOps framework: the sequence of activities an organization undertakes to deliver value to a customer, from trigger to value received. Mapping a system onto it locates exactly where a technical component sits — and what breaks in the business if it drifts.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li>A Context Discrepancy Report (S4 Concept + Demo) tells you <b>what</b> is wrong. A Value Stream Map tells you <b>why it matters to the business</b> — the difference between an engineering finding and a client-ready risk statement.</li>
+        <li>Practical technique: for each drift found, trace it forward through the value stream until it hits a stage a customer or the business actually feels — that's the sentence that gets a stakeholder's attention.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- LAB 2 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L2</span><span class="eyebrow">Lab 2 · Claude Desktop · 20 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Map the System to the Value Stream</h2>
+    <p class="lead">Turn the drift_watcher findings into a picture of business risk, not just a technical report.</p>
+    <div class="folder s2">
+      <div class="folder-top"><h3 style="color:#fff;">Build: Value Stream Map</h3><span class="case-tag">Reference: value_stream_map_reference.md</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Framework used: <b>Value Stream Mapping</b> (Lean / DevOps Handbook)</div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Map the chain<span class="step-time">8 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"notification-service sits inside a larger business process. Interview me to map the value stream it's part of — from the customer trigger through to the business outcome — and show me where this service sits in that chain."</span></div>
+            <div class="expect"><b>Expect:</b> a chain something like Order Placed → Notification Triggered → Notification Sent → Customer Informed → Trust/Retention, with notification-service explicitly located at one stage.</div>
+          </li>
+          <li>
+            <div class="step-title">Trace each drift forward<span class="step-time">8 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"For each of the 3 drifts drift_watcher found, trace it forward through this value stream. Which one creates the sharpest business risk, and at which stage does that risk actually land?"</span></div>
+            <div class="expect"><b>Expect:</b> the rate-limit drift (100 documented vs. 50 real) usually surfaces as the sharpest risk — a capacity plan built on the wrong number fails exactly at a promotional spike, right at the "Customer Informed" stage.</div>
+          </li>
+          <li>
+            <div class="step-title">Write the one risk sentence<span class="step-time">4 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Write one sentence a non-technical stakeholder would understand, connecting the rate-limit drift to the business risk it creates."</span></div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A value stream chain with notification-service placed on it, and one plain-language risk sentence per drift — the artifact that turns an engineering finding into something a VP will act on.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 2 -->
+  <section class="block">
+    <div class="interject quiz" id="q2">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 2</span></div>
+      <h3>Which documented discrepancy creates the sharpest risk once traced through the value stream?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Channels (push undocumented)</li>
+        <li><b>B.</b> Retry policy (2x fixed vs. 3x exponential)</li>
+        <li class="correct"><b>C.</b> Rate limit (50 real vs. 100 documented)</li>
+        <li><b>D.</b> All three carry equal risk</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q2')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> A capacity plan built on the wrong rate limit fails exactly during a demand spike — precisely when the business needs the "Customer Informed" stage to hold.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 3 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">03</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">SCQA — The Minto Pyramid Principle</h2>
+    <p class="lead">Barbara Minto's framework for structuring an executive-ready narrative from a technical finding: <b>Situation → Complication → Question → Answer.</b></p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li><b>Situation</b> — the stable, agreed-upon starting point nobody would argue with.</li>
+        <li><b>Complication</b> — the tension that makes the Situation insufficient; the thing that changed or was discovered.</li>
+        <li><b>Question</b> — the question the Complication forces the reader to ask, stated explicitly so the Answer feels earned, not asserted.</li>
+        <li><b>Answer</b> — your recommendation, stated with the evidence already in hand from Labs 1 and 2.</li>
+      </ul>
+      <p class="lead" style="margin-top:10px;">This is the same narrative discipline as Working Backwards/PR-FAQ from the product track — SCQA is the version built specifically for a technical-finding-to-executive-decision narrative.</p>
+    </div>
+  </section>
+
+  <!-- LAB 3 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L3</span><span class="eyebrow">Lab 3 · Claude Desktop · 20 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Articulate Value in the Build Narrative</h2>
+    <p class="lead">Everything from Labs 1 and 2 becomes evidence for one SCQA-structured pitch.</p>
+    <div class="folder s2">
+      <div class="folder-top"><h3 style="color:#fff;">Build: The Pitch</h3><span class="case-tag">Reference: build_narrative_reference.md</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Framework used: <b>SCQA</b> (Minto Pyramid Principle)</div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Draft Situation and Complication<span class="step-time">6 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Using what we found in Labs 1 and 2, write the Situation and Complication sections of an SCQA narrative. Situation should be something nobody would argue with; Complication should be the discrepancies and the business risk we traced."</span></div>
+          </li>
+          <li>
+            <div class="step-title">Draft Question and Answer<span class="step-time">8 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Now write the Question the Complication forces us to ask, and the Answer — recommending drift_watcher as a CI gate. Use the actual numbers from Lab 1, not rounded or vague ones."</span></div>
+            <div class="expect"><b>Expect:</b> an Answer that names the real exit-code mechanism from Lab 1, not just "we should check this more often."</div>
+          </li>
+          <li>
+            <div class="step-title">Compress to one line<span class="step-time">6 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Compress the whole SCQA into one sentence I could put in a Slack message to a VP who has 10 seconds to read it."</span></div>
+            <div class="expect"><b>Expect:</b> something with a real number in it — "we found 3 ways docs were wrong for months and built a 15-minute check that would've caught all of them" is the shape to aim for.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A full SCQA narrative plus a one-sentence compressed version — the artifact you'd actually send.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 3 -->
+  <section class="block">
+    <div class="interject quiz" id="q3">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 3</span></div>
+      <h3>In SCQA, what is the job of the Complication section?</h3>
+      <ul class="opts">
+        <li><b>A.</b> To state the budget being requested</li>
+        <li class="correct"><b>B.</b> To introduce the tension that makes the Situation no longer sufficient on its own</li>
+        <li><b>C.</b> To give the final recommendation</li>
+        <li><b>D.</b> To list next steps and owners</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q3')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> Complication is what turns a stable Situation into a live problem — it's what earns the reader's attention before you ask a question or offer an answer.</div>
+    </div>
+  </section>
+
+  <!-- FIELD GUIDE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--fw);">FG</span><span class="eyebrow">Field guide · reference, not counted in the 120 min</span></div>
+    <h2 class="title">Frameworks Behind Today's Build</h2>
+    <div class="fw-grid">
+      <div class="fw-card">
+        <span class="fw-cat">Agent Design</span>
+        <div class="fw-name">Hypothesis-as-Config</div>
+        <div class="fw-def">Encode a claim and its real source in one machine-readable file, so testing the claim is a mechanical check, not a judgment call someone has to remember to make.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Turn this documented claim into a hypothesis entry: what's the claim, and exactly where does the real answer live in source?"</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Business Value</span>
+        <div class="fw-name">Value Stream Mapping</div>
+        <div class="fw-def">The sequence of activities that deliver value to a customer, from trigger to value received — used here to trace a technical finding forward until it hits a stage the business actually feels.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Map this system into the value stream it's part of, and tell me which stage breaks first if this component silently drifts."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Narrative</span>
+        <div class="fw-name">SCQA / Minto Pyramid Principle</div>
+        <div class="fw-def">Situation, Complication, Question, Answer — the standard structure for turning a technical finding into an executive-ready narrative, in that order, every time.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Structure this finding as SCQA: what's the stable Situation, the Complication that breaks it, the Question that follows, and the Answer we're recommending?"</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Delivery</span>
+        <div class="fw-name">Shift-Left Verification</div>
+        <div class="fw-def">Catch a class of problem as early in the pipeline as possible — a CI gate that fails a merge is cheaper than a wrong number reaching a client conversation three months later.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Where's the earliest point in our pipeline we could run this check, and what does it cost us if we only catch it later instead?"</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <span class="stamp" style="color:var(--ink);">Case Closed</span>
+    <p>Concept + Demo taught you to find drift by hand. Today you configured the agent that finds it automatically, mapped what it's actually worth, and wrote the sentence that gets it funded. The same three moves — hypothesis, value stream, SCQA — generalize to any finding you'll ever need to turn into a client-facing decision.</p>
+  </section>
+
+</div>
+
+<script>
+function toggleAnswer(id){
+  document.getElementById(id).classList.toggle('revealed');
+}
+</script>
+</body>
+</html>

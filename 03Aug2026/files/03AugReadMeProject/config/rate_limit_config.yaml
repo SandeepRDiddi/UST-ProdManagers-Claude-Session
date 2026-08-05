@@ -1,0 +1,9 @@
+# rate_limit_config.yaml
+# Loaded at startup by RateLimiter. This is the value actually enforced in production.
+# Lowered from 100 -> 50 on 2026-05-14 after a provider quota incident (see CHANGELOG.md).
+# README.md was not updated at the time.
+
+rate_limit:
+  requests_per_second: 50
+  scope: per_client
+  burst_allowance: 10

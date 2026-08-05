@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Value Dashboard — Generated Live in Claude Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F14; --panel:#121821; --panel2:#161E29; --line:rgba(255,255,255,.08);
+    --ink:#EAF0F5; --ink-soft:#8FA3B5;
+    --teal:#22D3B0; --teal-soft:rgba(34,211,176,.14);
+    --amber:#F5A623; --amber-soft:rgba(245,166,35,.14);
+    --red:#FF6B5E; --red-soft:rgba(255,107,94,.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:
+      radial-gradient(circle at 15% 0%, rgba(34,211,176,.08), transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(245,166,35,.06), transparent 45%),
+      var(--bg);
+    color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:44px 26px 70px;}
+  .top{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:8px;}
+  .badge{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--teal); background:var(--teal-soft); border:1px solid rgba(34,211,176,.3);
+    padding:5px 12px; border-radius:20px; display:inline-block;
+  }
+  h1{font-family:'Space Grotesk',sans-serif; font-size:clamp(26px,4vw,36px); margin:14px 0 6px; font-weight:700;}
+  .subtitle{color:var(--ink-soft); font-size:15px; max-width:560px; line-height:1.5;}
+
+  .tabs{display:flex; gap:10px; margin:30px 0 22px; flex-wrap:wrap;}
+  .tab{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; letter-spacing:.04em;
+    background:var(--panel); border:1px solid var(--line); color:var(--ink-soft);
+    padding:10px 18px; border-radius:10px; cursor:pointer; transition:all .2s ease;
+  }
+  .tab.active{background:var(--teal-soft); border-color:var(--teal); color:var(--teal);}
+
+  .stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px;}
+  .stat{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 22px;
+  }
+  .stat-label{font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:10px;}
+  .stat-value{font-family:'Space Grotesk',sans-serif; font-size:clamp(22px,3.2vw,30px); font-weight:700;}
+  .stat.cop .stat-value{color:var(--red);}
+  .stat.coe .stat-value{color:var(--ink);}
+  .stat.payback{background:linear-gradient(135deg, var(--amber-soft), transparent); border-color:rgba(245,166,35,.4);}
+  .stat.payback .stat-value{color:var(--amber); font-size:clamp(26px,3.6vw,34px);}
+  .stat-sub{font-size:12px; color:var(--ink-soft); margin-top:6px;}
+
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:26px 28px; margin-bottom:22px;}
+  .panel h2{font-family:'Space Grotesk',sans-serif; font-size:17px; margin:0 0 18px; font-weight:700;}
+
+  /* bar chart */
+  .bars{display:flex; flex-direction:column; gap:14px;}
+  .bar-row{display:grid; grid-template-columns:150px 1fr 110px; align-items:center; gap:12px;}
+  .bar-name{font-size:13px; color:var(--ink-soft);}
+  .bar-track{background:var(--panel2); border-radius:6px; height:16px; overflow:hidden;}
+  .bar-fill{height:100%; width:0%; border-radius:6px; transition:width 1.1s cubic-bezier(.2,.8,.2,1);}
+  .bar-fill.cop{background:var(--red);}
+  .bar-fill.coe{background:var(--ink-soft);}
+  .bar-fill.net{background:var(--teal);}
+  .bar-val{font-family:'IBM Plex Mono',monospace; font-size:12.5px; text-align:right;}
+
+  /* before / after toggle */
+  .ba-toggle{display:flex; gap:8px; margin-bottom:18px;}
+  .ba-btn{
+    flex:1; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.04em; text-transform:uppercase;
+    padding:10px; border-radius:9px; text-align:center; cursor:pointer; border:1px solid var(--line);
+    background:var(--panel2); color:var(--ink-soft); transition:all .2s ease;
+  }
+  .ba-btn.naive.active{background:var(--red-soft); border-color:var(--red); color:var(--red);}
+  .ba-btn.good.active{background:var(--teal-soft); border-color:var(--teal); color:var(--teal);}
+
+  table{width:100%; border-collapse:collapse;}
+  td{padding:11px 4px; font-size:13.5px; border-top:1px solid var(--line); vertical-align:top;}
+  td.k{color:var(--ink-soft); width:150px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; padding-top:13px;}
+  tr:first-child td{border-top:none;}
+
+  .foot{margin-top:30px; padding-top:20px; border-top:1px solid var(--line); font-size:11.5px; color:var(--ink-soft); line-height:1.7;}
+  .foot b{color:var(--ink);}
+
+  @media(max-width:640px){
+    .stat-row{grid-template-columns:1fr;}
+    .bar-row{grid-template-columns:90px 1fr 80px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div>
+      <span class="badge">● Generated in Claude Code · S2 Capstone</span>
+      <h1>From Backlog to Board-Ready</h1>
+      <p class="subtitle">What the problem is actually costing, versus what it costs to fix it properly — computed from real session data, not a guess.</p>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-case="retail" onclick="setCase('retail')">Retail — Stockouts</div>
+    <div class="tab" data-case="health" onclick="setCase('health')">Healthcare — Prior-Auth</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat cop">
+      <div class="stat-label">Cost of Problem / mo</div>
+      <div class="stat-value" id="cop-val">$0</div>
+      <div class="stat-sub" id="cop-sub"></div>
+    </div>
+    <div class="stat coe">
+      <div class="stat-label">Cost of Existence</div>
+      <div class="stat-value" id="coe-val">$0</div>
+      <div class="stat-sub" id="coe-sub"></div>
+    </div>
+    <div class="stat payback">
+      <div class="stat-label">Payback Period</div>
+      <div class="stat-value" id="payback-val">—</div>
+      <div class="stat-sub" id="payback-sub"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Monthly Cost Comparison</h2>
+    <div class="bars">
+      <div class="bar-row">
+        <div class="bar-name">Cost of Problem</div>
+        <div class="bar-track"><div class="bar-fill cop" id="bar-cop"></div></div>
+        <div class="bar-val" id="bar-cop-val">$0</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">Cost of Existence</div>
+        <div class="bar-track"><div class="bar-fill coe" id="bar-coe"></div></div>
+        <div class="bar-val" id="bar-coe-val">$0</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">Net Monthly Benefit</div>
+        <div class="bar-track"><div class="bar-fill net" id="bar-net"></div></div>
+        <div class="bar-val" id="bar-net-val">$0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>The Naive Build vs. The Context-Engineered Build</h2>
+    <div class="ba-toggle">
+      <div class="ba-btn naive active" data-mode="naive" onclick="setMode('naive')">✕ The Naive Build</div>
+      <div class="ba-btn good" data-mode="good" onclick="setMode('good')">✓ The Context-Engineered Build</div>
+    </div>
+    <table id="ba-table"></table>
+  </div>
+
+  <div class="foot" id="footnote"></div>
+</div>
+
+<script>
+const DATA = {
+  retail: {
+    label: "Retail Stockouts",
+    cop: 85946, coe_monthly: 340, coe_build: 3400,
+    net: 85946*0 + 42633, // recovered-revenue net benefit
+    payback_days: 2.4,
+    cop_sub: "West-region lost-sale revenue (25% of unmet demand converts to a lost sale, $45 blended ASP)",
+    coe_sub: "$3,400 one-time build (40 eng hrs) + $340/mo governance",
+    payback_sub: "on $3,400 build cost",
+    assumptions: "Retail figures: 90-day dataset scaled to monthly; 25% lost-sale conversion rate and 50% fix-recovery rate are illustrative training assumptions — replace with your own conversion data.",
+    naive: {
+      scope: "Whatever the Slack message said — \"build a reorder dashboard\"",
+      guardrails: "None. A dashboard is passive, but the next ask is usually \"just auto-reorder it\"",
+      basis: "No verified root cause — assumes the whole network needs the same fix",
+      risk: "Fixes the wrong 15 stores, or none of them",
+      outcome: "Dashboard ships, nobody's stockout rate moves, it quietly stops being opened"
+    },
+    good: {
+      scope: "Defined via context.md — 5 specific West stores, lead-time root cause, verified r = 0.98",
+      guardrails: "Explicit in agent_spec.md — flags only, never auto-submits a purchase order",
+      basis: "Root cause tested against real data before a single line of the fix was written",
+      risk: "Recommendation requires human sign-off before anything changes",
+      outcome: "$42,633/mo net benefit, payback in ~2.4 days, on a $3,400 build"
+    }
+  },
+  health: {
+    label: "Healthcare Prior-Auth",
+    cop: 37058, coe_monthly: 704, coe_build: 10200,
+    net: 14119,
+    payback_days: 21.7,
+    cop_sub: "Monthly staff rework cost on procedural denials alone (1.5 hrs @ $45/hr, 549 cases/mo)",
+    coe_sub: "$10,200 one-time build (120 eng hrs) + $704/mo run + governance",
+    payback_sub: "on $10,200 build cost",
+    assumptions: "Healthcare figures: scaled from the verified 70-request sample (59.3% procedural / 40.7% clinical denial split) to an illustrative 1,200 requests/month. Replace with your network's real volume and rates.",
+    naive: {
+      scope: "\"Auto-approve anything that matches a policy keyword\"",
+      guardrails: "None — treats a missing-form case identically to a failed clinical-judgment call",
+      basis: "No split between procedural and clinical denials before automating",
+      risk: "Auto-approves or auto-denies genuine clinical judgment calls with no human ever looking",
+      outcome: "Shipped fast, pulled within a week after the first bad auto-decision"
+    },
+    good: {
+      scope: "Defined via context.md + agent_spec.md — flags only the procedural / missing-doc bucket",
+      guardrails: "Explicit — must not auto-approve or auto-deny; clinical cases always route to a human",
+      basis: "Verified 59.3% / 40.7% split computed from real sample data before any code was written",
+      risk: "Human reviewer always makes the clinical call; agent only accelerates the paperwork bucket",
+      outcome: "$14,119/mo net benefit, payback in ~3 weeks, on a $10,200 build"
+    }
+  }
+};
+
+let currentCase = 'retail';
+let currentMode = 'naive';
+
+function fmt(n){ return '$' + Math.round(n).toLocaleString('en-US'); }
+
+function countUp(el, target, prefix){
+  const dur = 900, start = performance.now();
+  function step(t){
+    const p = Math.min(1, (t-start)/dur);
+    const eased = 1 - Math.pow(1-p, 3);
+    el.textContent = prefix + Math.round(target*eased).toLocaleString('en-US');
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function renderTable(d, mode){
+  const rows = ['scope','guardrails','basis','risk','outcome'];
+  const labels = {scope:'Scope', guardrails:'Guardrails', basis:'Basis', risk:'Risk', outcome:'Outcome'};
+  const src = d[mode];
+  document.getElementById('ba-table').innerHTML = rows.map(r =>
+    `<tr><td class="k">${labels[r]}</td><td>${src[r]}</td></tr>`
+  ).join('');
+}
+
+function setMode(mode){
+  currentMode = mode;
+  document.querySelectorAll('.ba-btn').forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
+  renderTable(DATA[currentCase], mode);
+}
+
+function setCase(c){
+  currentCase = c;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.case===c));
+  const d = DATA[c];
+
+  countUp(document.getElementById('cop-val'), d.cop, '$');
+  countUp(document.getElementById('coe-val'), d.coe_build, '$');
+  document.getElementById('cop-sub').textContent = d.cop_sub;
+  document.getElementById('coe-sub').textContent = d.coe_sub;
+  document.getElementById('payback-val').textContent = d.payback_days < 7 ? `${d.payback_days.toFixed(1)} days` : `${(d.payback_days/7).toFixed(1)} weeks`;
+  document.getElementById('payback-sub').textContent = d.payback_sub;
+
+  const maxVal = Math.max(d.cop, d.coe_monthly, d.net);
+  requestAnimationFrame(()=>{
+    document.getElementById('bar-cop').style.width = (d.cop/maxVal*100)+'%';
+    document.getElementById('bar-coe').style.width = (d.coe_monthly/maxVal*100)+'%';
+    document.getElementById('bar-net').style.width = (d.net/maxVal*100)+'%';
+  });
+  document.getElementById('bar-cop-val').textContent = fmt(d.cop)+'/mo';
+  document.getElementById('bar-coe-val').textContent = fmt(d.coe_monthly)+'/mo';
+  document.getElementById('bar-net-val').textContent = fmt(d.net)+'/mo';
+
+  document.getElementById('footnote').innerHTML = `<b>Assumptions:</b> ${d.assumptions} No real UST client or patient data is used anywhere in this dashboard.`;
+
+  renderTable(d, currentMode);
+}
+
+setCase('retail');
+</script>
+</body>
+</html>

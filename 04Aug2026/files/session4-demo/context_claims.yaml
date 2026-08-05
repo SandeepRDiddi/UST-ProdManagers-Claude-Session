@@ -1,0 +1,40 @@
+# context_claims.yaml
+# This is the "hypothesis" file: every claim README.md makes, mapped to where
+# the REAL answer lives in source. drift_watcher.py (the context-aware agent)
+# tests each claim against its real source and reports any drift.
+#
+# source_type: python_attr -> import a module and read an attribute
+# source_type: yaml_path    -> read a dotted path out of a YAML file
+
+claims:
+  - name: supported_channels
+    description: "Notification channels the service supports"
+    doc_claim: ["email", "sms"]
+    source_type: python_attr
+    module: src.notification_service
+    attr: SUPPORTED_CHANNELS
+    check: set_equals
+
+  - name: max_retries
+    description: "Number of retry attempts on a failed send"
+    doc_claim: 3
+    source_type: python_attr
+    module: src.notification_service
+    attr: MAX_RETRIES
+    check: equals
+
+  - name: rate_limit_rps
+    description: "Enforced rate limit, requests per second per client"
+    doc_claim: 100
+    source_type: yaml_path
+    file: config/rate_limit_config.yaml
+    path: "rate_limit.requests_per_second"
+    check: equals
+
+  - name: burst_allowance
+    description: "Burst allowance on top of the enforced rate limit"
+    doc_claim: 5
+    source_type: yaml_path
+    file: config/rate_limit_config.yaml
+    path: "rate_limit.burst_allowance"
+    check: equals

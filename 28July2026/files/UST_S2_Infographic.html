@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File S2 — Hands-On + Value Articulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bitter:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1E8D5;
+    --paper2:#E7D8B8;
+    --paper3:#DCCBA3;
+    --ink:#241D14;
+    --ink-soft:#5A4C3A;
+    --retail:#A8631B;
+    --retail-soft:#F0D9AF;
+    --health:#2F6F62;
+    --health-soft:#CFE3DC;
+    --quiz:#A23B2E;
+    --quiz-soft:#F1D3CC;
+    --break:#2B4570;
+    --break-soft:#D6E0EE;
+    --fw:#6B4FA0;
+    --fw-soft:#E6DEF2;
+    --s2:#C8551F;
+    --s2-soft:#F3D9C4;
+    --line: rgba(36,29,20,0.22);
+    --gold:#C79A2E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05), transparent 45%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 80px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1.5px;background:var(--ink-soft);display:inline-block;}
+  h1,h2,h3{font-family:'Bitter', serif; margin:0; color:var(--ink);}
+
+  /* ---------- STAMP ---------- */
+  .stamp{
+    display:inline-block;
+    font-family:'Special Elite', monospace;
+    text-transform:uppercase;
+    border:3px solid currentColor;
+    border-radius:6px;
+    padding:6px 16px;
+    letter-spacing:.08em;
+    transform:rotate(-4deg);
+    position:relative;
+  }
+  .stamp::after{
+    content:"";
+    position:absolute; inset:3px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    opacity:.55;
+  }
+  .stamp.quiz{color:var(--quiz);}
+  .stamp.break{color:var(--break);}
+
+  /* ---------- TOP BANNER (S2 identity strip) ---------- */
+  .s2-banner{
+    background:var(--s2); color:#fff; padding:14px 28px;
+    font-family:'Bitter',serif; font-weight:700; font-size:15px; letter-spacing:.03em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s2-banner .dot{width:8px; height:8px; border-radius:50%; background:#fff; opacity:.85;}
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:60px 28px;
+    border-bottom:6px double var(--ink);
+    overflow:hidden;
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(36,29,20,0.035) 0px, rgba(36,29,20,0.035) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+  .cover-inner{max-width:980px;margin:0 auto; width:100%; position:relative; z-index:1;}
+  .folder-tabs{display:flex; gap:8px; margin-bottom:28px;}
+  .folder-tabs span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.1em;
+    background:var(--paper3);
+    border:1px solid var(--line);
+    border-bottom:none;
+    padding:5px 12px 8px;
+    border-radius:6px 6px 0 0;
+    color:var(--ink-soft);
+    opacity:0; transform:translateY(10px);
+    animation:tabIn .5s ease forwards;
+  }
+  .folder-tabs span:nth-child(1){animation-delay:.05s;}
+  .folder-tabs span:nth-child(2){animation-delay:.15s;}
+  .folder-tabs span:nth-child(3){animation-delay:.25s;}
+  .folder-tabs span:nth-child(4){animation-delay:.35s;}
+  .folder-tabs span:nth-child(5){animation-delay:.42s;}
+  @keyframes tabIn{to{opacity:1; transform:translateY(0);}}
+
+  .case-no{
+    font-family:'Special Elite', monospace;
+    color:var(--quiz);
+    font-size:15px;
+    letter-spacing:.05em;
+    margin-bottom:14px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards; animation-delay:.4s;
+  }
+  .cover h1{
+    font-size:clamp(40px, 7vw, 84px);
+    line-height:0.98;
+    font-weight:900;
+    margin:6px 0 18px;
+    opacity:0;
+    transform:scale(.9) rotate(-1deg);
+    animation:stampIn .7s cubic-bezier(.2,1.6,.4,1) forwards;
+    animation-delay:.55s;
+  }
+  .cover h1 em{font-style:normal; color:var(--retail);}
+  @keyframes stampIn{
+    0%{opacity:0; transform:scale(1.35) rotate(-3deg);}
+    60%{opacity:1;}
+    100%{opacity:1; transform:scale(1) rotate(-1deg);}
+  }
+  .cover .sub{
+    font-size:clamp(16px,2.1vw,20px);
+    max-width:640px; color:var(--ink-soft); line-height:1.5;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:.95s;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-top:34px;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.15s;
+  }
+  .meta-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); background:rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:20px; color:var(--ink);
+  }
+  .meta-chip b{color:var(--ink);}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  .seal{
+    position:absolute; top:56px; right:40px;
+    width:118px; height:118px;
+    border:3px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; font-family:'Special Elite',monospace;
+    font-size:11px; color:var(--gold); letter-spacing:.05em;
+    transform:rotate(12deg) scale(0);
+    animation:sealIn .6s cubic-bezier(.3,1.7,.4,1) forwards; animation-delay:1.3s;
+  }
+  .seal::before{content:""; position:absolute; inset:8px; border:1px dashed var(--gold); border-radius:50%;}
+  @keyframes sealIn{to{transform:rotate(12deg) scale(1);}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block{padding:56px 0 8px; border-bottom:1px solid var(--line);}
+  .tag-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .idx{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    color:#fff; background:var(--ink); border-radius:5px; padding:4px 9px;
+  }
+  h2.title{font-size:clamp(26px,3.6vw,38px); font-weight:700; margin-top:6px;}
+  .lead{color:var(--ink-soft); font-size:16.5px; max-width:680px; margin-top:8px; line-height:1.55;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{display:flex; flex-direction:column; gap:0; margin-top:26px;}
+  .t-row{
+    display:grid; grid-template-columns:96px 1px 1fr auto;
+    align-items:center; gap:18px; padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .t-row:first-child{border-top:none;}
+  .t-time{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-soft);}
+  .t-bar{width:1px; height:34px; background:var(--line);}
+  .t-label{font-weight:600; font-size:16px;}
+  .t-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    padding:5px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
+  }
+  .tag-mod{background:var(--paper3); color:var(--ink-soft);}
+  .tag-retail{background:var(--retail-soft); color:var(--retail);}
+  .tag-health{background:var(--health-soft); color:var(--health);}
+  .tag-quiz{background:var(--quiz-soft); color:var(--quiz);}
+  .tag-break{background:var(--break-soft); color:var(--break);}
+  .tag-fw{background:var(--fw-soft); color:var(--fw);}
+  .tag-s2{background:var(--s2-soft); color:var(--s2);}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:rgba(255,255,255,.4);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 28px;
+    margin-top:22px;
+    position:relative;
+  }
+  .card .pin{
+    position:absolute; top:-10px; left:26px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--gold); box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .points{margin:14px 0 0; padding:0; list-style:none;}
+  .points li{
+    padding:8px 0 8px 22px; position:relative; line-height:1.5; font-size:15.5px;
+  }
+  .points li::before{content:"—"; position:absolute; left:0; color:var(--ink-soft);}
+
+  /* ---------- ICEBREAKER / QUIZ CARDS ---------- */
+  .interject{
+    margin-top:26px; border-radius:12px; padding:26px 28px 24px;
+    border:2px dashed currentColor;
+  }
+  .interject.break{color:var(--break); background:var(--break-soft);}
+  .interject.quiz{color:var(--quiz); background:var(--quiz-soft);}
+  .interject-head{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .interject h3{color:var(--ink); font-size:20px;}
+  .interject p, .interject .opts{color:var(--ink); font-size:15.5px;}
+  .timer{
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    background:rgba(255,255,255,.6); padding:4px 10px; border-radius:20px; color:var(--ink);
+  }
+  .opts{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:8px;}
+  .opts li{
+    background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.12);
+    border-radius:8px; padding:9px 14px; font-size:15px;
+    transition:background .25s ease, border-color .25s ease, opacity .25s ease;
+  }
+  .opts li b{font-family:'IBM Plex Mono',monospace; margin-right:8px;}
+  .reveal-btn{
+    margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+    background:var(--ink); color:#fff; border:none; border-radius:20px;
+    padding:9px 18px; transition:transform .15s ease;
+  }
+  .reveal-btn:hover{transform:translateY(-1px);}
+  /* correct option + explanation stay neutral until the quiz container is marked revealed */
+  .interject.revealed .opts li.correct{
+    background:#DCF3E3; border-color:#2F7D4F; color:#1C4D31; font-weight:600;
+  }
+  .interject.revealed .opts li.correct::after{
+    content:" ✓ Correct"; font-weight:800; color:#2F7D4F; margin-left:6px;
+  }
+  .interject.revealed .opts li:not(.correct){opacity:.5;}
+  .answer{
+    margin-top:14px; padding:12px 16px; border-radius:8px;
+    background:rgba(255,255,255,.7); border-left:4px solid var(--ink);
+    font-size:15px; display:none;
+  }
+  .interject.revealed .answer{display:block; animation:fadeUp .35s ease;}
+  .answer b{color:var(--quiz);}
+
+  /* ---------- DEMO / CASE FOLDER ---------- */
+  .folder{
+    margin-top:24px; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+  }
+  .folder-top{padding:20px 26px; display:flex; align-items:center; gap:14px; color:#fff;}
+  .folder.retail .folder-top{background:var(--retail);}
+  .folder.health .folder-top{background:var(--health);}
+  .folder-top .case-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em;
+    background:rgba(255,255,255,.22); padding:4px 10px; border-radius:20px;
+  }
+  .folder-body{background:rgba(255,255,255,.45); padding:24px 26px;}
+  .kv{display:grid; grid-template-columns:140px 1fr; gap:8px 16px; font-size:15px; margin-bottom:16px;}
+  .kv .k{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; padding-top:2px;}
+  .steps{counter-reset:step; list-style:none; margin:14px 0 0; padding:0;}
+  .steps li{
+    counter-increment:step; position:relative; padding:9px 0 9px 34px; font-size:15px; line-height:1.5;
+    border-top:1px dashed var(--line);
+  }
+  .steps li:first-child{border-top:none;}
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:8px;
+    width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; display:flex; align-items:center; justify-content:center;
+  }
+  .verdict{
+    margin-top:16px; padding:14px 18px; border-radius:8px; font-size:15px;
+    background:rgba(0,0,0,.05); border-left:4px solid var(--ink);
+  }
+  .verdict b{font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-size:12px; letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);}
+
+  /* ---------- STEP DETAIL (prompts inside demo steps) ---------- */
+  .steps li{padding-bottom:16px;}
+  .step-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15.5px; margin-bottom:8px;}
+  .step-time{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); background:rgba(0,0,0,.06); padding:2px 9px; border-radius:10px; white-space:nowrap;}
+  .prompt-chip{
+    background:rgba(255,255,255,.75); border-radius:7px; padding:10px 14px;
+    font-size:14px; margin:0 0 8px; line-height:1.5;
+    border-left:3px solid currentColor;
+  }
+  .folder.retail .prompt-chip{color:var(--retail);}
+  .folder.health .prompt-chip{color:var(--health);}
+  .prompt-label{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:10.5px; letter-spacing:.07em; margin-right:8px;}
+  .prompt-chip .prompt-text{color:var(--ink); font-style:italic;}
+  .expect{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:2px;}
+  .expect b{color:var(--ink); font-weight:700;}
+  .fw-used{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.04em;
+    background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.12);
+    padding:6px 12px; border-radius:20px; color:var(--ink);
+  }
+  .fw-used b{color:var(--fw); text-transform:uppercase;}
+  .handson-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:rgba(255,255,255,.9); color:var(--s2); border:1px solid var(--s2);
+    padding:3px 9px; border-radius:20px;
+  }
+
+  /* ---------- FIELD GUIDE ---------- */
+  .fw-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px;}
+  .fw-card{
+    background:rgba(255,255,255,.5); border:1px solid var(--line); border-radius:12px;
+    padding:22px 24px; position:relative;
+  }
+  .fw-cat{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--fw);
+    background:var(--fw-soft); padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .fw-name{font-family:'Bitter',serif; font-weight:700; font-size:19px; margin-bottom:6px;}
+  .fw-def{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:12px;}
+  .fw-example{
+    font-size:13px; margin-bottom:12px; padding:9px 12px;
+    background:rgba(0,0,0,.045); border-radius:7px; line-height:1.5;
+  }
+  .fw-example b{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);
+  }
+  .fw-card .prompt-chip{color:var(--fw);}
+  @media (max-width:720px){.fw-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CLOSING ---------- */
+  .closing{padding:70px 0 40px; text-align:center;}
+  .closing .stamp{font-size:26px; padding:14px 30px;}
+  .closing p{max-width:600px; margin:22px auto 0; color:var(--ink-soft); font-size:16px; line-height:1.6;}
+
+  @media (max-width:640px){
+    .t-row{grid-template-columns:70px 1px 1fr; grid-template-areas:"time bar label" ". . tag"; }
+    .t-tag{grid-area:tag; justify-self:start; margin-top:6px;}
+    .seal{display:none;}
+    .kv{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="s2-banner"><span class="dot"></span>S2 · HANDS-ON + VALUE ARTICULATION <span class="dot"></span> Led by CLAUDE / ANTHROPIC-ALIGNED FACILITATION</div>
+
+<header class="cover">
+  <div class="seal">CLAUDE<br>×<br>UST</div>
+  <div class="cover-inner">
+    <div class="folder-tabs">
+      <span>CONTEXT</span><span>AGENT-READY</span><span>VALUE</span><span>DASHBOARD</span><span>2 INDUSTRIES</span>
+    </div>
+    <div class="case-no">CASE FILE NO. S2 — OPENED 0:00</div>
+    <h1>Build It. Frame It.<br><em>Prove It's Worth It.</em></h1>
+    <p class="sub">S1 taught you to diagnose. S2 is hands-on: you build the artifact, translate it into something an agent can safely act on, and put a real number on why it's worth doing — using the same Retail and Healthcare cases from S1.</p>
+    <div class="meta-row">
+      <div class="meta-chip"><b>Duration</b> · 120 min, fully hands-on</div>
+      <div class="meta-chip"><b>Tools</b> · Claude Desktop + Claude Code CLI</div>
+      <div class="meta-chip"><b>Bring</b> · Laptop, S1 datasets</div>
+      <div class="meta-chip"><b>Program</b> · UST AI Delivery Capability</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- AGENDA -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">00</span><span class="eyebrow">Evidence log</span></div>
+    <h2 class="title">The 120-Minute Build</h2>
+    <p class="lead">Three skills, three labs, one thread: the retail stockout and prior-auth cases from S1 get carried all the way to a shippable artifact and a business case.</p>
+    <div class="timeline">
+      <div class="t-row"><div class="t-time">0:00</div><div class="t-bar"></div><div class="t-label">Welcome & Session Frame</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:05</div><div class="t-bar"></div><div class="t-label">Icebreaker — 60 Seconds of Missing Context</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:10</div><div class="t-bar"></div><div class="t-label">Concept — Context Engineering</div><div class="t-tag tag-mod">6 min</div></div>
+      <div class="t-row"><div class="t-time">0:16</div><div class="t-bar"></div><div class="t-label">LAB 1 — Build the Business-Context Artifact (Claude Desktop)</div><div class="t-tag tag-retail">20 min</div></div>
+      <div class="t-row"><div class="t-time">0:36</div><div class="t-bar"></div><div class="t-label">Pop Quiz #1</div><div class="t-tag tag-quiz">2 min</div></div>
+      <div class="t-row"><div class="t-time">0:38</div><div class="t-bar"></div><div class="t-label">Concept — Agent-Ready Problem Framing + HITL Gates</div><div class="t-tag tag-mod">6 min</div></div>
+      <div class="t-row"><div class="t-time">0:44</div><div class="t-bar"></div><div class="t-label">LAB 2 — Rewrite as Agent-Ready Spec + Scaffold (Claude Code CLI)</div><div class="t-tag tag-retail">20 min</div></div>
+      <div class="t-row"><div class="t-time">1:04</div><div class="t-bar"></div><div class="t-label">Pop Quiz #2</div><div class="t-tag tag-quiz">2 min</div></div>
+      <div class="t-row"><div class="t-time">1:06</div><div class="t-bar"></div><div class="t-label">Break</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">1:11</div><div class="t-bar"></div><div class="t-label">Concept — Cost of Problem vs. Cost of Existence</div><div class="t-tag tag-mod">6 min</div></div>
+      <div class="t-row"><div class="t-time">1:17</div><div class="t-bar"></div><div class="t-label">LAB 3 — Cost Model, Live (Claude Desktop, code execution)</div><div class="t-tag tag-health">18 min</div></div>
+      <div class="t-row"><div class="t-time">1:35</div><div class="t-bar"></div><div class="t-label">Pop Quiz #3</div><div class="t-tag tag-quiz">2 min</div></div>
+      <div class="t-row"><div class="t-time">1:37</div><div class="t-bar"></div><div class="t-label">CAPSTONE — Build the Value Dashboard (Claude Code CLI)</div><div class="t-tag tag-s2">18 min</div></div>
+      <div class="t-row"><div class="t-time">1:55</div><div class="t-bar"></div><div class="t-label">Cross-Industry Challenge + Synthesis & Close</div><div class="t-tag tag-mod">5 min</div></div>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER 1 -->
+  <section class="block">
+    <div class="interject break">
+      <div class="interject-head">
+        <span class="stamp break">Icebreaker</span>
+        <span class="timer">⏱ 5 min · pairs</span>
+      </div>
+      <h3>60 Seconds of Missing Context</h3>
+      <p>Facilitator reads a real one-line Slack ask: <i>"Hey can someone build a quick report on why returns are up?"</i> In pairs, 60 seconds: list everything an agent would need to know before it could safely act on this — data source, owner, definition of "up," time window, what "act on it" even means. Compare lists across the room.</p>
+    </div>
+  </section>
+
+  <!-- CONCEPT 1: CONTEXT ENGINEERING -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">01</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">Context Engineering</h2>
+    <p class="lead">Output quality is bounded by context quality, not prompt cleverness. Context Engineering is the discipline of deliberately curating what an AI system can see — data, tools, constraints, history — before it's asked to do anything.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li>Real-world anchor: Claude Code reads a <b>CLAUDE.md</b> file at the start of every session — the same idea, applied to a whole engineering org, so every session starts grounded instead of guessing.</li>
+        <li>A vague ask plus no context doesn't produce a cautious agent — it produces a confident, wrong one.</li>
+        <li>Today's artifact, <b>context.md</b>, is that file: the thing you'd want any agent — or any new teammate — to read before touching this problem.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- LAB 1 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--retail);">L1</span><span class="eyebrow">Lab 1 · Claude Desktop · 22 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Build the Business-Context Artifact</h2>
+    <p class="lead">Same retail stockout case from S1. This time you're not watching a demo — you're producing the artifact yourself.</p>
+    <div class="folder retail">
+      <div class="folder-top"><h3 style="color:#fff;">Lab: Retail Ops</h3><span class="case-tag">Uses retail_store_sku_sales_90d.csv from S1</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Framework used: <b>Context Engineering</b> · builds on S1's <b>Discovery Canvas</b></div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Set up the interview<span class="step-time">3 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Interview me to build a Business-Context Artifact for our retail stockout problem. Ask me one section at a time: Problem Statement, Stakeholders, Current Workaround, Data Sources & Fields Available, Constraints, Success Metric, Out of Scope. Don't move to the next section until I've answered."</span></div>
+            <div class="expect"><b>Expect:</b> Claude asks Section 1 only, and waits — this is the discipline, not just the output.</div>
+          </li>
+          <li>
+            <div class="step-title">Answer honestly, section by section<span class="step-time">12 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">IF YOU GET STUCK, USE</span><span class="prompt-text">Problem Statement: reference S1's finding (West stores 45.5% vs. 14.5% stockout rate). Success Metric: "Reduce West-region stockout rate from 45.5% to under 20% within one quarter." Constraints: "No write access to the live inventory system; any reorder-point change needs human approval."</span></div>
+            <div class="expect"><b>Expect:</b> your own answers will differ from the reference — that's fine, the point is specificity, not matching a template. Vague answers here are exactly what causes a wrong agent guess later.</div>
+          </li>
+          <li>
+            <div class="step-title">Compile the artifact<span class="step-time">5 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Compile everything into a single markdown artifact called context.md, with a header for each section."</span></div>
+            <div class="expect"><b>Expect:</b> a 7-section markdown file, numeric and specific wherever possible. Save it — Lab 2 reads this file directly.</div>
+          </li>
+          <li>
+            <div class="step-title">Stress-test it<span class="step-time">2 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Read context.md back and tell me which section is still too vague for an agent to act on safely."</span></div>
+            <div class="expect"><b>Expect:</b> Claude usually flags Constraints or Success Metric first — the two sections people write fastest and think about least.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> You should now have a saved context.md with 7 filled, specific sections. A finished reference version (context_retail_reference.md) is included if you want to compare.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 1 -->
+  <section class="block">
+    <div class="interject quiz" id="q1">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 1</span></div>
+      <h3>An agent takes an action nobody expected. Which section of the Business-Context Artifact was most likely missing or too vague?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Success Metric</li>
+        <li class="correct"><b>B.</b> Constraints</li>
+        <li><b>C.</b> Stakeholders</li>
+        <li><b>D.</b> Current Workaround</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q1')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> Constraints are what defines the boundary of what's allowed. Without them, "helpful" and "unauthorized" look identical to an agent.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 2: AGENT-READY FRAMING -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">02</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">Agent-Ready Problem Framing + HITL Gates</h2>
+    <p class="lead">Before any agent writes code or takes action, translate the business ask into five explicit fields — the agent equivalent of an API contract.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li><b>Objective</b> — one sentence, no ambiguity.</li>
+        <li><b>Allowed Tools & Data</b> — exactly what it can read, never assumed.</li>
+        <li><b>Guardrails</b> — what it must never do unsupervised. This is where irreversible actions get named explicitly.</li>
+        <li><b>Definition of Done</b> — what "finished" looks like, so it doesn't keep going past the useful point.</li>
+        <li><b>Escalation Path</b> — what happens when it's uncertain, instead of guessing confidently.</li>
+      </ul>
+      <p class="lead" style="margin-top:10px;">S1's Demo 2 (prior-auth triage) was already a miniature version of this: flag the procedural cases, escalate the clinical judgment calls to a human. Today you write that spec explicitly, on purpose, before any code exists.</p>
+    </div>
+  </section>
+
+  <!-- LAB 2 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--retail);">L2</span><span class="eyebrow">Lab 2 · Claude Code CLI · 22 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Rewrite as an Agent-Ready Spec, Then Scaffold It</h2>
+    <p class="lead">Same retail case, one layer deeper: context.md becomes a spec an agent could actually be handed, and the spec becomes a real, running script.</p>
+    <div class="folder retail">
+      <div class="folder-top"><h3 style="color:#fff;">Lab: Retail Ops</h3><span class="case-tag">Reads context.md from Lab 1 + retail_store_sku_sales_90d.csv</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Framework used: <b>Agent Task Specification</b> · <b>HITL Gates</b></div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Open Claude Code in your project folder<span class="step-time">1 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">RUN</span><span class="prompt-text">cd ~/lab/retail-stockout/  &&  claude</span></div>
+            <div class="expect"><b>Expect:</b> a live Claude Code session in the folder containing context.md and the sales CSV.</div>
+          </li>
+          <li>
+            <div class="step-title">Convert context into a spec<span class="step-time">5 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Read context.md. Rewrite this as an agent-ready problem spec with exactly these fields: Objective, Allowed Tools & Data, Guardrails, Definition of Done, Escalation Path. Save it as agent_spec.md."</span></div>
+            <div class="expect"><b>Expect:</b> an Objective close to "flag stores where lead time is driving stockouts and recommend a reorder-point adjustment for human approval," and a Guardrails section that explicitly rules out auto-submitting purchase orders.</div>
+          </li>
+          <li>
+            <div class="step-title">Scaffold the real script<span class="step-time">8 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Now scaffold stockout_alert_agent.py that follows agent_spec.md exactly: read retail_store_sku_sales_90d.csv, compute stockout rate by store, flag any store above a 30% threshold, and print a recommendation queue. It must not write to any external system."</span></div>
+            <div class="expect"><b>Expect:</b> a working Python script — not pseudocode. If Claude proposes writing to a file or system beyond printing, that's your cue to point back at the Guardrails section you just wrote.</div>
+          </li>
+          <li>
+            <div class="step-title">Run it on real data<span class="step-time">5 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">RUN</span><span class="prompt-text">python3 stockout_alert_agent.py retail_store_sku_sales_90d.csv</span></div>
+            <div class="expect"><b>Verified output:</b> 5 stores flagged — S13 (49.3%), S11 (46.0%), S15 (45.4%), S14 (44.7%), S12 (42.1%) — all West-region, all above the 30% threshold, every line ending "FOR HUMAN APPROVAL — NOT AUTO-EXECUTED."</div>
+          </li>
+          <li>
+            <div class="step-title">Debrief<span class="step-time">3 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">DISCUSS</span><span class="prompt-text">Same data, same finding as S1's Demo 1 — except now it's a spec and a script a real team could hand off, not just an insight in a chat window.</span></div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A running stockout_alert_agent.py that reproduces the 5 flagged West stores. Reference versions of agent_spec.md and the script are included as a fallback.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 2 -->
+  <section class="block">
+    <div class="interject quiz" id="q2">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 2</span></div>
+      <h3>Which of these must NEVER appear in a Guardrails section as something the agent may do unsupervised?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Read the sales CSV</li>
+        <li class="correct"><b>B.</b> Auto-submit a purchase order</li>
+        <li><b>C.</b> Print a recommendation</li>
+        <li><b>D.</b> Flag a store above threshold</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q2')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> Irreversible, real-world actions are exactly what stay behind a human sign-off — that's the entire point of a Guardrails section.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 3: COST OF PROBLEM VS EXISTENCE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">03</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">Cost of Problem vs. Cost of Existence</h2>
+    <p class="lead"><b>Cost of Problem (COP)</b> — what the problem costs every month it stays unsolved. <b>Cost of Existence (COE)</b> — what it costs to build <i>and run</i> the solution, including compute, maintenance, and governance overhead, not just the initial build.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li>Real-world anchor: <b>Cost of Delay</b> (Reinertsen) — treating urgency as a number instead of a feeling.</li>
+        <li>An elegant agent that costs more to run and govern than the problem it solves is a bad build, no matter how clean the code is.</li>
+        <li>This is the artifact you bring to a sponsor — not "AI will help," but a number with a payback period.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- LAB 3 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--health);">L3</span><span class="eyebrow">Lab 3 · Claude Desktop, code execution · 22 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Articulate Cost of Problem vs. Cost of Existence</h2>
+    <p class="lead">Switching to the Healthcare case from S1. All dollar figures below are illustrative training assumptions — swap in real numbers on the job.</p>
+    <div class="folder health">
+      <div class="folder-top"><h3 style="color:#fff;">Lab: Payer Ops</h3><span class="case-tag">Uses prior_auth_requests_synthetic.csv from S1</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Framework used: <b>Cost of Delay</b> · <b>Total Cost of Ownership</b></div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Scale the verified sample to monthly volume<span class="step-time">4 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"We're scaling this PA triage pattern to a network processing about 1,200 requests/month, using the same procedural/clinical split we found in the sample data. Use code execution to project monthly volumes for approved, procedural-denial, and clinical-denial buckets."</span></div>
+            <div class="expect"><b>Verified:</b> ≈ 274 approved · 549 procedural · 377 clinical (scaled from the 70-request sample's 59.3% / 40.7% denial split).</div>
+          </li>
+          <li>
+            <div class="step-title">Calculate Cost of Problem<span class="step-time">5 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Assume 1.5 hours of staff rework per procedural denial at a fully-loaded rate of $45/hour. Calculate the monthly Cost of Problem for the procedural-denial backlog alone."</span></div>
+            <div class="expect"><b>Verified:</b> ≈ $37,058/month.</div>
+          </li>
+          <li>
+            <div class="step-title">Calculate Cost of Existence<span class="step-time">6 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Now calculate Cost of Existence: a one-time build of 120 engineering hours at $85/hour, plus ongoing monthly cost of about $0.02 per request analyzed and 8 hours/month of monitoring and governance at $85/hour."</span></div>
+            <div class="expect"><b>Verified:</b> one-time build ≈ $10,200 · steady-state monthly ≈ $704.</div>
+          </li>
+          <li>
+            <div class="step-title">Net benefit and payback<span class="step-time">5 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"If the agent cuts rework time on procedural cases by 40% — from 1.5 hours to 0.9 hours — what's the net monthly benefit after Cost of Existence, and what's the payback period on the build cost?"</span></div>
+            <div class="expect"><b>Verified:</b> net monthly benefit ≈ $14,119 · payback ≈ 0.72 months (about 3 weeks).</div>
+          </li>
+          <li>
+            <div class="step-title">Debrief<span class="step-time">2 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">DISCUSS</span><span class="prompt-text">A 3-week payback is a genuinely strong business case — and it only exists because Cost of Existence (governance, monitoring, ongoing run cost) was counted honestly instead of ignored.</span></div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A short cost model — COP, COE, net benefit, payback period — you could present to a sponsor in under 2 minutes. Reference script: cost_model.py.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 3 -->
+  <section class="block">
+    <div class="interject quiz" id="q3">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 3</span></div>
+      <h3>Which of these belongs in Cost of Existence, not Cost of Problem?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Staff hours spent chasing missing documentation today</li>
+        <li class="correct"><b>B.</b> Ongoing governance & monitoring hours for the agent</li>
+        <li><b>C.</b> Delayed claims revenue from the backlog</li>
+        <li><b>D.</b> Compliance risk exposure from slow turnaround</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q3')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> A, C, and D are all costs of the problem persisting. Governance and monitoring only exist because the solution exists — that's Cost of Existence.</div>
+    </div>
+  </section>
+
+  <!-- LAB 4: CAPSTONE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L4</span><span class="eyebrow">Capstone · Claude Code CLI · 18 min</span><span class="handson-badge">The artifact you keep</span></div>
+    <h2 class="title">Build the Value Dashboard</h2>
+    <p class="lead">Everything today produced text — a markdown file, a spec, numbers in a chat window. This step turns all three into one real, running artifact: a dashboard you could screenshot and send to your manager this afternoon. If you've sat through corporate AI training before, this is usually the part nobody does.</p>
+    <div class="folder" style="border:1px solid var(--line);">
+      <div class="folder-top" style="background:var(--s2);"><h3 style="color:#fff;">Capstone: The Wow Artifact</h3><span class="case-tag">Combines Lab 1 + Lab 2 + Lab 3 outputs into one file</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Pulls together: <b>context.md</b> · <b>agent_spec.md</b> · <b>Lab 3's cost numbers</b></div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Hand Claude Code everything it needs<span class="step-time">2 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"We have three things from today: context.md, agent_spec.md, and our cost numbers — Retail: Cost of Problem $85,946/mo, Cost of Existence $3,400 build + $340/mo, payback ~2.4 days. Healthcare: Cost of Problem $37,058/mo, Cost of Existence $10,200 build + $704/mo, payback ~3 weeks. Read context.md and agent_spec.md."</span></div>
+            <div class="expect"><b>Expect:</b> Claude Code confirms it's read both files and has all six numbers in hand before it writes anything.</div>
+          </li>
+          <li>
+            <div class="step-title">Ask for the dashboard, not a script<span class="step-time">10 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Build a single self-contained HTML file called value_dashboard.html — no external dependencies, must open fully offline. For both the Retail and Healthcare cases, show a toggle between 'The Naive Build' (what we'd have shipped without discovery — no guardrails, blind automation) and 'The Context-Engineered Build' (what we actually built — explicit guardrails, human-in-the-loop). Include a bar chart comparing Cost of Problem, Cost of Existence, and Net Benefit, and a large highlighted payback-period number. Make it something I'd be comfortable screenshotting and sending to my manager."</span></div>
+            <div class="expect"><b>Expect:</b> this is the moment the room usually goes quiet — Claude Code writes real HTML/CSS/JS, not a mockup. Let it finish; it may take one follow-up prompt to get the chart or toggle exactly right.</div>
+          </li>
+          <li>
+            <div class="step-title">Open it — for real<span class="step-time">3 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">RUN</span><span class="prompt-text">open value_dashboard.html    (or just double-click it — no server, no login, no build step)</span></div>
+            <div class="expect"><b>Expect:</b> a live, interactive dashboard with working tabs and an animated chart, generated in the last 10 minutes, sitting on your own machine. A tested reference version (value_dashboard.html) is included if you want to compare or as a fallback.</div>
+          </li>
+          <li>
+            <div class="step-title">Debrief<span class="step-time">3 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">DISCUSS</span><span class="prompt-text">Name what changed: nine months ago, this artifact took a designer, a dev, and a sprint. Today it took one afternoon and three prior artifacts you'd already built for other reasons.</span></div>
+          </li>
+        </ol>
+        <div class="verdict"><b>This is the output of the class.</b> Not a slide deck, not notes — a working dashboard that states, in one screen, what the problem costs, what fixing it costs, and how fast it pays back. That's the thing to walk out with.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 4 -->
+  <section class="block">
+    <div class="interject quiz" id="q4">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 4</span></div>
+      <h3>What makes the Value Dashboard different from a slide making the same argument?</h3>
+      <ul class="opts">
+        <li><b>A.</b> It uses better colors</li>
+        <li><b>B.</b> It's shorter</li>
+        <li class="correct"><b>C.</b> It's a real, running artifact built from verified numbers — not a claim, a working thing</li>
+        <li><b>D.</b> Nothing — a slide would do the same job</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q4')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> A slide is an assertion. A dashboard generated from context.md, agent_spec.md, and a tested cost model is evidence — and it took the same afternoon to produce.</div>
+    </div>
+  </section>
+
+  <!-- FIELD GUIDE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--fw);">FG</span><span class="eyebrow">Field guide · reference, not counted in the 120 min</span></div>
+    <h2 class="title">Frameworks Behind Today's Labs</h2>
+    <p class="lead">Four more real frameworks, each mapped to the lab that used it — take this as a standing reference for future engagements.</p>
+
+    <div class="fw-grid">
+
+      <div class="fw-card">
+        <span class="fw-cat">Context</span>
+        <div class="fw-name">Context Engineering</div>
+        <div class="fw-def">Deliberately curating what an AI system can see — data, tools, constraints, history — since output quality is bounded by context quality, not prompt wording.</div>
+        <div class="fw-example"><b>Real world</b>A CLAUDE.md file read at the start of every coding session, so the agent starts grounded in the real project instead of guessing.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Read our current context.md. Tell me what's missing that would cause an agent to make a wrong assumption."</span></div>
+      </div>
+
+      <div class="fw-card">
+        <span class="fw-cat">Delivery</span>
+        <div class="fw-name">Agent Task Specification</div>
+        <div class="fw-def">Before an agent writes code or acts, define its Objective, Allowed Tools & Data, Guardrails, Definition of Done, and Escalation Path explicitly — the agent equivalent of an API contract.</div>
+        <div class="fw-example"><b>Real world</b>An agent that flags a reorder recommendation but never executes the purchase order itself — the HITL gate made explicit in writing, then in code.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Convert this business context into an agent task spec: objective, allowed tools, guardrails, definition of done, escalation path."</span></div>
+      </div>
+
+      <div class="fw-card">
+        <span class="fw-cat">Value</span>
+        <div class="fw-name">Cost of Delay</div>
+        <div class="fw-def">Quantify what NOT shipping a fix costs per unit time, to compare directly against the cost of building it — turning "how urgent is this" into a number instead of a feeling.</div>
+        <div class="fw-example"><b>Real world</b>$37,058/month in procedural-denial rework is a number a finance sponsor can act on; "the backlog feels bad" is not.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Given these denial volumes and staff hourly rates, calculate our weekly cost of delay for not fixing this."</span></div>
+      </div>
+
+      <div class="fw-card">
+        <span class="fw-cat">Value</span>
+        <div class="fw-name">Total Cost of Ownership (TCO)</div>
+        <div class="fw-def">The true cost of a solution includes build cost plus compute, monitoring, and governance overhead over its life — not just the initial engineering hours.</div>
+        <div class="fw-example"><b>Real world</b>A triage agent's real monthly cost is API usage plus governance hours, not zero just because the model call itself is cheap.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Model our TCO for this agent over 12 months: token costs at our expected volume, engineering maintenance hours, and governance/monitoring overhead."</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <span class="stamp" style="color:var(--ink);">Case Closed</span>
+    <p>Context (Lab 1) → Agent-Ready Spec (Lab 2) → Business Case (Lab 3) → Value Dashboard (Capstone). Same two cases as S1, carried a full layer further — from insight to a working artifact a sponsor could act on.</p>
+    <p style="margin-top:20px;"><b>Cross-Industry Challenge, before S3:</b> apply Labs 1–4 to the <i>other</i> industry — a context.md and agent_spec.md for the Healthcare PA case, a Cost of Problem vs. Existence model for the Retail stockout case, and one dashboard that shows both. Bring it.</p>
+  </section>
+
+</div>
+
+<script>
+function toggleAnswer(id){
+  document.getElementById(id).classList.toggle('revealed');
+}
+</script>
+</body>
+</html>

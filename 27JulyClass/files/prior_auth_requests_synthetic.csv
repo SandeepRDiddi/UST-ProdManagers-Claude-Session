@@ -1,0 +1,71 @@
+request_id,member_id,procedure_code,procedure_desc,category,submitted_date,documentation_required_count,documentation_submitted_count,clinical_notes_attached,final_status,denial_reason_category
+PA-100001,M66257,J3490,Specialty Injectable Drug,Specialty Drug,2026-06-04,3,3,True,denied,clinical_criteria_not_met
+PA-100002,M14997,E0470,Respiratory Assist Device (DME),DME,2026-05-19,3,3,True,approved,not_applicable
+PA-100003,M88618,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-05-30,2,2,True,approved,not_applicable
+PA-100004,M20717,J3490,Specialty Injectable Drug,Specialty Drug,2026-05-29,3,3,True,denied,clinical_criteria_not_met
+PA-100005,M37272,J3490,Specialty Injectable Drug,Specialty Drug,2026-06-13,3,3,True,approved,not_applicable
+PA-100006,M62428,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-06-03,2,1,True,denied,missing_documentation
+PA-100007,M99594,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-06-12,3,3,True,denied,clinical_criteria_not_met
+PA-100008,M51960,E0470,Respiratory Assist Device (DME),DME,2026-05-13,3,3,True,denied,clinical_criteria_not_met
+PA-100009,M50027,J3490,Specialty Injectable Drug,Specialty Drug,2026-05-03,3,1,False,denied,missing_documentation
+PA-100010,M84110,70553,MRI Brain w/ and w/o contrast,Imaging,2026-06-07,3,2,True,denied,missing_documentation
+PA-100011,M99391,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-05-01,3,2,False,denied,missing_documentation
+PA-100012,M74887,70553,MRI Brain w/ and w/o contrast,Imaging,2026-05-23,3,1,False,denied,missing_documentation
+PA-100013,M10336,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-06-09,3,3,True,denied,clinical_criteria_not_met
+PA-100014,M96839,70553,MRI Brain w/ and w/o contrast,Imaging,2026-06-22,3,3,True,approved,not_applicable
+PA-100015,M55880,70553,MRI Brain w/ and w/o contrast,Imaging,2026-06-12,3,3,True,denied,clinical_criteria_not_met
+PA-100016,M18234,E0470,Respiratory Assist Device (DME),DME,2026-06-13,3,1,True,denied,missing_documentation
+PA-100017,M71741,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-05-22,3,3,True,denied,clinical_criteria_not_met
+PA-100018,M63835,E0470,Respiratory Assist Device (DME),DME,2026-06-09,3,3,True,approved,not_applicable
+PA-100019,M44342,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-06-18,2,1,False,denied,missing_documentation
+PA-100020,M44149,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-05-24,3,3,True,denied,clinical_criteria_not_met
+PA-100021,M67419,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-06-27,3,1,True,denied,missing_documentation
+PA-100022,M31560,70553,MRI Brain w/ and w/o contrast,Imaging,2026-06-19,3,1,True,denied,missing_documentation
+PA-100023,M95631,70553,MRI Brain w/ and w/o contrast,Imaging,2026-05-13,3,3,True,denied,clinical_criteria_not_met
+PA-100024,M18357,70553,MRI Brain w/ and w/o contrast,Imaging,2026-06-09,3,2,True,denied,missing_documentation
+PA-100025,M21845,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-05-29,3,3,True,denied,clinical_criteria_not_met
+PA-100026,M96451,J3490,Specialty Injectable Drug,Specialty Drug,2026-06-04,3,3,True,denied,clinical_criteria_not_met
+PA-100027,M23091,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-06-15,2,2,True,approved,not_applicable
+PA-100028,M26249,J3490,Specialty Injectable Drug,Specialty Drug,2026-06-28,3,1,True,denied,missing_documentation
+PA-100029,M43865,E0470,Respiratory Assist Device (DME),DME,2026-05-13,3,1,True,denied,missing_documentation
+PA-100030,M97246,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-06-22,2,2,True,approved,not_applicable
+PA-100031,M50205,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-06-15,3,1,True,denied,missing_documentation
+PA-100032,M91647,70553,MRI Brain w/ and w/o contrast,Imaging,2026-05-08,3,1,False,denied,missing_documentation
+PA-100033,M17112,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-06-01,3,2,True,denied,missing_documentation
+PA-100034,M35163,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-06-11,3,2,True,denied,missing_documentation
+PA-100035,M81020,J3490,Specialty Injectable Drug,Specialty Drug,2026-06-24,3,1,True,denied,missing_documentation
+PA-100036,M23595,J3490,Specialty Injectable Drug,Specialty Drug,2026-05-19,3,3,True,denied,clinical_criteria_not_met
+PA-100037,M76879,70553,MRI Brain w/ and w/o contrast,Imaging,2026-06-18,3,3,True,denied,clinical_criteria_not_met
+PA-100038,M97336,E0470,Respiratory Assist Device (DME),DME,2026-05-01,3,1,True,denied,missing_documentation
+PA-100039,M66560,J3490,Specialty Injectable Drug,Specialty Drug,2026-06-27,3,3,True,denied,clinical_criteria_not_met
+PA-100040,M30377,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-06-24,3,1,False,denied,missing_documentation
+PA-100041,M45530,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-05-21,2,2,True,approved,not_applicable
+PA-100042,M95330,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-05-09,2,1,True,denied,missing_documentation
+PA-100043,M29708,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-05-27,2,2,True,denied,clinical_criteria_not_met
+PA-100044,M98234,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-06-23,2,1,True,denied,missing_documentation
+PA-100045,M62258,J3490,Specialty Injectable Drug,Specialty Drug,2026-06-26,3,2,True,denied,missing_documentation
+PA-100046,M93047,J3490,Specialty Injectable Drug,Specialty Drug,2026-05-15,3,2,False,denied,missing_documentation
+PA-100047,M95583,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-06-17,3,2,False,denied,missing_documentation
+PA-100048,M74537,J3490,Specialty Injectable Drug,Specialty Drug,2026-06-25,3,1,True,denied,missing_documentation
+PA-100049,M45844,J3490,Specialty Injectable Drug,Specialty Drug,2026-05-11,3,2,False,denied,missing_documentation
+PA-100050,M36958,70553,MRI Brain w/ and w/o contrast,Imaging,2026-06-24,3,3,True,approved,not_applicable
+PA-100051,M85614,J3490,Specialty Injectable Drug,Specialty Drug,2026-06-14,3,3,True,approved,not_applicable
+PA-100052,M63521,E0470,Respiratory Assist Device (DME),DME,2026-05-23,3,1,True,denied,missing_documentation
+PA-100053,M77951,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-05-28,2,2,True,denied,clinical_criteria_not_met
+PA-100054,M66528,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-06-14,2,1,False,denied,missing_documentation
+PA-100055,M78761,70553,MRI Brain w/ and w/o contrast,Imaging,2026-06-23,3,1,True,denied,missing_documentation
+PA-100056,M92659,E0470,Respiratory Assist Device (DME),DME,2026-06-24,3,3,True,approved,not_applicable
+PA-100057,M82182,E0470,Respiratory Assist Device (DME),DME,2026-06-23,3,3,True,denied,clinical_criteria_not_met
+PA-100058,M36743,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-05-03,3,3,True,denied,clinical_criteria_not_met
+PA-100059,M12725,70553,MRI Brain w/ and w/o contrast,Imaging,2026-05-16,3,3,True,approved,not_applicable
+PA-100060,M95483,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-05-12,2,2,True,approved,not_applicable
+PA-100061,M61034,J3490,Specialty Injectable Drug,Specialty Drug,2026-05-19,3,3,True,approved,not_applicable
+PA-100062,M20334,97110,Therapeutic Exercise (Physical Therapy),Physical Therapy,2026-06-10,3,3,True,approved,not_applicable
+PA-100063,M87179,70553,MRI Brain w/ and w/o contrast,Imaging,2026-06-02,3,1,True,denied,missing_documentation
+PA-100064,M31328,E0470,Respiratory Assist Device (DME),DME,2026-05-12,3,2,True,denied,missing_documentation
+PA-100065,M61694,E0470,Respiratory Assist Device (DME),DME,2026-05-15,3,3,True,approved,not_applicable
+PA-100066,M91049,J3490,Specialty Injectable Drug,Specialty Drug,2026-06-21,3,3,True,denied,clinical_criteria_not_met
+PA-100067,M23790,70553,MRI Brain w/ and w/o contrast,Imaging,2026-05-07,3,1,True,denied,missing_documentation
+PA-100068,M66394,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-05-19,2,2,True,denied,clinical_criteria_not_met
+PA-100069,M49200,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-06-17,2,2,True,denied,clinical_criteria_not_met
+PA-100070,M21622,72148,MRI Lumbar Spine w/o contrast,Imaging,2026-06-15,2,2,True,denied,clinical_criteria_not_met

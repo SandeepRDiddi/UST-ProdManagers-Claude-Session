@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File S1 — Claude as Thinking Partner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bitter:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1E8D5;
+    --paper2:#E7D8B8;
+    --paper3:#DCCBA3;
+    --ink:#241D14;
+    --ink-soft:#5A4C3A;
+    --retail:#A8631B;
+    --retail-soft:#F0D9AF;
+    --health:#2F6F62;
+    --health-soft:#CFE3DC;
+    --quiz:#A23B2E;
+    --quiz-soft:#F1D3CC;
+    --break:#2B4570;
+    --break-soft:#D6E0EE;
+    --fw:#6B4FA0;
+    --fw-soft:#E6DEF2;
+    --line: rgba(36,29,20,0.22);
+    --gold:#C79A2E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05), transparent 45%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 80px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1.5px;background:var(--ink-soft);display:inline-block;}
+  h1,h2,h3{font-family:'Bitter', serif; margin:0; color:var(--ink);}
+
+  /* ---------- STAMP ---------- */
+  .stamp{
+    display:inline-block;
+    font-family:'Special Elite', monospace;
+    text-transform:uppercase;
+    border:3px solid currentColor;
+    border-radius:6px;
+    padding:6px 16px;
+    letter-spacing:.08em;
+    transform:rotate(-4deg);
+    position:relative;
+  }
+  .stamp::after{
+    content:"";
+    position:absolute; inset:3px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    opacity:.55;
+  }
+  .stamp.quiz{color:var(--quiz);}
+  .stamp.break{color:var(--break);}
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:60px 28px;
+    border-bottom:6px double var(--ink);
+    overflow:hidden;
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(36,29,20,0.035) 0px, rgba(36,29,20,0.035) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+  .cover-inner{max-width:980px;margin:0 auto; width:100%; position:relative; z-index:1;}
+  .folder-tabs{display:flex; gap:8px; margin-bottom:28px;}
+  .folder-tabs span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.1em;
+    background:var(--paper3);
+    border:1px solid var(--line);
+    border-bottom:none;
+    padding:5px 12px 8px;
+    border-radius:6px 6px 0 0;
+    color:var(--ink-soft);
+    opacity:0; transform:translateY(10px);
+    animation:tabIn .5s ease forwards;
+  }
+  .folder-tabs span:nth-child(1){animation-delay:.05s;}
+  .folder-tabs span:nth-child(2){animation-delay:.15s;}
+  .folder-tabs span:nth-child(3){animation-delay:.25s;}
+  .folder-tabs span:nth-child(4){animation-delay:.35s;}
+  .folder-tabs span:nth-child(5){animation-delay:.42s;}
+  @keyframes tabIn{to{opacity:1; transform:translateY(0);}}
+
+  .case-no{
+    font-family:'Special Elite', monospace;
+    color:var(--quiz);
+    font-size:15px;
+    letter-spacing:.05em;
+    margin-bottom:14px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards; animation-delay:.4s;
+  }
+  .cover h1{
+    font-size:clamp(40px, 7vw, 84px);
+    line-height:0.98;
+    font-weight:900;
+    margin:6px 0 18px;
+    opacity:0;
+    transform:scale(.9) rotate(-1deg);
+    animation:stampIn .7s cubic-bezier(.2,1.6,.4,1) forwards;
+    animation-delay:.55s;
+  }
+  .cover h1 em{font-style:normal; color:var(--retail);}
+  @keyframes stampIn{
+    0%{opacity:0; transform:scale(1.35) rotate(-3deg);}
+    60%{opacity:1;}
+    100%{opacity:1; transform:scale(1) rotate(-1deg);}
+  }
+  .cover .sub{
+    font-size:clamp(16px,2.1vw,20px);
+    max-width:640px; color:var(--ink-soft); line-height:1.5;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:.95s;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-top:34px;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.15s;
+  }
+  .meta-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); background:rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:20px; color:var(--ink);
+  }
+  .meta-chip b{color:var(--ink);}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  .seal{
+    position:absolute; top:56px; right:40px;
+    width:118px; height:118px;
+    border:3px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; font-family:'Special Elite',monospace;
+    font-size:11px; color:var(--gold); letter-spacing:.05em;
+    transform:rotate(12deg) scale(0);
+    animation:sealIn .6s cubic-bezier(.3,1.7,.4,1) forwards; animation-delay:1.3s;
+  }
+  .seal::before{content:""; position:absolute; inset:8px; border:1px dashed var(--gold); border-radius:50%;}
+  @keyframes sealIn{to{transform:rotate(12deg) scale(1);}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block{padding:56px 0 8px; border-bottom:1px solid var(--line);}
+  .tag-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .idx{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    color:#fff; background:var(--ink); border-radius:5px; padding:4px 9px;
+  }
+  h2.title{font-size:clamp(26px,3.6vw,38px); font-weight:700; margin-top:6px;}
+  .lead{color:var(--ink-soft); font-size:16.5px; max-width:680px; margin-top:8px; line-height:1.55;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{display:flex; flex-direction:column; gap:0; margin-top:26px;}
+  .t-row{
+    display:grid; grid-template-columns:96px 1px 1fr auto;
+    align-items:center; gap:18px; padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .t-row:first-child{border-top:none;}
+  .t-time{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-soft);}
+  .t-bar{width:1px; height:34px; background:var(--line);}
+  .t-label{font-weight:600; font-size:16px;}
+  .t-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    padding:5px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
+  }
+  .tag-mod{background:var(--paper3); color:var(--ink-soft);}
+  .tag-retail{background:var(--retail-soft); color:var(--retail);}
+  .tag-health{background:var(--health-soft); color:var(--health);}
+  .tag-quiz{background:var(--quiz-soft); color:var(--quiz);}
+  .tag-break{background:var(--break-soft); color:var(--break);}
+  .tag-fw{background:var(--fw-soft); color:var(--fw);}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:rgba(255,255,255,.4);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 28px;
+    margin-top:22px;
+    position:relative;
+  }
+  .card .pin{
+    position:absolute; top:-10px; left:26px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--gold); box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .points{margin:14px 0 0; padding:0; list-style:none;}
+  .points li{
+    padding:8px 0 8px 22px; position:relative; line-height:1.5; font-size:15.5px;
+  }
+  .points li::before{content:"—"; position:absolute; left:0; color:var(--ink-soft);}
+
+  /* ---------- ICEBREAKER / QUIZ CARDS ---------- */
+  .interject{
+    margin-top:26px; border-radius:12px; padding:26px 28px 24px;
+    border:2px dashed currentColor;
+  }
+  .interject.break{color:var(--break); background:var(--break-soft);}
+  .interject.quiz{color:var(--quiz); background:var(--quiz-soft);}
+  .interject-head{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .interject h3{color:var(--ink); font-size:20px;}
+  .interject p, .interject .opts{color:var(--ink); font-size:15.5px;}
+  .timer{
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    background:rgba(255,255,255,.6); padding:4px 10px; border-radius:20px; color:var(--ink);
+  }
+  .opts{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:8px;}
+  .opts li{
+    background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.12);
+    border-radius:8px; padding:9px 14px; font-size:15px;
+    transition:background .25s ease, border-color .25s ease, opacity .25s ease;
+  }
+  .opts li b{font-family:'IBM Plex Mono',monospace; margin-right:8px;}
+  .reveal-btn{
+    margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+    background:var(--ink); color:#fff; border:none; border-radius:20px;
+    padding:9px 18px; transition:transform .15s ease;
+  }
+  .reveal-btn:hover{transform:translateY(-1px);}
+  /* correct option + explanation stay neutral until the quiz container is marked revealed */
+  .interject.revealed .opts li.correct{
+    background:#DCF3E3; border-color:#2F7D4F; color:#1C4D31; font-weight:600;
+  }
+  .interject.revealed .opts li.correct::after{
+    content:" ✓ Correct"; font-weight:800; color:#2F7D4F; margin-left:6px;
+  }
+  .interject.revealed .opts li:not(.correct){opacity:.5;}
+  .answer{
+    margin-top:14px; padding:12px 16px; border-radius:8px;
+    background:rgba(255,255,255,.7); border-left:4px solid var(--ink);
+    font-size:15px; display:none;
+  }
+  .interject.revealed .answer{display:block; animation:fadeUp .35s ease;}
+  .answer b{color:var(--quiz);}
+
+  /* ---------- DEMO / CASE FOLDER ---------- */
+  .folder{
+    margin-top:24px; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+  }
+  .folder-top{padding:20px 26px; display:flex; align-items:center; gap:14px; color:#fff;}
+  .folder.retail .folder-top{background:var(--retail);}
+  .folder.health .folder-top{background:var(--health);}
+  .folder-top .case-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em;
+    background:rgba(255,255,255,.22); padding:4px 10px; border-radius:20px;
+  }
+  .folder-body{background:rgba(255,255,255,.45); padding:24px 26px;}
+  .kv{display:grid; grid-template-columns:140px 1fr; gap:8px 16px; font-size:15px; margin-bottom:16px;}
+  .kv .k{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; padding-top:2px;}
+  .steps{counter-reset:step; list-style:none; margin:14px 0 0; padding:0;}
+  .steps li{
+    counter-increment:step; position:relative; padding:9px 0 9px 34px; font-size:15px; line-height:1.5;
+    border-top:1px dashed var(--line);
+  }
+  .steps li:first-child{border-top:none;}
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:8px;
+    width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; display:flex; align-items:center; justify-content:center;
+  }
+  .verdict{
+    margin-top:16px; padding:14px 18px; border-radius:8px; font-size:15px;
+    background:rgba(0,0,0,.05); border-left:4px solid var(--ink);
+  }
+  .verdict b{font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-size:12px; letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);}
+
+  /* ---------- STEP DETAIL (prompts inside demo steps) ---------- */
+  .steps li{padding-bottom:16px;}
+  .step-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15.5px; margin-bottom:8px;}
+  .step-time{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); background:rgba(0,0,0,.06); padding:2px 9px; border-radius:10px; white-space:nowrap;}
+  .prompt-chip{
+    background:rgba(255,255,255,.75); border-radius:7px; padding:10px 14px;
+    font-size:14px; margin:0 0 8px; line-height:1.5;
+    border-left:3px solid currentColor;
+  }
+  .folder.retail .prompt-chip{color:var(--retail);}
+  .folder.health .prompt-chip{color:var(--health);}
+  .prompt-label{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:10.5px; letter-spacing:.07em; margin-right:8px;}
+  .prompt-chip .prompt-text{color:var(--ink); font-style:italic;}
+  .expect{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:2px;}
+  .expect b{color:var(--ink); font-weight:700;}
+  .fw-used{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.04em;
+    background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.12);
+    padding:6px 12px; border-radius:20px; color:var(--ink);
+  }
+  .fw-used b{color:var(--fw); text-transform:uppercase;}
+
+  /* ---------- FIELD GUIDE ---------- */
+  .fw-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px;}
+  .fw-card{
+    background:rgba(255,255,255,.5); border:1px solid var(--line); border-radius:12px;
+    padding:22px 24px; position:relative;
+  }
+  .fw-cat{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--fw);
+    background:var(--fw-soft); padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .fw-name{font-family:'Bitter',serif; font-weight:700; font-size:19px; margin-bottom:6px;}
+  .fw-def{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:12px;}
+  .fw-example{
+    font-size:13px; margin-bottom:12px; padding:9px 12px;
+    background:rgba(0,0,0,.045); border-radius:7px; line-height:1.5;
+  }
+  .fw-example b{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);
+  }
+  .fw-card .prompt-chip{color:var(--fw);}
+  @media (max-width:720px){.fw-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CLOSING ---------- */
+  .closing{padding:70px 0 40px; text-align:center;}
+  .closing .stamp{font-size:26px; padding:14px 30px;}
+  .closing p{max-width:600px; margin:22px auto 0; color:var(--ink-soft); font-size:16px; line-height:1.6;}
+
+  @media (max-width:640px){
+    .t-row{grid-template-columns:70px 1px 1fr; grid-template-areas:"time bar label" ". . tag"; }
+    .t-tag{grid-area:tag; justify-self:start; margin-top:6px;}
+    .seal{display:none;}
+    .kv{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="seal">CLAUDE<br>×<br>UST</div>
+  <div class="cover-inner">
+    <div class="folder-tabs">
+      <span>MINDSET</span><span>WHY</span><span>DISCOVERY</span><span>FRAMEWORKS</span><span>DEMO×2</span>
+    </div>
+    <div class="case-no">CASE FILE NO. S1 — OPENED 0:00</div>
+    <h1>Claude as a<br><em>Thinking Partner</em></h1>
+    <p class="sub">A live investigation into two real operating problems — one in Retail, one in Healthcare — and the mindset shift that decides whether AI builds the right thing or just builds fast.</p>
+    <div class="meta-row">
+      <div class="meta-chip"><b>Duration</b> · 120 min</div>
+      <div class="meta-chip"><b>Tools</b> · Claude Desktop + Claude Code CLI</div>
+      <div class="meta-chip"><b>Industries</b> · Retail · Healthcare</div>
+      <div class="meta-chip"><b>Program</b> · UST AI Delivery Capability</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- AGENDA -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">00</span><span class="eyebrow">Evidence log</span></div>
+    <h2 class="title">The 120-Minute Case</h2>
+    <p class="lead">Order matters here — each block sets up the next. Follow it top to bottom.</p>
+    <div class="timeline">
+      <div class="t-row"><div class="t-time">0:00</div><div class="t-bar"></div><div class="t-label">Welcome & Session Frame</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:05</div><div class="t-bar"></div><div class="t-label">Icebreaker — 60-Second Case Swap</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:10</div><div class="t-bar"></div><div class="t-label">Module 1 — Product Mindset & Identity Shift</div><div class="t-tag tag-mod">20 min</div></div>
+      <div class="t-row"><div class="t-time">0:30</div><div class="t-bar"></div><div class="t-label">Pop Quiz #1</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">0:33</div><div class="t-bar"></div><div class="t-label">Module 2 — WHY Thinking Before Solutioning</div><div class="t-tag tag-mod">20 min</div></div>
+      <div class="t-row"><div class="t-time">0:53</div><div class="t-bar"></div><div class="t-label">Pop Quiz #2</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">0:56</div><div class="t-bar"></div><div class="t-label">Icebreaker — Assumption Line-Up</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">1:01</div><div class="t-bar"></div><div class="t-label">Module 3 — Discovery-Led Framing</div><div class="t-tag tag-mod">15 min</div></div>
+      <div class="t-row"><div class="t-time">1:16</div><div class="t-bar"></div><div class="t-label">Pop Quiz #3 + Break</div><div class="t-tag tag-quiz">9 min</div></div>
+      <div class="t-row"><div class="t-time">—</div><div class="t-bar"></div><div class="t-label">Field Guide — Product Strategy Frameworks (handout / pre-read)</div><div class="t-tag tag-fw">reference</div></div>
+      <div class="t-row"><div class="t-time">1:25</div><div class="t-bar"></div><div class="t-label">DEMO 1 — Retail Stockout Case (Claude Desktop)</div><div class="t-tag tag-retail">18 min</div></div>
+      <div class="t-row"><div class="t-time">1:43</div><div class="t-bar"></div><div class="t-label">Pop Quiz #4</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:46</div><div class="t-bar"></div><div class="t-label">DEMO 2 — Prior-Auth Case (Claude Code CLI)</div><div class="t-tag tag-health">11 min</div></div>
+      <div class="t-row"><div class="t-time">1:57</div><div class="t-bar"></div><div class="t-label">Pop Quiz #5 + Case Closed</div><div class="t-tag tag-quiz">3 min</div></div>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER 1 -->
+  <section class="block">
+    <div class="interject break">
+      <div class="interject-head">
+        <span class="stamp break">Icebreaker</span>
+        <span class="timer">⏱ 5 min · pairs</span>
+      </div>
+      <h3>60-Second Case Swap</h3>
+      <p>Turn to your neighbour. Each person gets 60 seconds: describe one project where you built <b>exactly</b> what was asked. Your partner guesses — did it get used, or did it quietly die? Then swap.</p>
+    </div>
+  </section>
+
+  <!-- MODULE 1 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">01</span><span class="eyebrow">Module 1 · 20 min</span></div>
+    <h2 class="title">Product Mindset & Identity Shift</h2>
+    <p class="lead">AI makes execution cheap. The bottleneck moves upstream — to whether the ask was even the right one.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li><b>Old identity:</b> "I execute what's asked." <b>New identity:</b> "I make sure we're solving the right thing, then I execute fast."</li>
+        <li>The recurring failure: dashboards, scores, and tools built to spec that quietly go unused — because no one asked what decision they were meant to change.</li>
+        <li>This isn't "slow down." It's front-load the thinking, then move faster than before on the build.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- QUIZ 1 -->
+  <section class="block">
+    <div class="interject quiz" id="q1">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 1</span></div>
+      <h3>What actually defines the identity shift?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Type faster with AI autocomplete</li>
+        <li class="correct"><b>B.</b> Ask what problem you're really solving, before you build</li>
+        <li><b>C.</b> Use as many AI tools as possible</li>
+        <li><b>D.</b> Skip discovery meetings to save time</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q1')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> The shift is judgment, not speed or tool count — AI just removes the excuse for skipping it.</div>
+    </div>
+  </section>
+
+  <!-- MODULE 2 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">02</span><span class="eyebrow">Module 2 · 20 min</span></div>
+    <h2 class="title">WHY Thinking Before Solutioning</h2>
+    <p class="lead">Most prompts are HOW-first. WHY-first inserts a root-cause pass — a Five Whys discipline — before any build.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">How-first</div><div>"Build me a churn prediction model for our subscription base."</div>
+        <div class="k">Why-first</div><div>"Before we design anything, ask me the questions you'd need answered to be confident we're solving the real driver of churn."</div>
+      </div>
+      <ul class="points">
+        <li>The WHY-first version turns Claude from an order-fulfillment engine into a root-cause interviewer.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- QUIZ 2 -->
+  <section class="block">
+    <div class="interject quiz" id="q2">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 2</span></div>
+      <h3>HOW-first or WHY-first?</h3>
+      <p>"Write a script to auto-approve routine prior-authorization requests."</p>
+      <ul class="opts">
+        <li class="correct"><b>A.</b> HOW-first</li>
+        <li><b>B.</b> WHY-first</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q2')">Reveal answer</button>
+      <div class="answer"><b>Answer: A — HOW-first.</b> It names the build before anyone's asked which denials are procedural vs. clinical judgment. Rewrite it before Demo 2!</div>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER 2 -->
+  <section class="block">
+    <div class="interject break">
+      <div class="interject-head">
+        <span class="stamp break">Icebreaker</span>
+        <span class="timer">⏱ 5 min · whole room</span>
+      </div>
+      <h3>The Assumption Line-Up</h3>
+      <p>Facilitator reads one line: <i>"Top SKUs keep stocking out at 15 stores, even though total inventory is up 12% this year."</i> Room votes by show of hands — before seeing any data: <b>Forecasting error? Allocation error? Lead-time issue? Need more info?</b> Tally the votes, then open Module 3.</p>
+    </div>
+  </section>
+
+  <!-- MODULE 3 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">03</span><span class="eyebrow">Module 3 · 15 min</span></div>
+    <h2 class="title">Discovery-Led Framing</h2>
+    <p class="lead">Claude's first output should be a problem brief, not a solution. The Discovery Canvas makes that a repeatable habit.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li><b>1. Problem statement</b> — what's observably wrong, no solution named.</li>
+        <li><b>2. Who's affected & how</b> — the role, the exact moment of pain.</li>
+        <li><b>3. Current workaround</b> — what people do today. This is where real requirements hide.</li>
+        <li><b>4. Cost of inaction</b> — hours, rework rate, revenue, risk.</li>
+        <li><b>5. Definition of success</b> — the observable change that proves it's fixed.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- QUIZ 3 -->
+  <section class="block">
+    <div class="interject quiz" id="q3">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 3</span></div>
+      <h3>Which Discovery Canvas field is this?</h3>
+      <p>"Store managers currently export last week's sales to Excel every Monday and eyeball which SKUs look low."</p>
+      <ul class="opts">
+        <li><b>A.</b> Problem statement</li>
+        <li class="correct"><b>B.</b> Current workaround</li>
+        <li><b>C.</b> Definition of success</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q3')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> That's the manual workaround — the richest source of real requirements, and the easiest field to skip.</div>
+    </div>
+  </section>
+
+  <!-- FIELD GUIDE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--fw);">FG</span><span class="eyebrow">Field guide · reference, not counted in the 120 min</span></div>
+    <h2 class="title">Product Strategy Frameworks, Run Through Claude</h2>
+    <p class="lead">These are real frameworks product teams already use — the only thing that changes is that Claude now runs the interview, the scoring, or the tree-building with you, instead of it living in a slide nobody reopens. Hand this page out; both demos below explicitly use two of these.</p>
+
+    <div class="fw-grid">
+
+      <div class="fw-card">
+        <span class="fw-cat">Discovery</span>
+        <div class="fw-name">Jobs-to-be-Done (JTBD)</div>
+        <div class="fw-def">People don't buy products — they "hire" them to make progress on a specific job. Judge a request by the job behind it, not by the feature list.</div>
+        <div class="fw-example"><b>Real world</b>Retail: shoppers aren't asking for a loyalty app — they're hiring something to make repeat business feel recognized without extra steps.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Act as a JTBD interviewer. Given this feature request, ask me: what job is the customer hiring this for, what struggling moment triggered it, and what are they using today as a workaround?"</span></div>
+      </div>
+
+      <div class="fw-card">
+        <span class="fw-cat">Prioritization</span>
+        <div class="fw-name">RICE Scoring</div>
+        <div class="fw-def">Score competing initiatives on Reach × Impact × Confidence ÷ Effort, so tradeoffs are explicit instead of political.</div>
+        <div class="fw-example"><b>Real world</b>Healthcare IT: ranking a backlog of EHR integration requests when every stakeholder insists theirs is P0.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Here are 8 backlog items with rough reach/impact/effort notes. Score each on RICE, show your assumptions per score, and flag which score is most sensitive to a wrong estimate."</span></div>
+      </div>
+
+      <div class="fw-card">
+        <span class="fw-cat">Discovery</span>
+        <div class="fw-name">Opportunity Solution Tree</div>
+        <div class="fw-def">Map a desired outcome, then the customer opportunities (needs, pain points) that ladder up to it, then candidate solutions — so nothing gets built without a mapped opportunity behind it.</div>
+        <div class="fw-example"><b>Real world</b>Retail: outcome = reduce stockouts on top SKUs; opportunities = forecast error, allocation error, lead-time variance; only then, solutions.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Help me build an opportunity solution tree. My outcome is [X]. Interview me on the opportunities first — don't let me jump to solutions."</span></div>
+      </div>
+
+      <div class="fw-card">
+        <span class="fw-cat">Strategy</span>
+        <div class="fw-name">Double Diamond</div>
+        <div class="fw-def">Diverge to explore the problem broadly (Discover), converge to define it precisely (Define), diverge again on solutions (Develop), converge to ship (Deliver).</div>
+        <div class="fw-example"><b>Real world</b>Structuring a whole quarter's stockout-reduction initiative instead of jumping straight to "build a dashboard."</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"We're in the Discover phase on [topic]. Act as a research partner — help me diverge: list every plausible cause and stakeholder. Don't converge or propose solutions yet."</span></div>
+      </div>
+
+      <div class="fw-card">
+        <span class="fw-cat">Strategy</span>
+        <div class="fw-name">North Star Framework</div>
+        <div class="fw-def">One metric that captures the core value delivered to customers, plus the input metrics that actually move it — so teams stop chasing vanity metrics.</div>
+        <div class="fw-example"><b>Real world</b>On-shelf availability rate as the North Star input metric, not total inventory dollars — which can rise while shoppers still can't find the SKU they want.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Given this list of team initiatives, which ones plausibly move our North Star metric (on-shelf availability), and which are just busywork?"</span></div>
+      </div>
+
+      <div class="fw-card">
+        <span class="fw-cat">Narrative</span>
+        <div class="fw-name">Working Backwards / PR-FAQ</div>
+        <div class="fw-def">Write the future press release and FAQ before building anything, to force clarity on the actual customer benefit and surface weak assumptions early.</div>
+        <div class="fw-example"><b>Real world</b>Payer ops: writing the PR-FAQ for a new triage tool surfaced that "faster denials" wasn't the real benefit — "fewer wrongful denials" was.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Write a one-page PR-FAQ for this idea as if it shipped and worked perfectly. Then argue against your own FAQ — what's the weakest claim in it?"</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DEMO 1: RETAIL -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">04</span><span class="eyebrow">Demo 1 · Claude Desktop · 18 min</span></div>
+    <h2 class="title">The Stockout Paradox</h2>
+    <p class="lead">Total inventory is up 12% year-over-year. Top SKUs still stock out at 15 stores every peak weekend. Real, common retail pattern.</p>
+    <div class="folder retail">
+      <div class="folder-top"><h3 style="color:#fff;">Case: Retail Ops</h3><span class="case-tag">Real dataset · 10,800 rows · synthetic, no client data</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Framework used: <b>Five Whys</b> → <b>Opportunity Solution Tree</b></div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Show the anti-pattern<span class="step-time">2 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Attached is 90 days of store-level sales and inventory data for our footwear and apparel network. Build me a dashboard to flag which SKUs need reordering."</span></div>
+            <div class="expect"><b>Expect:</b> Claude complies immediately and starts proposing a dashboard, no questions asked — let it get a sentence in, then stop and name it: "it built, it didn't ask."</div>
+          </li>
+          <li>
+            <div class="step-title">Reframe with discovery<span class="step-time">3 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Hold on — act as a retail operations thinking partner. Total on-hand inventory is healthy, but specific stores keep stocking out on our top SKUs at peak. Ask me your top questions, and tell me what hypotheses you'd want to test first."</span></div>
+            <div class="expect"><b>Expect:</b> Claude separates competing hypotheses — forecasting error vs. allocation error vs. replenishment lead-time variance — and asks whether stockouts cluster by region, SKU, or store.</div>
+          </li>
+          <li>
+            <div class="step-title">Test hypotheses against real data<span class="step-time">6 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Let's test it using code execution. Does stockout rate correlate more strongly with each store's replenishment lead time, or with each store's demand-variance tier?"</span></div>
+            <div class="expect"><b>Expect:</b> lead time strongly correlated (verified r = <b>0.98</b>), demand variance essentially flat (verified r = <b>0.07</b>). Then ask Claude to break it down by region.</div>
+          </li>
+          <li>
+            <div class="step-title">Regional breakdown<span class="step-time">3 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Break it down by region too — stockout rate for West stores versus the rest of the network."</span></div>
+            <div class="expect"><b>Expect:</b> West (long lead time) ≈ <b>45.5%</b> stockout rate vs. North+South ≈ <b>14.5%</b> — the gap the room voted on in the icebreaker, now settled with data.</div>
+          </li>
+          <li>
+            <div class="step-title">Synthesis & debrief<span class="step-time">4 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Given what we found, what would you now build — and how is it different from the dashboard I first asked for?"</span></div>
+            <div class="expect"><b>Expect:</b> a lead-time-aware reorder-point fix for the affected stores, not a generic dashboard. Close with: "same tool, same data, different question, better answer."</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Verdict</b> West-region stores (long lead time) stock out on 45.5% of store-days vs. 14.5% for the rest of the network. A generic dashboard would have missed this entirely.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 4 -->
+  <section class="block">
+    <div class="interject quiz" id="q4">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 4</span></div>
+      <h3>What was the real root cause?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Not enough total inventory</li>
+        <li class="correct"><b>B.</b> Long replenishment lead time at specific stores</li>
+        <li><b>C.</b> Wrong SKUs stocked entirely</li>
+        <li><b>D.</b> Website checkout errors</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q4')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> Total inventory was never the problem — allocation and lead time were.</div>
+    </div>
+  </section>
+
+  <!-- DEMO 2: HEALTHCARE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">05</span><span class="eyebrow">Demo 2 · Claude Code CLI · 11 min</span></div>
+    <h2 class="title">The Prior-Authorization Backlog</h2>
+    <p class="lead">A large share of denials trace back to missing documentation — not genuine clinical judgment calls. Both sit in the same manual queue.</p>
+    <div class="folder health">
+      <div class="folder-top"><h3 style="color:#fff;">Case: Payer Ops</h3><span class="case-tag">Real dataset · 70 requests · synthetic, no patient data</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Framework used: <b>Jobs-to-be-Done</b> → <b>Risk-scoped prioritization (RICE-style)</b></div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Show the anti-pattern<span class="step-time">1.5 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Write a Python script that auto-approves prior-authorization requests in prior_auth_requests_synthetic.csv whenever the procedure matches something in sample_payer_policy.txt."</span></div>
+            <div class="expect"><b>Expect:</b> Claude Code scaffolds it readily. Pause and name the risk out loud: this treats a missing-form case the same as a case that genuinely fails clinical criteria — unsafe to automate blind.</div>
+          </li>
+          <li>
+            <div class="step-title">Reframe with discovery<span class="step-time">3.5 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Stop — read sample_payer_policy.txt and prior_auth_requests_synthetic.csv directly first. What share of denials look procedural (missing documentation) versus a genuine clinical judgment call? Ask me anything you need to make that split defensible."</span></div>
+            <div class="expect"><b>Expect:</b> a split close to the verified <b>59.3%</b> procedural / <b>40.7%</b> clinical, plus a clarifying question about how to treat borderline/partial documentation.</div>
+          </li>
+          <li>
+            <div class="step-title">Scope the automation deliberately<span class="step-time">3 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Build pa_triage.py: flag only the procedural / missing-documentation cases for fast provider follow-up, and explicitly route clinical-judgment cases to a human reviewer. It must not auto-approve or auto-deny anything."</span></div>
+            <div class="expect"><b>Expect:</b> a script with two queues and zero auto-decisions — the human-in-the-loop boundary made explicit in code, not just in policy.</div>
+          </li>
+          <li>
+            <div class="step-title">Run it and show the output<span class="step-time">1.5 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">RUN</span><span class="prompt-text">python3 pa_triage.py prior_auth_requests_synthetic.csv</span></div>
+            <div class="expect"><b>Expect:</b> 70 loaded → 16 approved, 32 flagged procedural, 22 routed to clinical review, broken down by Imaging / Physical Therapy / DME / Specialty Drug. (`pa_triage.py` is also included pre-built as a fallback if the live build runs short.)</div>
+          </li>
+          <li>
+            <div class="step-title">Debrief<span class="step-time">1.5 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">ASK THE ROOM</span><span class="prompt-text">"What would have gone wrong if we'd shipped the Step-1 version instead?"</span></div>
+            <div class="expect"><b>Expect:</b> the room lands on "genuine clinical judgment calls would've been auto-decided with no human ever looking" — the Module 1 identity shift, now visible in a terminal.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Verdict</b> Of 70 requests: 16 approved, 32 flagged procedural, 22 routed to clinical review. Safe automation starts with the boring, procedural bucket — not the hard judgment calls.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 5 -->
+  <section class="block">
+    <div class="interject quiz" id="q5">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 5</span></div>
+      <h3>Which prior-auth cases get automated first?</h3>
+      <ul class="opts">
+        <li><b>A.</b> All of them</li>
+        <li><b>B.</b> Only the hard clinical-judgment cases</li>
+        <li class="correct"><b>C.</b> Only procedural / missing-information cases</li>
+        <li><b>D.</b> None — automation is never safe here</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q5')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> Scope automation to what's safe and defensible — leave judgment calls to people.</div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <span class="stamp" style="color:var(--ink);">Case Closed</span>
+    <p>Mindset (Module 1) → Discipline (Module 2) → Technique (Module 3). One instruction pattern — <i>"interview me before you propose a solution"</i> — drove both live demos. Name one HOW-first prompt you sent this week. Rewrite it as WHY-first before you leave the room.</p>
+  </section>
+
+</div>
+
+<script>
+function toggleAnswer(id){
+  document.getElementById(id).classList.toggle('revealed');
+}
+</script>
+</body>
+</html>
