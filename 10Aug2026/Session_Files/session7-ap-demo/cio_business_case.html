@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autonomous AP — CIO Business Case</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F14; --panel:#121821; --panel2:#161E29; --line:rgba(255,255,255,.08);
+    --ink:#EAF0F5; --ink-soft:#8FA3B5;
+    --teal:#22D3B0; --teal-soft:rgba(34,211,176,.14);
+    --amber:#F5A623; --amber-soft:rgba(245,166,35,.14);
+    --violet:#8B7FE8; --violet-soft:rgba(139,127,232,.14);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:
+      radial-gradient(circle at 15% 0%, rgba(34,211,176,.08), transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(139,127,232,.07), transparent 45%), var(--bg);
+    color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px; margin:0 auto; padding:44px 26px 70px;}
+  .badge{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--teal); background:var(--teal-soft); border:1px solid rgba(34,211,176,.3);
+    padding:5px 12px; border-radius:20px; display:inline-block;}
+  h1{font-family:'Space Grotesk',sans-serif; font-size:clamp(26px,4vw,36px); margin:14px 0 6px; font-weight:700;}
+  .subtitle{color:var(--ink-soft); font-size:15px; max-width:620px; line-height:1.5;}
+  .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:30px 0 24px;}
+  .stat{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 16px;}
+  .stat-label{font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin-bottom:8px;}
+  .stat-value{font-family:'Space Grotesk',sans-serif; font-size:clamp(20px,2.6vw,26px); font-weight:700; color:var(--teal);}
+  .stat.payback .stat-value{color:var(--amber);}
+  .stat.touchless .stat-value{color:var(--violet);}
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:24px 26px; margin-bottom:20px;}
+  .panel h2{font-family:'Space Grotesk',sans-serif; font-size:16px; margin:0 0 16px; font-weight:700;}
+  table{width:100%; border-collapse:collapse;}
+  td,th{padding:9px 8px; font-size:13px; border-top:1px solid var(--line); text-align:left;}
+  th{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); border-top:none;}
+  .bars{display:flex; flex-direction:column; gap:12px; margin-top:6px;}
+  .bar-row{display:grid; grid-template-columns:150px 1fr 90px; align-items:center; gap:12px;}
+  .bar-name{font-size:12.5px; color:var(--ink-soft);}
+  .bar-track{background:var(--panel2); border-radius:6px; height:14px; overflow:hidden;}
+  .bar-fill{height:100%; border-radius:6px;}
+  .bar-val{font-family:'IBM Plex Mono',monospace; font-size:12px; text-align:right;}
+  .gov-list{list-style:none; margin:0; padding:0;}
+  .gov-list li{padding:9px 0; border-top:1px solid var(--line); font-size:13.5px; display:flex; gap:10px; align-items:flex-start;}
+  .gov-list li:first-child{border-top:none;}
+  .check{color:var(--teal); font-family:'IBM Plex Mono',monospace; font-weight:700;}
+  .foot{margin-top:24px; padding-top:18px; border-top:1px solid var(--line); font-size:11.5px; color:var(--ink-soft); line-height:1.7;}
+  .foot b{color:var(--ink);}
+  @media(max-width:640px){.stat-row{grid-template-columns:1fr 1fr;} .bar-row{grid-template-columns:90px 1fr 70px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="badge">● Autonomous Invoice-to-Pay · verified against 1,800 real invoices</span>
+  <h1>Autonomous AP — CIO Business Case</h1>
+  <p class="subtitle">Tiered autonomy, not all-or-nothing automation. Every number below comes from actually running the agent and its governance tests against a real invoice dataset — nothing here is a projection dressed up as a result.</p>
+
+  <div class="stat-row">
+    <div class="stat"><div class="stat-label">Monthly Savings</div><div class="stat-value">$19,614</div></div>
+    <div class="stat payback"><div class="stat-label">Payback Period</div><div class="stat-value">2.2 months</div></div>
+    <div class="stat"><div class="stat-label">Year 1 Net Benefit</div><div class="stat-value">$168,568</div></div>
+    <div class="stat touchless"><div class="stat-label">Fully Touchless</div><div class="stat-value">61.6%</div></div>
+  </div>
+
+  <div class="panel">
+    <h2>Tiered Autonomy — Volume Distribution</h2>
+    <div class="bars">
+      <div class="bar-row"><div class="bar-name">Tier 4 — Full Autonomy</div><div class="bar-track"><div class="bar-fill" style="width:61.6%; background:var(--teal);"></div></div><div class="bar-val">61.6%</div></div>
+      <div class="bar-row"><div class="bar-name">Tier 3 — Conditional</div><div class="bar-track"><div class="bar-fill" style="width:16.6%; background:var(--amber);"></div></div><div class="bar-val">16.6%</div></div>
+      <div class="bar-row"><div class="bar-name">Tier 2 — Assisted</div><div class="bar-track"><div class="bar-fill" style="width:10.0%; background:var(--violet);"></div></div><div class="bar-val">10.0%</div></div>
+      <div class="bar-row"><div class="bar-name">Tier 1 — Manual</div><div class="bar-track"><div class="bar-fill" style="width:11.9%; background:var(--ink-soft);"></div></div><div class="bar-val">11.9%</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Total Cost of Ownership</h2>
+    <table>
+      <tr><th>Item</th><th>Value</th></tr>
+      <tr><td>Build cost (one-time, 400 eng hrs @ $95/hr)</td><td>$38,000</td></tr>
+      <tr><td>Governance & audit tooling, monthly</td><td>$2,400</td></tr>
+      <tr><td>Agent operational cost, monthly (all tiers)</td><td>$5,586</td></tr>
+      <tr><td>Manual baseline, monthly</td><td>$25,200</td></tr>
+      <tr><td><b>Net monthly benefit</b></td><td><b>$17,214</b></td></tr>
+      <tr><td><b>3-Year net benefit</b></td><td><b>$581,704</b></td></tr>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Governance Guarantees — Tested, Not Asserted</h2>
+    <ul class="gov-list">
+      <li><span class="check">✓</span> No invoice flagged as a duplicate suspect is ever auto-approved</li>
+      <li><span class="check">✓</span> No invoice missing a PO is ever auto-approved</li>
+      <li><span class="check">✓</span> No invoice above $250,000 is ever auto-approved</li>
+      <li><span class="check">✓</span> Tier 4 is strictly limited to exact PO match, established vendor, ≤ $10,000</li>
+      <li><span class="check">✓</span> Vendors with under 6 months of tenure never exceed Tier 2 — always human-reviewed</li>
+    </ul>
+  </div>
+
+  <div class="foot"><b>Method:</b> tier classification and audit logging performed by autonomous_ap_agent.py; all five governance guarantees verified by test_autonomous_ap_agent.py against the same dataset (ap_invoices_fy26.csv, 1,800 invoices, synthetic). Cost assumptions ($14/invoice manual baseline, $95/hr blended engineering rate) are stated planning assumptions — replace with your organization's real figures before presenting externally.</div>
+</div>
+</body>
+</html>

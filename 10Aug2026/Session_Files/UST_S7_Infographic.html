@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File S7 — Concept + Demo: Engineering the Client Narrative</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bitter:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1E8D5;
+    --paper2:#E7D8B8;
+    --paper3:#DCCBA3;
+    --ink:#241D14;
+    --ink-soft:#5A4C3A;
+    --retail:#A8631B;
+    --retail-soft:#F0D9AF;
+    --health:#2F6F62;
+    --health-soft:#CFE3DC;
+    --quiz:#A23B2E;
+    --quiz-soft:#F1D3CC;
+    --break:#2B4570;
+    --break-soft:#D6E0EE;
+    --fw:#6B4FA0;
+    --fw-soft:#E6DEF2;
+    --s2:#C8551F;
+    --s2-soft:#F3D9C4;
+    --s3:#1C33C4;
+    --s3-soft:#DCE1FA;
+    --devops:#455568;
+    --devops-soft:#DDE3E9;
+    --finance:#7A6A1C;
+    --finance-soft:#EDE7C9;
+    --live:#1E7B4D;
+    --live-soft:#D2E8DA;
+    --dead-cat:#5A4C3A;
+    --dead-cat-soft:#E4DDC9;
+    --vestigial:#B5791E;
+    --vestigial-soft:#F1DFB8;
+    --zombie:#A23B2E;
+    --zombie-soft:#F1D3CC;
+    --line: rgba(36,29,20,0.22);
+    --gold:#C79A2E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05), transparent 45%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 80px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1.5px;background:var(--ink-soft);display:inline-block;}
+  h1,h2,h3{font-family:'Bitter', serif; margin:0; color:var(--ink);}
+
+  /* ---------- STAMP ---------- */
+  .stamp{
+    display:inline-block;
+    font-family:'Special Elite', monospace;
+    text-transform:uppercase;
+    border:3px solid currentColor;
+    border-radius:6px;
+    padding:6px 16px;
+    letter-spacing:.08em;
+    transform:rotate(-4deg);
+    position:relative;
+  }
+  .stamp::after{
+    content:"";
+    position:absolute; inset:3px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    opacity:.55;
+  }
+  .stamp.quiz{color:var(--quiz);}
+  .stamp.break{color:var(--break);}
+
+  /* ---------- TOP BANNER (session identity strip) ---------- */
+  .s2-banner{
+    background:var(--s2); color:#fff; padding:14px 28px;
+    font-family:'Bitter',serif; font-weight:700; font-size:15px; letter-spacing:.03em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s2-banner .dot{width:8px; height:8px; border-radius:50%; background:#fff; opacity:.85;}
+  .s3-banner{background:var(--s3);}
+  .s7-banner{background:var(--gold); color:var(--ink);}
+  .s7-banner .dot{background:var(--ink); opacity:.6;}
+
+  /* ---------- PRACTITIONER BYLINE ---------- */
+  .practitioner{
+    margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.3s;
+  }
+  .practitioner .p-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--s3); font-weight:700; margin-bottom:6px;
+  }
+  .practitioner .p-desc{font-style:italic; color:var(--ink-soft); font-size:14.5px;}
+  .voice-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase;
+    letter-spacing:.05em; padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .voice-tag.external{background:var(--s3-soft); color:var(--s3);}
+  .voice-tag.internal{background:var(--retail-soft); color:var(--retail);}
+
+  /* ---------- GHERKIN / POSTMORTEM / 5 WHYS ---------- */
+  .gherkin{
+    background:#10151C; color:#D7E1EA; border-radius:10px; padding:16px 20px;
+    font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.9; margin:14px 0;
+    overflow-x:auto; white-space:pre-wrap;
+  }
+  .gherkin .kw{color:#5FD9C4; font-weight:700;}
+  .gherkin .cm{color:#7A8A99; font-style:italic;}
+  .pm-timeline{list-style:none; margin:14px 0; padding:0;}
+  .pm-timeline li{display:grid; grid-template-columns:98px 1fr; gap:14px; padding:9px 0; border-top:1px dashed var(--line); font-size:14px; line-height:1.5;}
+  .pm-timeline li:first-child{border-top:none;}
+  .pm-timeline .day{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--s3); font-weight:700; padding-top:1px;}
+  .whys-chain{list-style:none; margin:14px 0; padding:0;}
+  .whys-chain li{padding:11px 0; border-top:1px dashed var(--line); font-size:14.5px; line-height:1.55;}
+  .whys-chain li:first-child{border-top:none;}
+  .whys-chain .why-q{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700;
+    color:var(--s3); text-transform:uppercase; letter-spacing:.06em;
+    display:inline-block; margin-bottom:5px; background:var(--s3-soft); padding:3px 9px; border-radius:20px;
+  }
+  .fw-subhead{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-soft); margin:26px 0 4px; padding-top:20px; border-top:1px solid var(--line);
+  }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:60px 28px;
+    border-bottom:6px double var(--ink);
+    overflow:hidden;
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(36,29,20,0.035) 0px, rgba(36,29,20,0.035) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+  .cover-inner{max-width:980px;margin:0 auto; width:100%; position:relative; z-index:1;}
+  .folder-tabs{display:flex; gap:8px; margin-bottom:28px;}
+  .folder-tabs span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.1em;
+    background:var(--paper3);
+    border:1px solid var(--line);
+    border-bottom:none;
+    padding:5px 12px 8px;
+    border-radius:6px 6px 0 0;
+    color:var(--ink-soft);
+    opacity:0; transform:translateY(10px);
+    animation:tabIn .5s ease forwards;
+  }
+  .folder-tabs span:nth-child(1){animation-delay:.05s;}
+  .folder-tabs span:nth-child(2){animation-delay:.15s;}
+  .folder-tabs span:nth-child(3){animation-delay:.25s;}
+  .folder-tabs span:nth-child(4){animation-delay:.35s;}
+  .folder-tabs span:nth-child(5){animation-delay:.42s;}
+  @keyframes tabIn{to{opacity:1; transform:translateY(0);}}
+
+  .case-no{
+    font-family:'Special Elite', monospace;
+    color:var(--quiz);
+    font-size:15px;
+    letter-spacing:.05em;
+    margin-bottom:14px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards; animation-delay:.4s;
+  }
+  .cover h1{
+    font-size:clamp(40px, 7vw, 84px);
+    line-height:0.98;
+    font-weight:900;
+    margin:6px 0 18px;
+    opacity:0;
+    transform:scale(.9) rotate(-1deg);
+    animation:stampIn .7s cubic-bezier(.2,1.6,.4,1) forwards;
+    animation-delay:.55s;
+  }
+  .cover h1 em{font-style:normal; color:var(--retail);}
+  @keyframes stampIn{
+    0%{opacity:0; transform:scale(1.35) rotate(-3deg);}
+    60%{opacity:1;}
+    100%{opacity:1; transform:scale(1) rotate(-1deg);}
+  }
+  .cover .sub{
+    font-size:clamp(16px,2.1vw,20px);
+    max-width:640px; color:var(--ink-soft); line-height:1.5;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:.95s;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-top:34px;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.15s;
+  }
+  .meta-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); background:rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:20px; color:var(--ink);
+  }
+  .meta-chip b{color:var(--ink);}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  .seal{
+    position:absolute; top:56px; right:40px;
+    width:118px; height:118px;
+    border:3px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; font-family:'Special Elite',monospace;
+    font-size:11px; color:var(--gold); letter-spacing:.05em;
+    transform:rotate(12deg) scale(0);
+    animation:sealIn .6s cubic-bezier(.3,1.7,.4,1) forwards; animation-delay:1.3s;
+  }
+  .seal::before{content:""; position:absolute; inset:8px; border:1px dashed var(--gold); border-radius:50%;}
+  @keyframes sealIn{to{transform:rotate(12deg) scale(1);}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block{padding:56px 0 8px; border-bottom:1px solid var(--line);}
+  .tag-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .idx{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    color:#fff; background:var(--ink); border-radius:5px; padding:4px 9px;
+  }
+  h2.title{font-size:clamp(26px,3.6vw,38px); font-weight:700; margin-top:6px;}
+  .lead{color:var(--ink-soft); font-size:16.5px; max-width:680px; margin-top:8px; line-height:1.55;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{display:flex; flex-direction:column; gap:0; margin-top:26px;}
+  .t-row{
+    display:grid; grid-template-columns:96px 1px 1fr auto;
+    align-items:center; gap:18px; padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .t-row:first-child{border-top:none;}
+  .t-time{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-soft);}
+  .t-bar{width:1px; height:34px; background:var(--line);}
+  .t-label{font-weight:600; font-size:16px;}
+  .t-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    padding:5px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
+  }
+  .tag-mod{background:var(--paper3); color:var(--ink-soft);}
+  .tag-retail{background:var(--retail-soft); color:var(--retail);}
+  .tag-health{background:var(--health-soft); color:var(--health);}
+  .tag-quiz{background:var(--quiz-soft); color:var(--quiz);}
+  .tag-break{background:var(--break-soft); color:var(--break);}
+  .tag-fw{background:var(--fw-soft); color:var(--fw);}
+  .tag-s2{background:var(--s2-soft); color:var(--s2);}
+  .tag-s3{background:var(--s3-soft); color:var(--s3);}
+  .tag-devops{background:var(--devops-soft); color:var(--devops);}
+  .tag-finance{background:var(--finance-soft); color:var(--finance);}
+  .tag-gold{background:var(--gold); color:var(--ink);}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:rgba(255,255,255,.4);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 28px;
+    margin-top:22px;
+    position:relative;
+  }
+  .card .pin{
+    position:absolute; top:-10px; left:26px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--gold); box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .points{margin:14px 0 0; padding:0; list-style:none;}
+  .points li{
+    padding:8px 0 8px 22px; position:relative; line-height:1.5; font-size:15.5px;
+  }
+  .points li::before{content:"—"; position:absolute; left:0; color:var(--ink-soft);}
+
+  /* ---------- ICEBREAKER / QUIZ CARDS ---------- */
+  .interject{
+    margin-top:26px; border-radius:12px; padding:26px 28px 24px;
+    border:2px dashed currentColor;
+  }
+  .interject.break{color:var(--break); background:var(--break-soft);}
+  .interject.quiz{color:var(--quiz); background:var(--quiz-soft);}
+  .interject-head{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .interject h3{color:var(--ink); font-size:20px;}
+  .interject p, .interject .opts{color:var(--ink); font-size:15.5px;}
+  .timer{
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    background:rgba(255,255,255,.6); padding:4px 10px; border-radius:20px; color:var(--ink);
+  }
+  .opts{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:8px;}
+  .opts li{
+    background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.12);
+    border-radius:8px; padding:9px 14px; font-size:15px;
+    transition:background .25s ease, border-color .25s ease, opacity .25s ease;
+  }
+  .opts li b{font-family:'IBM Plex Mono',monospace; margin-right:8px;}
+  .reveal-btn{
+    margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+    background:var(--ink); color:#fff; border:none; border-radius:20px;
+    padding:9px 18px; transition:transform .15s ease;
+  }
+  .reveal-btn:hover{transform:translateY(-1px);}
+  /* correct option + explanation stay neutral until the quiz container is marked revealed */
+  .interject.revealed .opts li.correct{
+    background:#DCF3E3; border-color:#2F7D4F; color:#1C4D31; font-weight:600;
+  }
+  .interject.revealed .opts li.correct::after{
+    content:" ✓ Correct"; font-weight:800; color:#2F7D4F; margin-left:6px;
+  }
+  .interject.revealed .opts li:not(.correct){opacity:.5;}
+  .answer{
+    margin-top:14px; padding:12px 16px; border-radius:8px;
+    background:rgba(255,255,255,.7); border-left:4px solid var(--ink);
+    font-size:15px; display:none;
+  }
+  .interject.revealed .answer{display:block; animation:fadeUp .35s ease;}
+  .answer b{color:var(--quiz);}
+
+  /* ---------- DEMO / CASE FOLDER ---------- */
+  .folder{
+    margin-top:24px; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+  }
+  .folder-top{padding:20px 26px; display:flex; align-items:center; gap:14px; color:#fff;}
+  .folder.retail .folder-top{background:var(--retail);}
+  .folder.health .folder-top{background:var(--health);}
+  .folder.s3 .folder-top{background:var(--s3);}
+  .folder.devops .folder-top{background:var(--devops);}
+  .folder.finance .folder-top{background:var(--finance);}
+  .folder.gold .folder-top{background:var(--gold);}
+  .folder-top .case-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em;
+    background:rgba(255,255,255,.22); padding:4px 10px; border-radius:20px;
+  }
+  .folder-body{background:rgba(255,255,255,.45); padding:24px 26px;}
+  .kv{display:grid; grid-template-columns:140px 1fr; gap:8px 16px; font-size:15px; margin-bottom:16px;}
+  .kv .k{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; padding-top:2px;}
+  .steps{counter-reset:step; list-style:none; margin:14px 0 0; padding:0;}
+  .steps li{
+    counter-increment:step; position:relative; padding:9px 0 9px 34px; font-size:15px; line-height:1.5;
+    border-top:1px dashed var(--line);
+  }
+  .steps li:first-child{border-top:none;}
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:8px;
+    width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; display:flex; align-items:center; justify-content:center;
+  }
+  .verdict{
+    margin-top:16px; padding:14px 18px; border-radius:8px; font-size:15px;
+    background:rgba(0,0,0,.05); border-left:4px solid var(--ink);
+  }
+  .verdict b{font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-size:12px; letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);}
+
+  /* ---------- STEP DETAIL (prompts inside demo steps) ---------- */
+  .steps li{padding-bottom:16px;}
+  .step-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15.5px; margin-bottom:8px;}
+  .step-time{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); background:rgba(0,0,0,.06); padding:2px 9px; border-radius:10px; white-space:nowrap;}
+  .prompt-chip{
+    background:rgba(255,255,255,.75); border-radius:7px; padding:10px 14px;
+    font-size:14px; margin:0 0 8px; line-height:1.5;
+    border-left:3px solid currentColor;
+  }
+  .folder.retail .prompt-chip{color:var(--retail);}
+  .folder.health .prompt-chip{color:var(--health);}
+  .folder.s3 .prompt-chip{color:var(--s3);}
+  .folder.devops .prompt-chip{color:var(--devops);}
+  .folder.finance .prompt-chip{color:var(--finance);}
+  .folder.gold .prompt-chip{color:var(--dead-cat);}
+  .prompt-label{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:10.5px; letter-spacing:.07em; margin-right:8px;}
+  .prompt-chip .prompt-text{color:var(--ink); font-style:italic;}
+  .expect{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:2px;}
+  .expect b{color:var(--ink); font-weight:700;}
+  .fw-used{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.04em;
+    background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.12);
+    padding:6px 12px; border-radius:20px; color:var(--ink);
+  }
+  .fw-used b{color:var(--fw); text-transform:uppercase;}
+  .handson-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:rgba(255,255,255,.9); color:var(--s2); border:1px solid var(--s2);
+    padding:3px 9px; border-radius:20px;
+  }
+  .feature-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:var(--s3); color:#fff;
+    padding:4px 11px; border-radius:20px;
+  }
+  .class-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700;
+    padding:3px 10px; border-radius:20px;
+  }
+  .class-tag.live{background:var(--live-soft); color:var(--live);}
+  .class-tag.dead{background:var(--dead-cat-soft); color:var(--dead-cat);}
+  .class-tag.vestigial{background:var(--vestigial-soft); color:var(--vestigial);}
+  .class-tag.zombie{background:var(--zombie-soft); color:var(--zombie);}
+  .class-table{width:100%; border-collapse:collapse; margin-top:14px; font-size:13.5px;}
+  .class-table td{padding:9px 10px; border-top:1px solid var(--line); vertical-align:top;}
+  .class-table tr:first-child td{border-top:none;}
+  .class-table td.fn{font-family:'IBM Plex Mono',monospace; font-size:12px;}
+
+  /* ---------- FIELD GUIDE ---------- */
+  .fw-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px;}
+  .fw-card{
+    background:rgba(255,255,255,.5); border:1px solid var(--line); border-radius:12px;
+    padding:22px 24px; position:relative;
+  }
+  .fw-cat{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--fw);
+    background:var(--fw-soft); padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .fw-name{font-family:'Bitter',serif; font-weight:700; font-size:19px; margin-bottom:6px;}
+  .fw-def{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:12px;}
+  .fw-example{
+    font-size:13px; margin-bottom:12px; padding:9px 12px;
+    background:rgba(0,0,0,.045); border-radius:7px; line-height:1.5;
+  }
+  .fw-example b{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);
+  }
+  .fw-card .prompt-chip{color:var(--fw);}
+  @media (max-width:720px){.fw-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CLOSING ---------- */
+  .closing{padding:70px 0 40px; text-align:center;}
+  .closing .stamp{font-size:26px; padding:14px 30px;}
+  .closing p{max-width:600px; margin:22px auto 0; color:var(--ink-soft); font-size:16px; line-height:1.6;}
+
+  @media (max-width:640px){
+    .t-row{grid-template-columns:70px 1px 1fr; grid-template-areas:"time bar label" ". . tag"; }
+    .t-tag{grid-area:tag; justify-self:start; margin-top:6px;}
+    .seal{display:none;}
+    .kv{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="s2-banner s7-banner"><span class="dot"></span>S7 · CONCEPT + DEMO <span class="dot"></span> Engineering the Client Narrative</div>
+
+<header class="cover">
+  <div class="seal">CLAUDE<br>×<br>UST</div>
+  <div class="cover-inner">
+    <div class="folder-tabs">
+      <span>NARRATIVE</span><span>AUTONOMY</span><span>GOVERNANCE</span><span>COST</span><span>FINANCE DEMO</span>
+    </div>
+    <div class="case-no">CASE FILE NO. S7 — OPENED 0:00</div>
+    <h1>Engineering the<br><em>Client Narrative</em></h1>
+    <p class="sub">A production-shaped Finance use case, end to end on Claude: a tiered-autonomy Accounts Payable agent with a real dataset, a working governance-tested build, and the CIO-ready business case it produces — plus the language and objection-handling to actually pitch it in the room.</p>
+    <div class="meta-row">
+      <div class="meta-chip"><b>Duration</b> · 120 min</div>
+      <div class="meta-chip"><b>Domain</b> · Finance — Accounts Payable</div>
+      <div class="meta-chip"><b>Tools</b> · Claude Desktop + Claude Code CLI</div>
+      <div class="meta-chip"><b>Audience</b> · CIO / economic buyer conversation</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- AGENDA -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">00</span><span class="eyebrow">Evidence log</span></div>
+    <h2 class="title">The 120-Minute Case</h2>
+    <p class="lead">Three objections a CIO will actually raise — autonomy, governance, cost — each with a real framework, then one demo that answers all three with evidence instead of assurance.</p>
+    <div class="timeline">
+      <div class="t-row"><div class="t-time">0:00</div><div class="t-bar"></div><div class="t-label">Welcome & Session Frame</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:05</div><div class="t-bar"></div><div class="t-label">Icebreaker — Pitch It in One Breath</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:10</div><div class="t-bar"></div><div class="t-label">Engineering the Client Narrative — SCQA for a CIO Audience</div><div class="t-tag tag-gold">15 min</div></div>
+      <div class="t-row"><div class="t-time">0:25</div><div class="t-bar"></div><div class="t-label">The Autonomy Objection — Levels of Autonomy</div><div class="t-tag tag-gold">15 min</div></div>
+      <div class="t-row"><div class="t-time">0:40</div><div class="t-bar"></div><div class="t-label">The Governance Objection — NIST AI RMF</div><div class="t-tag tag-gold">15 min</div></div>
+      <div class="t-row"><div class="t-time">0:55</div><div class="t-bar"></div><div class="t-label">The Cost Objection — TCO & Risk-Adjusted ROI</div><div class="t-tag tag-gold">15 min</div></div>
+      <div class="t-row"><div class="t-time">1:10</div><div class="t-bar"></div><div class="t-label">Break</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">1:15</div><div class="t-bar"></div><div class="t-label">DEMO — Autonomous AP, End to End (Claude Desktop + CLI)</div><div class="t-tag tag-finance">35 min</div></div>
+      <div class="t-row"><div class="t-time">1:50</div><div class="t-bar"></div><div class="t-label">Objection-Handling Script Walkthrough</div><div class="t-tag tag-gold">5 min</div></div>
+      <div class="t-row"><div class="t-time">1:55</div><div class="t-bar"></div><div class="t-label">Synthesis & Close</div><div class="t-tag tag-mod">5 min</div></div>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER -->
+  <section class="block">
+    <div class="interject break">
+      <div class="interject-head"><span class="stamp break">Icebreaker</span><span class="timer">⏱ 5 min · pairs</span></div>
+      <h3>Pitch It in One Breath</h3>
+      <p>In pairs, 30 seconds each: pitch "an AI agent that approves invoices" to a skeptical CIO, using only words you'd actually use in that room. No "LLM," no "agentic," no "prompt." Your partner calls out every word that wouldn't survive contact with a real CIO. You'll rebuild this pitch properly by the end of the session.</p>
+    </div>
+  </section>
+
+  <!-- CONCEPT 1: CLIENT NARRATIVE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--gold); color:var(--ink);">01</span><span class="eyebrow">Concept · 15 min</span></div>
+    <h2 class="title">Engineering the Client Narrative</h2>
+    <p class="lead">CIOs don't buy architecture. They buy a resolved tension. SCQA — Situation, Complication, Question, Answer — is the structure; the discipline is translating every technical fact into the vocabulary a CIO already thinks in: TCO, risk-adjusted return, board reporting, integration exposure.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Situation</div><div>Accounts Payable processes ~1,800 invoices/month, fully manual, at roughly $25,200/month in processing cost.</div>
+        <div class="k">Complication</div><div>Invoice volume grows with the business; headcount doesn't scale the same way, and manual review fatigue is where duplicate-payment and fraud exposure actually lives — the risk already exists today, it's just unmeasured.</div>
+        <div class="k">Question</div><div>How do we cut processing cost materially without increasing the very risk manual review is supposed to control?</div>
+        <div class="k">Answer</div><div>Tiered autonomy: full automation only where risk is provably low and testable, hard governance and human review everywhere else — not a binary "turn AI loose on payments" decision.</div>
+      </div>
+      <p class="lead" style="margin-top:12px;"><b>Translation discipline:</b> "agentic workflow" becomes "automated only where three specific conditions are met." "Guardrails" becomes "hard-coded thresholds a code reviewer, not a runtime setting, controls." Say the CIO-native version first; the technical version is available if asked.</p>
+    </div>
+  </section>
+
+  <!-- QUIZ 1 -->
+  <section class="block">
+    <div class="interject quiz" id="q1">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 1</span></div>
+      <h3>In SCQA, what comes immediately before the Answer?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Situation</li>
+        <li><b>B.</b> Complication</li>
+        <li class="correct"><b>C.</b> Question</li>
+        <li><b>D.</b> Objection</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q1')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> The Question is what earns the right to the Answer — skip it, and a recommendation just sounds like an opinion.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 2: AUTONOMY -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--gold); color:var(--ink);">02</span><span class="eyebrow">Concept · 15 min</span></div>
+    <h2 class="title">The Autonomy Objection — Levels of Autonomy</h2>
+    <p class="lead">Real framework: Sheridan & Verplank's Levels of Automation, the same lineage behind the SAE self-driving levels most CIOs already recognize as an analogy. Autonomy is a dial, not a switch — and the dial can be set differently per risk category.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Tier 4</div><div><b>Full autonomy.</b> Exact PO match, established vendor (6mo+), ≤ $10,000. No human touch.</div>
+        <div class="k">Tier 3</div><div><b>Conditional autonomy.</b> PO matched within 5% variance, established vendor, ≤ $50,000. Auto-approved, logged, 10% sampled for human audit.</div>
+        <div class="k">Tier 2</div><div><b>Assisted.</b> New vendor, larger mismatch, or $50k–$250k. Agent recommends; a human approves every one.</div>
+        <div class="k">Tier 1</div><div><b>Manual only.</b> No PO, duplicate-suspect, or over $250,000. Full manual handling, no exceptions.</div>
+      </div>
+      <p class="lead" style="margin-top:12px;"><b>The objection:</b> "We're not comfortable letting AI approve payments on its own." <b>The reframe:</b> nobody's proposing Tier 4 for everything — it's scoped to the lowest-risk 61.6% of volume, with the boundary enforced in code, not policy alone.</p>
+    </div>
+  </section>
+
+  <!-- QUIZ 2 -->
+  <section class="block">
+    <div class="interject quiz" id="q2">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 2</span></div>
+      <h3>Which tiers require a human to approve every single transaction?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Tier 4 only</li>
+        <li><b>B.</b> Tier 3 only</li>
+        <li class="correct"><b>C.</b> Tier 2 and Tier 1</li>
+        <li><b>D.</b> None — all tiers are autonomous</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q2')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> Tier 2 gets an agent recommendation but always needs a human decision; Tier 1 doesn't even get a recommendation — full manual, by design.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 3: GOVERNANCE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--gold); color:var(--ink);">03</span><span class="eyebrow">Concept · 15 min</span></div>
+    <h2 class="title">The Governance Objection — NIST AI RMF</h2>
+    <p class="lead">Real framework: the U.S. NIST AI Risk Management Framework — four functions, Govern / Map / Measure / Manage. Each one shows up as a concrete design decision in the AP agent, not an abstract compliance gesture.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Govern</div><div>Tier thresholds are hard-coded and versioned in the agent's source — changeable only through code review, never a runtime parameter that can silently drift.</div>
+        <div class="k">Map</div><div>Every autonomous decision records which specific rule fired — never a bare "approved" with no reasoning attached.</div>
+        <div class="k">Measure</div><div>Tier distribution and dollar exposure are computed and printed on every single run — not buried in a log nobody opens.</div>
+        <div class="k">Manage</div><div>Every Tier 1/2 invoice routes to a human queue, full stop; every Tier 3 decision has a live sampling rate for human audit.</div>
+      </div>
+      <p class="lead" style="margin-top:12px;"><b>The objection:</b> "How do we know this stays in compliance?" <b>The reframe:</b> don't assert it — five governance guarantees are written as automated tests and run against the real data, live, in the demo.</p>
+    </div>
+  </section>
+
+  <!-- QUIZ 3 -->
+  <section class="block">
+    <div class="interject quiz" id="q3">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 3</span></div>
+      <h3>Which NIST AI RMF function is served by printing tier distribution and dollar exposure on every run?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Govern</li>
+        <li><b>B.</b> Map</li>
+        <li class="correct"><b>C.</b> Measure</li>
+        <li><b>D.</b> Manage</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q3')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> Measure is about visible, ongoing tracking — exactly what a printed summary on every run provides.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 4: COST -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--gold); color:var(--ink);">04</span><span class="eyebrow">Concept · 15 min</span></div>
+    <h2 class="title">The Cost Objection — TCO & Risk-Adjusted ROI</h2>
+    <p class="lead">Total Cost of Ownership, not just a subscription line: build cost, governance overhead, and operational cost, set against a real manual baseline.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Build</div><div>$38,000 one-time (400 engineering hours at a $95/hr blended rate)</div>
+        <div class="k">Governance</div><div>$2,400/month (20 governance hours + audit tooling)</div>
+        <div class="k">Operational</div><div>$5,586/month, all tiers combined, vs. $25,200/month manual baseline</div>
+        <div class="k">Net benefit</div><div>$17,214/month net · <b>2.2-month payback</b> · $168,568 Year-1 net · $581,704 3-Year net</div>
+      </div>
+      <p class="lead" style="margin-top:12px;"><b>The objection:</b> "This sounds too good to be true." <b>The reframe:</b> state the catch honestly — 11.9% of volume (Tier 1) sees zero automation benefit and stays fully manual, by design. The ROI is credible precisely because it isn't claiming to automate everything.</p>
+    </div>
+  </section>
+
+  <!-- QUIZ 4 -->
+  <section class="block">
+    <div class="interject quiz" id="q4">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 4</span></div>
+      <h3>What's the payback period on the $38,000 build cost?</h3>
+      <ul class="opts">
+        <li class="correct"><b>A.</b> 2.2 months</li>
+        <li><b>B.</b> 12 months</li>
+        <li><b>C.</b> 24 months</li>
+        <li><b>D.</b> It never pays back</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q4')">Reveal answer</button>
+      <div class="answer"><b>Answer: A.</b> $38,000 build ÷ $17,214 net monthly benefit ≈ 2.2 months.</div>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--finance);">DEMO</span><span class="eyebrow">Autonomous AP · Claude Desktop + CLI · 35 min</span></div>
+    <h2 class="title">End to End, on Claude</h2>
+    <p class="lead">Same numbers as the concept blocks above — because they come from actually running this, live, not from slides prepared in advance.</p>
+    <div class="folder finance">
+      <div class="folder-top"><h3 style="color:#fff;">Repo: session7-ap-demo</h3><span class="case-tag">Real dataset · 1,800 invoices · governance-tested</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Claude Desktop — reproduce the numbers from raw data<span class="step-time">10 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Here's ap_invoices_fy26.csv, 1,800 invoices. Using code execution, classify each into Tier 1-4 using these rules: [paste the 4 tier rules], then compute the tier distribution and the monthly cost using $14/invoice manual baseline vs. tiered costs of $0.50/$2/$8/$14."</span></div>
+            <div class="expect"><b>Expect:</b> Claude should independently reproduce the same distribution — 61.6% Tier 4, 16.6% Tier 3, 10.0% Tier 2, 11.9% Tier 1 — and the same $19,614/month gross savings, from raw data, live.</div>
+          </li>
+          <li>
+            <div class="step-title">Claude Code CLI — run the real agent<span class="step-time">10 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">RUN</span><span class="prompt-text">python3 autonomous_ap_agent.py ap_invoices_fy26.csv</span></div>
+            <div class="expect"><b>Verified output:</b> full MEASURE summary by tier, 1,406 governance audit log entries written, ~10% of Tier 3 sampled for human review, and an explicit statement that every Tier 1/2 invoice routes to a human queue.</div>
+          </li>
+          <li>
+            <div class="step-title">Claude Code CLI — prove the governance claims<span class="step-time">8 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">RUN</span><span class="prompt-text">python3 test_autonomous_ap_agent.py</span></div>
+            <div class="expect"><b>Verified:</b> 5/5 governance guarantees pass — no duplicate-suspect, no-PO, or over-$250k invoice is ever auto-approved; Tier 4 strictly matches its rule; new vendors never exceed Tier 2. This is the evidence behind the governance reframe from Concept 3.</div>
+          </li>
+          <li>
+            <div class="step-title">Claude Desktop — build the CIO artifact<span class="step-time">7 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Create a single self-contained HTML dashboard called cio_business_case.html: the tier distribution, the TCO table, and the 5 governance guarantees, styled for a CIO audience — no jargon, lead with the numbers."</span></div>
+            <div class="expect"><b>Expect:</b> a real, openable dashboard — the artifact you'd actually walk into the room with. A reference version is included in the repo to compare against.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Verdict</b> Every number in this session's concept blocks was reproduced live from raw data and real governance tests — not asserted once and reused. That repeatability is itself part of the pitch.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OBJECTION HANDLING -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--gold); color:var(--ink);">05</span><span class="eyebrow">Script · 5 min</span></div>
+    <h2 class="title">Objection-Handling Script — Acknowledge → Reframe → Evidence</h2>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Autonomy</div><div><b>Acknowledge:</b> "That's the right instinct to have with payments." <b>Reframe:</b> "This isn't all-or-nothing — it's scoped to the lowest-risk 61.6% of volume." <b>Evidence:</b> the 4-tier rule table and the hard dollar thresholds enforced in code.</div>
+        <div class="k">Governance</div><div><b>Acknowledge:</b> "Compliance has to sign off on this, not just IT." <b>Reframe:</b> "We don't ask you to trust it — we show you the test suite." <b>Evidence:</b> 5/5 governance guarantees, run live, against real data.</div>
+        <div class="k">Cost</div><div><b>Acknowledge:</b> "A number this good deserves scrutiny." <b>Reframe:</b> "The catch is stated up front: 11.9% of volume gets zero automation, on purpose." <b>Evidence:</b> the TCO table and the 2.2-month payback, computed, not projected.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 5 -->
+  <section class="block">
+    <div class="interject quiz" id="q5">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 5</span></div>
+      <h3>In Acknowledge → Reframe → Evidence, what comes last, and why?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Acknowledge — always end by validating the concern</li>
+        <li><b>B.</b> Reframe — always end by repositioning the question</li>
+        <li class="correct"><b>C.</b> Evidence — because a reframed claim without proof is still just an assertion</li>
+        <li><b>D.</b> None — order doesn't matter</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q5')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> Acknowledge earns the room's trust, Reframe repositions the concern, but only Evidence actually closes it — which is why every objection above ends with something tested or computed, not asserted.</div>
+    </div>
+  </section>
+
+  <!-- FIELD GUIDE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--fw);">FG</span><span class="eyebrow">Field guide · reference, not counted in the 120 min</span></div>
+    <h2 class="title">Frameworks Behind Today's Narrative</h2>
+    <div class="fw-grid">
+      <div class="fw-card">
+        <span class="fw-cat">Narrative</span>
+        <div class="fw-name">SCQA / Minto Pyramid Principle</div>
+        <div class="fw-def">Situation, Complication, Question, Answer — the structure that earns a recommendation instead of just stating one.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Structure this finding as SCQA for a CIO audience — translate every technical term into TCO, risk, or compliance language."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Autonomy</span>
+        <div class="fw-name">Levels of Autonomy</div>
+        <div class="fw-def">Sheridan & Verplank's autonomy taxonomy — the same lineage as SAE's self-driving levels. Autonomy is a dial per risk category, not a single switch.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Define 4 autonomy tiers for this workflow, with a hard, testable rule for exactly which cases qualify for full autonomy."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Governance</span>
+        <div class="fw-name">NIST AI Risk Management Framework</div>
+        <div class="fw-def">Govern, Map, Measure, Manage — four functions that turn "trust us" into four separate, checkable design decisions.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Map this agent's design decisions onto NIST AI RMF's four functions, and write a test for each governance claim we're making."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Cost</span>
+        <div class="fw-name">TCO & Risk-Adjusted ROI</div>
+        <div class="fw-def">Build cost, governance overhead, and operational cost against a real baseline — a credible number states its own limits, not just its upside.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Compute TCO and payback for this build, and tell me honestly which share of volume gets zero benefit, and why."</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <span class="stamp" style="color:var(--ink);">Case Closed</span>
+    <p>A pitch a CIO believes isn't the one with the biggest number — it's the one that names its own limits and proves the rest. Autonomy is a dial, governance is a test suite, and cost is a number with a stated catch. That's the whole narrative.</p>
+  </section>
+
+</div>
+
+<script>
+function toggleAnswer(id){
+  document.getElementById(id).classList.toggle('revealed');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File S8 — Hands-On + Value Articulation: The Panel Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bitter:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1E8D5;
+    --paper2:#E7D8B8;
+    --paper3:#DCCBA3;
+    --ink:#241D14;
+    --ink-soft:#5A4C3A;
+    --retail:#A8631B;
+    --retail-soft:#F0D9AF;
+    --health:#2F6F62;
+    --health-soft:#CFE3DC;
+    --quiz:#A23B2E;
+    --quiz-soft:#F1D3CC;
+    --break:#2B4570;
+    --break-soft:#D6E0EE;
+    --fw:#6B4FA0;
+    --fw-soft:#E6DEF2;
+    --s2:#C8551F;
+    --s2-soft:#F3D9C4;
+    --s3:#1C33C4;
+    --s3-soft:#DCE1FA;
+    --devops:#455568;
+    --devops-soft:#DDE3E9;
+    --finance:#7A6A1C;
+    --finance-soft:#EDE7C9;
+    --live:#1E7B4D;
+    --live-soft:#D2E8DA;
+    --dead-cat:#5A4C3A;
+    --dead-cat-soft:#E4DDC9;
+    --vestigial:#B5791E;
+    --vestigial-soft:#F1DFB8;
+    --zombie:#A23B2E;
+    --zombie-soft:#F1D3CC;
+    --line: rgba(36,29,20,0.22);
+    --gold:#C79A2E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05), transparent 45%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 80px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1.5px;background:var(--ink-soft);display:inline-block;}
+  h1,h2,h3{font-family:'Bitter', serif; margin:0; color:var(--ink);}
+
+  /* ---------- STAMP ---------- */
+  .stamp{
+    display:inline-block;
+    font-family:'Special Elite', monospace;
+    text-transform:uppercase;
+    border:3px solid currentColor;
+    border-radius:6px;
+    padding:6px 16px;
+    letter-spacing:.08em;
+    transform:rotate(-4deg);
+    position:relative;
+  }
+  .stamp::after{
+    content:"";
+    position:absolute; inset:3px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    opacity:.55;
+  }
+  .stamp.quiz{color:var(--quiz);}
+  .stamp.break{color:var(--break);}
+
+  /* ---------- TOP BANNER (session identity strip) ---------- */
+  .s2-banner{
+    background:var(--s2); color:#fff; padding:14px 28px;
+    font-family:'Bitter',serif; font-weight:700; font-size:15px; letter-spacing:.03em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s2-banner .dot{width:8px; height:8px; border-radius:50%; background:#fff; opacity:.85;}
+  .s3-banner{background:var(--s3);}
+  .s7-banner{background:var(--gold); color:var(--ink);}
+  .s7-banner .dot{background:var(--ink); opacity:.6;}
+
+  /* ---------- PRACTITIONER BYLINE ---------- */
+  .practitioner{
+    margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.3s;
+  }
+  .practitioner .p-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--s3); font-weight:700; margin-bottom:6px;
+  }
+  .practitioner .p-desc{font-style:italic; color:var(--ink-soft); font-size:14.5px;}
+  .voice-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase;
+    letter-spacing:.05em; padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .voice-tag.external{background:var(--s3-soft); color:var(--s3);}
+  .voice-tag.internal{background:var(--retail-soft); color:var(--retail);}
+
+  /* ---------- GHERKIN / POSTMORTEM / 5 WHYS ---------- */
+  .gherkin{
+    background:#10151C; color:#D7E1EA; border-radius:10px; padding:16px 20px;
+    font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.9; margin:14px 0;
+    overflow-x:auto; white-space:pre-wrap;
+  }
+  .gherkin .kw{color:#5FD9C4; font-weight:700;}
+  .gherkin .cm{color:#7A8A99; font-style:italic;}
+  .pm-timeline{list-style:none; margin:14px 0; padding:0;}
+  .pm-timeline li{display:grid; grid-template-columns:98px 1fr; gap:14px; padding:9px 0; border-top:1px dashed var(--line); font-size:14px; line-height:1.5;}
+  .pm-timeline li:first-child{border-top:none;}
+  .pm-timeline .day{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--s3); font-weight:700; padding-top:1px;}
+  .whys-chain{list-style:none; margin:14px 0; padding:0;}
+  .whys-chain li{padding:11px 0; border-top:1px dashed var(--line); font-size:14.5px; line-height:1.55;}
+  .whys-chain li:first-child{border-top:none;}
+  .whys-chain .why-q{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700;
+    color:var(--s3); text-transform:uppercase; letter-spacing:.06em;
+    display:inline-block; margin-bottom:5px; background:var(--s3-soft); padding:3px 9px; border-radius:20px;
+  }
+  .fw-subhead{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-soft); margin:26px 0 4px; padding-top:20px; border-top:1px solid var(--line);
+  }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:60px 28px;
+    border-bottom:6px double var(--ink);
+    overflow:hidden;
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(36,29,20,0.035) 0px, rgba(36,29,20,0.035) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+  .cover-inner{max-width:980px;margin:0 auto; width:100%; position:relative; z-index:1;}
+  .folder-tabs{display:flex; gap:8px; margin-bottom:28px;}
+  .folder-tabs span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.1em;
+    background:var(--paper3);
+    border:1px solid var(--line);
+    border-bottom:none;
+    padding:5px 12px 8px;
+    border-radius:6px 6px 0 0;
+    color:var(--ink-soft);
+    opacity:0; transform:translateY(10px);
+    animation:tabIn .5s ease forwards;
+  }
+  .folder-tabs span:nth-child(1){animation-delay:.05s;}
+  .folder-tabs span:nth-child(2){animation-delay:.15s;}
+  .folder-tabs span:nth-child(3){animation-delay:.25s;}
+  .folder-tabs span:nth-child(4){animation-delay:.35s;}
+  .folder-tabs span:nth-child(5){animation-delay:.42s;}
+  @keyframes tabIn{to{opacity:1; transform:translateY(0);}}
+
+  .case-no{
+    font-family:'Special Elite', monospace;
+    color:var(--quiz);
+    font-size:15px;
+    letter-spacing:.05em;
+    margin-bottom:14px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards; animation-delay:.4s;
+  }
+  .cover h1{
+    font-size:clamp(40px, 7vw, 84px);
+    line-height:0.98;
+    font-weight:900;
+    margin:6px 0 18px;
+    opacity:0;
+    transform:scale(.9) rotate(-1deg);
+    animation:stampIn .7s cubic-bezier(.2,1.6,.4,1) forwards;
+    animation-delay:.55s;
+  }
+  .cover h1 em{font-style:normal; color:var(--retail);}
+  @keyframes stampIn{
+    0%{opacity:0; transform:scale(1.35) rotate(-3deg);}
+    60%{opacity:1;}
+    100%{opacity:1; transform:scale(1) rotate(-1deg);}
+  }
+  .cover .sub{
+    font-size:clamp(16px,2.1vw,20px);
+    max-width:640px; color:var(--ink-soft); line-height:1.5;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:.95s;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-top:34px;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.15s;
+  }
+  .meta-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); background:rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:20px; color:var(--ink);
+  }
+  .meta-chip b{color:var(--ink);}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  .seal{
+    position:absolute; top:56px; right:40px;
+    width:118px; height:118px;
+    border:3px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; font-family:'Special Elite',monospace;
+    font-size:11px; color:var(--gold); letter-spacing:.05em;
+    transform:rotate(12deg) scale(0);
+    animation:sealIn .6s cubic-bezier(.3,1.7,.4,1) forwards; animation-delay:1.3s;
+  }
+  .seal::before{content:""; position:absolute; inset:8px; border:1px dashed var(--gold); border-radius:50%;}
+  @keyframes sealIn{to{transform:rotate(12deg) scale(1);}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block{padding:56px 0 8px; border-bottom:1px solid var(--line);}
+  .tag-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .idx{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    color:#fff; background:var(--ink); border-radius:5px; padding:4px 9px;
+  }
+  h2.title{font-size:clamp(26px,3.6vw,38px); font-weight:700; margin-top:6px;}
+  .lead{color:var(--ink-soft); font-size:16.5px; max-width:680px; margin-top:8px; line-height:1.55;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{display:flex; flex-direction:column; gap:0; margin-top:26px;}
+  .t-row{
+    display:grid; grid-template-columns:96px 1px 1fr auto;
+    align-items:center; gap:18px; padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .t-row:first-child{border-top:none;}
+  .t-time{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-soft);}
+  .t-bar{width:1px; height:34px; background:var(--line);}
+  .t-label{font-weight:600; font-size:16px;}
+  .t-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    padding:5px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
+  }
+  .tag-mod{background:var(--paper3); color:var(--ink-soft);}
+  .tag-retail{background:var(--retail-soft); color:var(--retail);}
+  .tag-health{background:var(--health-soft); color:var(--health);}
+  .tag-quiz{background:var(--quiz-soft); color:var(--quiz);}
+  .tag-break{background:var(--break-soft); color:var(--break);}
+  .tag-fw{background:var(--fw-soft); color:var(--fw);}
+  .tag-s2{background:var(--s2-soft); color:var(--s2);}
+  .tag-s3{background:var(--s3-soft); color:var(--s3);}
+  .tag-devops{background:var(--devops-soft); color:var(--devops);}
+  .tag-finance{background:var(--finance-soft); color:var(--finance);}
+  .tag-gold{background:var(--gold); color:var(--ink);}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:rgba(255,255,255,.4);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 28px;
+    margin-top:22px;
+    position:relative;
+  }
+  .card .pin{
+    position:absolute; top:-10px; left:26px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--gold); box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .points{margin:14px 0 0; padding:0; list-style:none;}
+  .points li{
+    padding:8px 0 8px 22px; position:relative; line-height:1.5; font-size:15.5px;
+  }
+  .points li::before{content:"—"; position:absolute; left:0; color:var(--ink-soft);}
+
+  /* ---------- ICEBREAKER / QUIZ CARDS ---------- */
+  .interject{
+    margin-top:26px; border-radius:12px; padding:26px 28px 24px;
+    border:2px dashed currentColor;
+  }
+  .interject.break{color:var(--break); background:var(--break-soft);}
+  .interject.quiz{color:var(--quiz); background:var(--quiz-soft);}
+  .interject-head{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .interject h3{color:var(--ink); font-size:20px;}
+  .interject p, .interject .opts{color:var(--ink); font-size:15.5px;}
+  .timer{
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    background:rgba(255,255,255,.6); padding:4px 10px; border-radius:20px; color:var(--ink);
+  }
+  .opts{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:8px;}
+  .opts li{
+    background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.12);
+    border-radius:8px; padding:9px 14px; font-size:15px;
+    transition:background .25s ease, border-color .25s ease, opacity .25s ease;
+  }
+  .opts li b{font-family:'IBM Plex Mono',monospace; margin-right:8px;}
+  .reveal-btn{
+    margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+    background:var(--ink); color:#fff; border:none; border-radius:20px;
+    padding:9px 18px; transition:transform .15s ease;
+  }
+  .reveal-btn:hover{transform:translateY(-1px);}
+  /* correct option + explanation stay neutral until the quiz container is marked revealed */
+  .interject.revealed .opts li.correct{
+    background:#DCF3E3; border-color:#2F7D4F; color:#1C4D31; font-weight:600;
+  }
+  .interject.revealed .opts li.correct::after{
+    content:" ✓ Correct"; font-weight:800; color:#2F7D4F; margin-left:6px;
+  }
+  .interject.revealed .opts li:not(.correct){opacity:.5;}
+  .answer{
+    margin-top:14px; padding:12px 16px; border-radius:8px;
+    background:rgba(255,255,255,.7); border-left:4px solid var(--ink);
+    font-size:15px; display:none;
+  }
+  .interject.revealed .answer{display:block; animation:fadeUp .35s ease;}
+  .answer b{color:var(--quiz);}
+
+  /* ---------- DEMO / CASE FOLDER ---------- */
+  .folder{
+    margin-top:24px; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+  }
+  .folder-top{padding:20px 26px; display:flex; align-items:center; gap:14px; color:#fff;}
+  .folder.retail .folder-top{background:var(--retail);}
+  .folder.health .folder-top{background:var(--health);}
+  .folder.s3 .folder-top{background:var(--s3);}
+  .folder.devops .folder-top{background:var(--devops);}
+  .folder.finance .folder-top{background:var(--finance);}
+  .folder.gold .folder-top{background:var(--gold);}
+  .folder-top .case-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em;
+    background:rgba(255,255,255,.22); padding:4px 10px; border-radius:20px;
+  }
+  .folder-body{background:rgba(255,255,255,.45); padding:24px 26px;}
+  .kv{display:grid; grid-template-columns:140px 1fr; gap:8px 16px; font-size:15px; margin-bottom:16px;}
+  .kv .k{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; padding-top:2px;}
+  .steps{counter-reset:step; list-style:none; margin:14px 0 0; padding:0;}
+  .steps li{
+    counter-increment:step; position:relative; padding:9px 0 9px 34px; font-size:15px; line-height:1.5;
+    border-top:1px dashed var(--line);
+  }
+  .steps li:first-child{border-top:none;}
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:8px;
+    width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; display:flex; align-items:center; justify-content:center;
+  }
+  .verdict{
+    margin-top:16px; padding:14px 18px; border-radius:8px; font-size:15px;
+    background:rgba(0,0,0,.05); border-left:4px solid var(--ink);
+  }
+  .verdict b{font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-size:12px; letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);}
+
+  /* ---------- STEP DETAIL (prompts inside demo steps) ---------- */
+  .steps li{padding-bottom:16px;}
+  .step-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15.5px; margin-bottom:8px;}
+  .step-time{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); background:rgba(0,0,0,.06); padding:2px 9px; border-radius:10px; white-space:nowrap;}
+  .prompt-chip{
+    background:rgba(255,255,255,.75); border-radius:7px; padding:10px 14px;
+    font-size:14px; margin:0 0 8px; line-height:1.5;
+    border-left:3px solid currentColor;
+  }
+  .folder.retail .prompt-chip{color:var(--retail);}
+  .folder.health .prompt-chip{color:var(--health);}
+  .folder.s3 .prompt-chip{color:var(--s3);}
+  .folder.devops .prompt-chip{color:var(--devops);}
+  .folder.finance .prompt-chip{color:var(--finance);}
+  .folder.gold .prompt-chip{color:var(--dead-cat);}
+  .prompt-label{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:10.5px; letter-spacing:.07em; margin-right:8px;}
+  .prompt-chip .prompt-text{color:var(--ink); font-style:italic;}
+  .expect{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:2px;}
+  .expect b{color:var(--ink); font-weight:700;}
+  .fw-used{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.04em;
+    background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.12);
+    padding:6px 12px; border-radius:20px; color:var(--ink);
+  }
+  .fw-used b{color:var(--fw); text-transform:uppercase;}
+  .handson-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:rgba(255,255,255,.9); color:var(--s2); border:1px solid var(--s2);
+    padding:3px 9px; border-radius:20px;
+  }
+  .feature-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:var(--s3); color:#fff;
+    padding:4px 11px; border-radius:20px;
+  }
+  .class-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700;
+    padding:3px 10px; border-radius:20px;
+  }
+  .class-tag.live{background:var(--live-soft); color:var(--live);}
+  .class-tag.dead{background:var(--dead-cat-soft); color:var(--dead-cat);}
+  .class-tag.vestigial{background:var(--vestigial-soft); color:var(--vestigial);}
+  .class-tag.zombie{background:var(--zombie-soft); color:var(--zombie);}
+  .class-table{width:100%; border-collapse:collapse; margin-top:14px; font-size:13.5px;}
+  .class-table td{padding:9px 10px; border-top:1px solid var(--line); vertical-align:top;}
+  .class-table tr:first-child td{border-top:none;}
+  .class-table td.fn{font-family:'IBM Plex Mono',monospace; font-size:12px;}
+
+  /* ---------- FIELD GUIDE ---------- */
+  .fw-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px;}
+  .fw-card{
+    background:rgba(255,255,255,.5); border:1px solid var(--line); border-radius:12px;
+    padding:22px 24px; position:relative;
+  }
+  .fw-cat{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--fw);
+    background:var(--fw-soft); padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .fw-name{font-family:'Bitter',serif; font-weight:700; font-size:19px; margin-bottom:6px;}
+  .fw-def{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:12px;}
+  .fw-example{
+    font-size:13px; margin-bottom:12px; padding:9px 12px;
+    background:rgba(0,0,0,.045); border-radius:7px; line-height:1.5;
+  }
+  .fw-example b{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);
+  }
+  .fw-card .prompt-chip{color:var(--fw);}
+  @media (max-width:720px){.fw-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CLOSING ---------- */
+  .closing{padding:70px 0 40px; text-align:center;}
+  .closing .stamp{font-size:26px; padding:14px 30px;}
+  .closing p{max-width:600px; margin:22px auto 0; color:var(--ink-soft); font-size:16px; line-height:1.6;}
+
+  @media (max-width:640px){
+    .t-row{grid-template-columns:70px 1px 1fr; grid-template-areas:"time bar label" ". . tag"; }
+    .t-tag{grid-area:tag; justify-self:start; margin-top:6px;}
+    .seal{display:none;}
+    .kv{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="s2-banner"><span class="dot"></span>S8 · HANDS-ON + VALUE ARTICULATION <span class="dot"></span> The Panel Pitch</div>
+
+<header class="cover">
+  <div class="seal">CLAUDE<br>×<br>UST</div>
+  <div class="cover-inner">
+    <div class="folder-tabs">
+      <span>NARRATIVE</span><span>DECK</span><span>PANEL</span><span>UST</span><span>RUBRIC</span>
+    </div>
+    <div class="case-no">CASE FILE NO. S8 — OPENED 0:00</div>
+    <h1>Draft It. Deck It.<br><em>Defend It.</em></h1>
+    <p class="sub">Session 7 gave you the frameworks and ran the demo. Today you build your own submission on the same Autonomous AP case: the full written narrative, the business-case deck, and two short statements of value — one for the panel, one for UST — ready to defend in the room.</p>
+    <div class="meta-row">
+      <div class="meta-chip"><b>Duration</b> · 120 min, fully hands-on</div>
+      <div class="meta-chip"><b>Tools</b> · Claude Desktop</div>
+      <div class="meta-chip"><b>Builds on</b> · Session 7 (Autonomous AP case + numbers)</div>
+      <div class="meta-chip"><b>Output</b> · A submission ready for panel review</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- AGENDA -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">00</span><span class="eyebrow">Evidence log</span></div>
+    <h2 class="title">The 120-Minute Build</h2>
+    <p class="lead">Three deliverables, in the order a real submission actually gets built: the narrative first, because the deck should be compressed from it, not written independently.</p>
+    <div class="timeline">
+      <div class="t-row"><div class="t-time">0:00</div><div class="t-bar"></div><div class="t-label">Welcome & Session Frame</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:05</div><div class="t-bar"></div><div class="t-label">Icebreaker — Two Truths, One Audience</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:10</div><div class="t-bar"></div><div class="t-label">Concept — The Two-Audience Narrative</div><div class="t-tag tag-mod">8 min</div></div>
+      <div class="t-row"><div class="t-time">0:18</div><div class="t-bar"></div><div class="t-label">LAB 1 — Draft the Full Product Narrative</div><div class="t-tag tag-s2">25 min</div></div>
+      <div class="t-row"><div class="t-time">0:43</div><div class="t-bar"></div><div class="t-label">Pop Quiz #1</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">0:46</div><div class="t-bar"></div><div class="t-label">Break</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:51</div><div class="t-bar"></div><div class="t-label">Concept — From Narrative to Deck</div><div class="t-tag tag-mod">7 min</div></div>
+      <div class="t-row"><div class="t-time">0:58</div><div class="t-bar"></div><div class="t-label">LAB 2 — Build the Business-Case / ROI Deck</div><div class="t-tag tag-s2">25 min</div></div>
+      <div class="t-row"><div class="t-time">1:23</div><div class="t-bar"></div><div class="t-label">Pop Quiz #2</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:26</div><div class="t-bar"></div><div class="t-label">Concept — Dual Narrative: Panel vs. UST</div><div class="t-tag tag-mod">7 min</div></div>
+      <div class="t-row"><div class="t-time">1:33</div><div class="t-bar"></div><div class="t-label">LAB 3 — Articulate Value to the Panel AND to UST</div><div class="t-tag tag-s2">20 min</div></div>
+      <div class="t-row"><div class="t-time">1:53</div><div class="t-bar"></div><div class="t-label">Pop Quiz #3</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:56</div><div class="t-bar"></div><div class="t-label">Panel Rubric Walkthrough</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">2:01</div><div class="t-bar"></div><div class="t-label">Synthesis & Close</div><div class="t-tag tag-mod">4 min</div></div>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER -->
+  <section class="block">
+    <div class="interject break">
+      <div class="interject-head"><span class="stamp break">Icebreaker</span><span class="timer">⏱ 5 min · pairs</span></div>
+      <h3>Two Truths, One Audience</h3>
+      <p>In pairs: say the same true fact about the Autonomous AP case twice — once the way you'd say it to a skeptical CIO on the panel, once the way you'd say it to your own UST leadership. If both versions sound identical, one of them isn't actually speaking to its audience yet.</p>
+    </div>
+  </section>
+
+  <!-- CONCEPT 1 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">01</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">The Two-Audience Narrative</h2>
+    <p class="lead">Every panel pitch actually has two audiences in the room at once, even when only one of them speaks: the panel itself, evaluating whether the solution is credible — and UST, evaluating whether this is a capability worth having built at all.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li><b>To the panel:</b> the Complication is the client's problem — cost, risk, scale. The Answer has to earn trust in the room, on the spot.</li>
+        <li><b>To UST:</b> the Complication is different — can we repeat this, sell it again, defend it competitively? The Answer is about capability and reusable IP, not just this one engagement.</li>
+        <li>Same evidence, two narratives. The numbers don't change; which consequence gets emphasized does.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- LAB 1 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L1</span><span class="eyebrow">Lab 1 · Claude Desktop · 25 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Draft the Full Product Narrative</h2>
+    <p class="lead">Not bullet points — complete prose, the way it would actually be read aloud to a panel.</p>
+    <div class="folder s2">
+      <div class="folder-top"><h3 style="color:#fff;">Build: Product Narrative</h3><span class="case-tag">Reference: product_narrative_reference.md</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Framework used: <b>SCQA</b> (from Session 4/7) applied in full prose, not fragments</div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Draft Situation and Complication in full sentences<span class="step-time">10 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Using the Session 7 Autonomous AP numbers, write the Situation and Complication as complete paragraphs I could read aloud to a panel — not bullet points. The Complication should name both the visible cost problem and the invisible risk problem."</span></div>
+            <div class="expect"><b>Expect:</b> two paragraphs, not two bullet lists — this is the discipline the lab is actually testing.</div>
+          </li>
+          <li>
+            <div class="step-title">Draft Question and Answer with the real numbers<span class="step-time">10 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Now write the Question and the Answer. The Answer must include the actual tier rules and the actual dollar figures — no rounded placeholders — and must end with one sentence confirming these numbers came from actually running the code, not a projection."</span></div>
+          </li>
+          <li>
+            <div class="step-title">Read it aloud, once<span class="step-time">5 min</span></div>
+            <div class="expect"><b>Do this literally:</b> read your narrative aloud to your partner, at pitch pace. Any sentence you stumble on, or that sounds like it's reading a spec sheet, gets flagged for a rewrite pass after the break.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A complete SCQA narrative in full prose, stress-tested by reading it aloud once. This becomes the source material Lab 2 compresses into slides.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 1 -->
+  <section class="block">
+    <div class="interject quiz" id="q1">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 1</span></div>
+      <h3>What's the key difference between the Panel narrative and the UST narrative?</h3>
+      <ul class="opts">
+        <li><b>A.</b> They use different numbers</li>
+        <li class="correct"><b>B.</b> They share the same evidence but emphasize different consequences</li>
+        <li><b>C.</b> The UST narrative is aspirational, not evidence-based</li>
+        <li><b>D.</b> The Panel narrative excludes governance</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q1')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> A narrative that needs different facts for different audiences isn't a narrative — it's two claims hoping nobody compares notes.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 2 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">02</span><span class="eyebrow">Concept · 7 min</span></div>
+    <h2 class="title">From Narrative to Deck</h2>
+    <p class="lead">Real framework: Guy Kawasaki's 10/20/30 Rule — 10 slides, 20 minutes, 30-point minimum font. Constraints that force compression, not decoration.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li>A standard ROI-deck sequence maps directly onto SCQA: <b>Situation → Complication → Answer (solution overview) → How It Works → Governance & Risk → ROI/TCO → Proof → The Ask.</b></li>
+        <li>30-point-minimum font isn't a style rule — it forces you to cut every sentence down to the one thing that sentence is actually for. If it doesn't fit at 30pt, it's two ideas, not one.</li>
+        <li>The deck compresses the narrative from Lab 1. It does not replace the discipline of having written the narrative in full first.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- LAB 2 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L2</span><span class="eyebrow">Lab 2 · Claude Desktop · 25 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Build the Business-Case / ROI Deck</h2>
+    <p class="lead">Ask Claude to create the file directly — a real, openable deck, not a slide outline in chat.</p>
+    <div class="folder s2">
+      <div class="folder-top"><h3 style="color:#fff;">Build: AP_Business_Case_Deck.pptx</h3><span class="case-tag">Reference deck included — 8 slides, validated</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Ask for the deck, structured to the sequence<span class="step-time">15 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Create a PowerPoint deck from my narrative: Title, Situation, Complication, Answer (tiered autonomy), Governance, ROI, Proof (the verified numbers table), and The Ask. Use a finance-appropriate palette, one visual element per slide, and pull every number directly from my narrative — no placeholders."</span></div>
+            <div class="expect"><b>Expect:</b> a real .pptx file. Open it — don't just trust the chat description of it.</div>
+          </li>
+          <li>
+            <div class="step-title">Check it against the reference<span class="step-time">6 min</span></div>
+            <div class="expect"><b>Compare:</b> does your Proof slide state the 214 invoices (11.9%) that stay fully manual — the honest catch — as clearly as the reference deck does? A deck that only shows the upside isn't ready for a panel that's paid to find the catch themselves.</div>
+          </li>
+          <li>
+            <div class="step-title">Cut one slide<span class="step-time">4 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"If I had to present this in 15 minutes instead of 20, which slide would you cut, and what's the one sentence from it that has to survive into another slide?"</span></div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A real, validated .pptx deck, 8-10 slides, every number traceable to Lab 1's narrative — not a new set of numbers invented for the deck.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 2 -->
+  <section class="block">
+    <div class="interject quiz" id="q2">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 2</span></div>
+      <h3>In the 10/20/30 Rule, what does the "30" refer to?</h3>
+      <ul class="opts">
+        <li><b>A.</b> 30 slides</li>
+        <li><b>B.</b> 30 minutes</li>
+        <li class="correct"><b>C.</b> 30-point minimum font size</li>
+        <li><b>D.</b> 30 seconds per slide</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q2')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> The font-size floor is what actually forces compression — you physically cannot fit two ideas on one line at 30pt.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 3 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">03</span><span class="eyebrow">Concept · 7 min</span></div>
+    <h2 class="title">Dual Narrative — Panel vs. UST, in Practice</h2>
+    <p class="lead">Concretely, the same fact reframed for two audiences without changing the fact itself.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">"2.2-month payback"</div><div><b>To the panel:</b> your risk is small and short-lived. <b>To UST:</b> this pattern funds its own next iteration almost immediately — worth standardizing.</div>
+        <div class="k">"5/5 governance tests pass"</div><div><b>To the panel:</b> you don't have to trust us, you can verify us. <b>To UST:</b> this is a delivery methodology competitors can't easily match.</div>
+        <div class="k">"11.9% stays fully manual"</div><div><b>To the panel:</b> we're not overselling autonomy — the risky cases still get a human. <b>To UST:</b> honesty about limits is what makes the other 88% of the pitch credible.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LAB 3 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L3</span><span class="eyebrow">Lab 3 · Claude Desktop · 20 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Articulate Value to the Panel AND to UST</h2>
+    <p class="lead">Two short, separate statements — not one watered-down statement trying to serve both.</p>
+    <div class="folder s2">
+      <div class="folder-top"><h3 style="color:#fff;">Build: Dual Narrative</h3><span class="case-tag">Reference: dual_narrative_reference.md</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Write the panel-facing statement<span class="step-time">7 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Write a short 'why this matters to you' statement for the panel — a few sentences, client-facing, leading with the governance evidence, not the savings number."</span></div>
+          </li>
+          <li>
+            <div class="step-title">Write the UST-facing statement<span class="step-time">7 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Now write a separate 'why this matters to UST' statement — internal audience, focused on repeatability and competitive differentiation, not this one client's savings."</span></div>
+          </li>
+          <li>
+            <div class="step-title">Find the shared thread<span class="step-time">6 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"What's the one piece of evidence both statements point back to? If they don't share one, one of them isn't actually grounded in the same case."</span></div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> Two distinct statements, both traceable to the same underlying evidence — the test the reference example's closing section names explicitly.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 3 -->
+  <section class="block">
+    <div class="interject quiz" id="q3">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 3</span></div>
+      <h3>Where does the honest "catch" — the 11.9% that gets zero automation — actually belong in the deck?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Nowhere — leave it out, it undercuts the pitch</li>
+        <li class="correct"><b>B.</b> Stated explicitly, on the Proof slide, as "by design"</li>
+        <li><b>C.</b> Only mentioned if the panel asks</li>
+        <li><b>D.</b> In an appendix nobody presents</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q3')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> A credible ROI story states its own limits before being asked — that's what makes the rest of the number believable.</div>
+    </div>
+  </section>
+
+  <!-- RUBRIC -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--fw);">RB</span><span class="eyebrow">Panel Rubric · 5 min walkthrough</span></div>
+    <h2 class="title">How the Panel Will Actually Score This</h2>
+    <p class="lead">Five criteria, 1–4 each. Know this before you finish Lab 3, not after.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Narrative</div><div>Full prose, not fragments; Complication names both the visible and invisible problem.</div>
+        <div class="k">Deck</div><div>Every number traceable to the narrative; the honest limit is stated, not hidden.</div>
+        <div class="k">Governance evidence</div><div>Claims are backed by something tested, not just asserted.</div>
+        <div class="k">Panel narrative</div><div>Leads with evidence and trust, not just the savings number.</div>
+        <div class="k">UST narrative</div><div>Argues repeatability and differentiation — not a restatement of the panel pitch.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FIELD GUIDE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--fw);">FG</span><span class="eyebrow">Field guide · reference, not counted in the 120 min</span></div>
+    <h2 class="title">Frameworks Behind Today's Build</h2>
+    <div class="fw-grid">
+      <div class="fw-card">
+        <span class="fw-cat">Narrative</span>
+        <div class="fw-name">SCQA in Full Prose</div>
+        <div class="fw-def">The same Situation-Complication-Question-Answer structure from Session 4/7, now written as complete, readable-aloud paragraphs — not fragments a reader has to reassemble.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Turn these SCQA bullet points into full paragraphs I could read aloud to a panel."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Deck</span>
+        <div class="fw-name">10/20/30 Rule</div>
+        <div class="fw-def">Guy Kawasaki's constraint set — 10 slides, 20 minutes, 30-point font — forces compression instead of decoration.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Compress this slide's text until it fits at 30-point font without shrinking the box."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Audience</span>
+        <div class="fw-name">Dual Narrative Technique</div>
+        <div class="fw-def">One body of evidence, two audience-specific statements — the panel's Complication is the client's problem, UST's Complication is repeatability and differentiation.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Write this finding twice: once for a skeptical client panel, once for internal leadership deciding whether to invest in this capability."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Credibility</span>
+        <div class="fw-name">Stating the Catch</div>
+        <div class="fw-def">A number that only shows upside reads as marketing. Naming the honest limit — the volume that gets no benefit, by design — is what makes the rest of the pitch believable.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"What's the least flattering true thing about this result? Make sure it's stated somewhere in the deck, not just discoverable under questioning."</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <span class="stamp" style="color:var(--ink);">Case Closed</span>
+    <p>A narrative in full prose, a deck compressed from it — not written separately — and two honest statements of value pointing at the same evidence. That's a submission ready for a panel, and ready for UST, at the same time, because it never needed to be two different stories.</p>
+  </section>
+
+</div>
+
+<script>
+function toggleAnswer(id){
+  document.getElementById(id).classList.toggle('revealed');
+}
+</script>
+</body>
+</html>

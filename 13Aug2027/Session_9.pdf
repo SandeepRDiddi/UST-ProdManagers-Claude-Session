@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File S9 — Masterclass: Selling Autonomous Delivery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bitter:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1E8D5;
+    --paper2:#E7D8B8;
+    --paper3:#DCCBA3;
+    --ink:#241D14;
+    --ink-soft:#5A4C3A;
+    --retail:#A8631B;
+    --retail-soft:#F0D9AF;
+    --health:#2F6F62;
+    --health-soft:#CFE3DC;
+    --quiz:#A23B2E;
+    --quiz-soft:#F1D3CC;
+    --break:#2B4570;
+    --break-soft:#D6E0EE;
+    --fw:#6B4FA0;
+    --fw-soft:#E6DEF2;
+    --s2:#C8551F;
+    --s2-soft:#F3D9C4;
+    --s3:#1C33C4;
+    --s3-soft:#DCE1FA;
+    --devops:#455568;
+    --devops-soft:#DDE3E9;
+    --finance:#7A6A1C;
+    --finance-soft:#EDE7C9;
+    --live:#1E7B4D;
+    --live-soft:#D2E8DA;
+    --dead-cat:#5A4C3A;
+    --dead-cat-soft:#E4DDC9;
+    --vestigial:#B5791E;
+    --vestigial-soft:#F1DFB8;
+    --zombie:#A23B2E;
+    --zombie-soft:#F1D3CC;
+    --line: rgba(36,29,20,0.22);
+    --gold:#C79A2E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05), transparent 45%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 80px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1.5px;background:var(--ink-soft);display:inline-block;}
+  h1,h2,h3{font-family:'Bitter', serif; margin:0; color:var(--ink);}
+
+  /* ---------- STAMP ---------- */
+  .stamp{
+    display:inline-block;
+    font-family:'Special Elite', monospace;
+    text-transform:uppercase;
+    border:3px solid currentColor;
+    border-radius:6px;
+    padding:6px 16px;
+    letter-spacing:.08em;
+    transform:rotate(-4deg);
+    position:relative;
+  }
+  .stamp::after{
+    content:"";
+    position:absolute; inset:3px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    opacity:.55;
+  }
+  .stamp.quiz{color:var(--quiz);}
+  .stamp.break{color:var(--break);}
+
+  /* ---------- TOP BANNER (session identity strip) ---------- */
+  .s2-banner{
+    background:var(--s2); color:#fff; padding:14px 28px;
+    font-family:'Bitter',serif; font-weight:700; font-size:15px; letter-spacing:.03em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s2-banner .dot{width:8px; height:8px; border-radius:50%; background:#fff; opacity:.85;}
+  .s3-banner{background:var(--s3);}
+  .s7-banner{background:var(--gold); color:var(--ink);}
+  .s7-banner .dot{background:var(--ink); opacity:.6;}
+
+  /* ---------- PRACTITIONER BYLINE ---------- */
+  .practitioner{
+    margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.3s;
+  }
+  .practitioner .p-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--s3); font-weight:700; margin-bottom:6px;
+  }
+  .practitioner .p-desc{font-style:italic; color:var(--ink-soft); font-size:14.5px;}
+  .voice-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase;
+    letter-spacing:.05em; padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .voice-tag.external{background:var(--s3-soft); color:var(--s3);}
+  .voice-tag.internal{background:var(--retail-soft); color:var(--retail);}
+
+  /* ---------- VALUE ADD CALLOUT ---------- */
+  .value-add{
+    margin-top:14px; padding:14px 18px; border-radius:10px;
+    background:linear-gradient(135deg, var(--gold-soft, #F3E3B8), transparent 140%);
+    background-color:#FBF1D6;
+    border:1.5px solid var(--gold); position:relative;
+  }
+  .value-add .va-label{
+    font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--dead-cat); display:flex; align-items:center; gap:6px; margin-bottom:5px;
+  }
+  .value-add .va-label::before{content:"$"; display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px; border-radius:50%; background:var(--gold); color:#fff; font-size:10px; font-weight:800;}
+  .value-add p{margin:0; font-size:14px; color:var(--ink); line-height:1.5;}
+
+  /* ---------- GHERKIN / POSTMORTEM / 5 WHYS ---------- */
+  .gherkin{
+    background:#10151C; color:#D7E1EA; border-radius:10px; padding:16px 20px;
+    font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.9; margin:14px 0;
+    overflow-x:auto; white-space:pre-wrap;
+  }
+  .gherkin .kw{color:#5FD9C4; font-weight:700;}
+  .gherkin .cm{color:#7A8A99; font-style:italic;}
+  .pm-timeline{list-style:none; margin:14px 0; padding:0;}
+  .pm-timeline li{display:grid; grid-template-columns:98px 1fr; gap:14px; padding:9px 0; border-top:1px dashed var(--line); font-size:14px; line-height:1.5;}
+  .pm-timeline li:first-child{border-top:none;}
+  .pm-timeline .day{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--s3); font-weight:700; padding-top:1px;}
+  .whys-chain{list-style:none; margin:14px 0; padding:0;}
+  .whys-chain li{padding:11px 0; border-top:1px dashed var(--line); font-size:14.5px; line-height:1.55;}
+  .whys-chain li:first-child{border-top:none;}
+  .whys-chain .why-q{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700;
+    color:var(--s3); text-transform:uppercase; letter-spacing:.06em;
+    display:inline-block; margin-bottom:5px; background:var(--s3-soft); padding:3px 9px; border-radius:20px;
+  }
+  .fw-subhead{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-soft); margin:26px 0 4px; padding-top:20px; border-top:1px solid var(--line);
+  }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:60px 28px;
+    border-bottom:6px double var(--ink);
+    overflow:hidden;
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(36,29,20,0.035) 0px, rgba(36,29,20,0.035) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+  .cover-inner{max-width:980px;margin:0 auto; width:100%; position:relative; z-index:1;}
+  .folder-tabs{display:flex; gap:8px; margin-bottom:28px;}
+  .folder-tabs span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.1em;
+    background:var(--paper3);
+    border:1px solid var(--line);
+    border-bottom:none;
+    padding:5px 12px 8px;
+    border-radius:6px 6px 0 0;
+    color:var(--ink-soft);
+    opacity:0; transform:translateY(10px);
+    animation:tabIn .5s ease forwards;
+  }
+  .folder-tabs span:nth-child(1){animation-delay:.05s;}
+  .folder-tabs span:nth-child(2){animation-delay:.15s;}
+  .folder-tabs span:nth-child(3){animation-delay:.25s;}
+  .folder-tabs span:nth-child(4){animation-delay:.35s;}
+  .folder-tabs span:nth-child(5){animation-delay:.42s;}
+  @keyframes tabIn{to{opacity:1; transform:translateY(0);}}
+
+  .case-no{
+    font-family:'Special Elite', monospace;
+    color:var(--quiz);
+    font-size:15px;
+    letter-spacing:.05em;
+    margin-bottom:14px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards; animation-delay:.4s;
+  }
+  .cover h1{
+    font-size:clamp(40px, 7vw, 84px);
+    line-height:0.98;
+    font-weight:900;
+    margin:6px 0 18px;
+    opacity:0;
+    transform:scale(.9) rotate(-1deg);
+    animation:stampIn .7s cubic-bezier(.2,1.6,.4,1) forwards;
+    animation-delay:.55s;
+  }
+  .cover h1 em{font-style:normal; color:var(--retail);}
+  @keyframes stampIn{
+    0%{opacity:0; transform:scale(1.35) rotate(-3deg);}
+    60%{opacity:1;}
+    100%{opacity:1; transform:scale(1) rotate(-1deg);}
+  }
+  .cover .sub{
+    font-size:clamp(16px,2.1vw,20px);
+    max-width:640px; color:var(--ink-soft); line-height:1.5;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:.95s;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-top:34px;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.15s;
+  }
+  .meta-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); background:rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:20px; color:var(--ink);
+  }
+  .meta-chip b{color:var(--ink);}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  .seal{
+    position:absolute; top:56px; right:40px;
+    width:118px; height:118px;
+    border:3px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; font-family:'Special Elite',monospace;
+    font-size:11px; color:var(--gold); letter-spacing:.05em;
+    transform:rotate(12deg) scale(0);
+    animation:sealIn .6s cubic-bezier(.3,1.7,.4,1) forwards; animation-delay:1.3s;
+  }
+  .seal::before{content:""; position:absolute; inset:8px; border:1px dashed var(--gold); border-radius:50%;}
+  @keyframes sealIn{to{transform:rotate(12deg) scale(1);}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block{padding:56px 0 8px; border-bottom:1px solid var(--line);}
+  .tag-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .idx{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    color:#fff; background:var(--ink); border-radius:5px; padding:4px 9px;
+  }
+  h2.title{font-size:clamp(26px,3.6vw,38px); font-weight:700; margin-top:6px;}
+  .lead{color:var(--ink-soft); font-size:16.5px; max-width:680px; margin-top:8px; line-height:1.55;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{display:flex; flex-direction:column; gap:0; margin-top:26px;}
+  .t-row{
+    display:grid; grid-template-columns:96px 1px 1fr auto;
+    align-items:center; gap:18px; padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .t-row:first-child{border-top:none;}
+  .t-time{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-soft);}
+  .t-bar{width:1px; height:34px; background:var(--line);}
+  .t-label{font-weight:600; font-size:16px;}
+  .t-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    padding:5px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
+  }
+  .tag-mod{background:var(--paper3); color:var(--ink-soft);}
+  .tag-retail{background:var(--retail-soft); color:var(--retail);}
+  .tag-health{background:var(--health-soft); color:var(--health);}
+  .tag-quiz{background:var(--quiz-soft); color:var(--quiz);}
+  .tag-break{background:var(--break-soft); color:var(--break);}
+  .tag-fw{background:var(--fw-soft); color:var(--fw);}
+  .tag-s2{background:var(--s2-soft); color:var(--s2);}
+  .tag-s3{background:var(--s3-soft); color:var(--s3);}
+  .tag-devops{background:var(--devops-soft); color:var(--devops);}
+  .tag-finance{background:var(--finance-soft); color:var(--finance);}
+  .tag-gold{background:var(--gold); color:var(--ink);}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:rgba(255,255,255,.4);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 28px;
+    margin-top:22px;
+    position:relative;
+  }
+  .card .pin{
+    position:absolute; top:-10px; left:26px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--gold); box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .points{margin:14px 0 0; padding:0; list-style:none;}
+  .points li{
+    padding:8px 0 8px 22px; position:relative; line-height:1.5; font-size:15.5px;
+  }
+  .points li::before{content:"—"; position:absolute; left:0; color:var(--ink-soft);}
+
+  /* ---------- ICEBREAKER / QUIZ CARDS ---------- */
+  .interject{
+    margin-top:26px; border-radius:12px; padding:26px 28px 24px;
+    border:2px dashed currentColor;
+  }
+  .interject.break{color:var(--break); background:var(--break-soft);}
+  .interject.quiz{color:var(--quiz); background:var(--quiz-soft);}
+  .interject-head{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .interject h3{color:var(--ink); font-size:20px;}
+  .interject p, .interject .opts{color:var(--ink); font-size:15.5px;}
+  .timer{
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    background:rgba(255,255,255,.6); padding:4px 10px; border-radius:20px; color:var(--ink);
+  }
+  .opts{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:8px;}
+  .opts li{
+    background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.12);
+    border-radius:8px; padding:9px 14px; font-size:15px;
+    transition:background .25s ease, border-color .25s ease, opacity .25s ease;
+  }
+  .opts li b{font-family:'IBM Plex Mono',monospace; margin-right:8px;}
+  .reveal-btn{
+    margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+    background:var(--ink); color:#fff; border:none; border-radius:20px;
+    padding:9px 18px; transition:transform .15s ease;
+  }
+  .reveal-btn:hover{transform:translateY(-1px);}
+  /* correct option + explanation stay neutral until the quiz container is marked revealed */
+  .interject.revealed .opts li.correct{
+    background:#DCF3E3; border-color:#2F7D4F; color:#1C4D31; font-weight:600;
+  }
+  .interject.revealed .opts li.correct::after{
+    content:" ✓ Correct"; font-weight:800; color:#2F7D4F; margin-left:6px;
+  }
+  .interject.revealed .opts li:not(.correct){opacity:.5;}
+  .answer{
+    margin-top:14px; padding:12px 16px; border-radius:8px;
+    background:rgba(255,255,255,.7); border-left:4px solid var(--ink);
+    font-size:15px; display:none;
+  }
+  .interject.revealed .answer{display:block; animation:fadeUp .35s ease;}
+  .answer b{color:var(--quiz);}
+
+  /* ---------- DEMO / CASE FOLDER ---------- */
+  .folder{
+    margin-top:24px; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+  }
+  .folder-top{padding:20px 26px; display:flex; align-items:center; gap:14px; color:#fff;}
+  .folder.retail .folder-top{background:var(--retail);}
+  .folder.health .folder-top{background:var(--health);}
+  .folder.s3 .folder-top{background:var(--s3);}
+  .folder.devops .folder-top{background:var(--devops);}
+  .folder.finance .folder-top{background:var(--finance);}
+  .folder.gold .folder-top{background:var(--gold);}
+  .folder-top .case-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em;
+    background:rgba(255,255,255,.22); padding:4px 10px; border-radius:20px;
+  }
+  .folder-body{background:rgba(255,255,255,.45); padding:24px 26px;}
+  .kv{display:grid; grid-template-columns:140px 1fr; gap:8px 16px; font-size:15px; margin-bottom:16px;}
+  .kv .k{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; padding-top:2px;}
+  .steps{counter-reset:step; list-style:none; margin:14px 0 0; padding:0;}
+  .steps li{
+    counter-increment:step; position:relative; padding:9px 0 9px 34px; font-size:15px; line-height:1.5;
+    border-top:1px dashed var(--line);
+  }
+  .steps li:first-child{border-top:none;}
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:8px;
+    width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; display:flex; align-items:center; justify-content:center;
+  }
+  .verdict{
+    margin-top:16px; padding:14px 18px; border-radius:8px; font-size:15px;
+    background:rgba(0,0,0,.05); border-left:4px solid var(--ink);
+  }
+  .verdict b{font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-size:12px; letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);}
+
+  /* ---------- STEP DETAIL (prompts inside demo steps) ---------- */
+  .steps li{padding-bottom:16px;}
+  .step-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15.5px; margin-bottom:8px;}
+  .step-time{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); background:rgba(0,0,0,.06); padding:2px 9px; border-radius:10px; white-space:nowrap;}
+  .prompt-chip{
+    background:rgba(255,255,255,.75); border-radius:7px; padding:10px 14px;
+    font-size:14px; margin:0 0 8px; line-height:1.5;
+    border-left:3px solid currentColor;
+  }
+  .folder.retail .prompt-chip{color:var(--retail);}
+  .folder.health .prompt-chip{color:var(--health);}
+  .folder.s3 .prompt-chip{color:var(--s3);}
+  .folder.devops .prompt-chip{color:var(--devops);}
+  .folder.finance .prompt-chip{color:var(--finance);}
+  .folder.gold .prompt-chip{color:var(--dead-cat);}
+  .prompt-label{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:10.5px; letter-spacing:.07em; margin-right:8px;}
+  .prompt-chip .prompt-text{color:var(--ink); font-style:italic;}
+  .expect{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:2px;}
+  .expect b{color:var(--ink); font-weight:700;}
+  .fw-used{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.04em;
+    background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.12);
+    padding:6px 12px; border-radius:20px; color:var(--ink);
+  }
+  .fw-used b{color:var(--fw); text-transform:uppercase;}
+  .handson-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:rgba(255,255,255,.9); color:var(--s2); border:1px solid var(--s2);
+    padding:3px 9px; border-radius:20px;
+  }
+  .feature-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:var(--s3); color:#fff;
+    padding:4px 11px; border-radius:20px;
+  }
+  .class-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700;
+    padding:3px 10px; border-radius:20px;
+  }
+  .class-tag.live{background:var(--live-soft); color:var(--live);}
+  .class-tag.dead{background:var(--dead-cat-soft); color:var(--dead-cat);}
+  .class-tag.vestigial{background:var(--vestigial-soft); color:var(--vestigial);}
+  .class-tag.zombie{background:var(--zombie-soft); color:var(--zombie);}
+  .class-table{width:100%; border-collapse:collapse; margin-top:14px; font-size:13.5px;}
+  .class-table td{padding:9px 10px; border-top:1px solid var(--line); vertical-align:top;}
+  .class-table tr:first-child td{border-top:none;}
+  .class-table td.fn{font-family:'IBM Plex Mono',monospace; font-size:12px;}
+
+  /* ---------- FIELD GUIDE ---------- */
+  .fw-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px;}
+  .fw-card{
+    background:rgba(255,255,255,.5); border:1px solid var(--line); border-radius:12px;
+    padding:22px 24px; position:relative;
+  }
+  .fw-cat{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--fw);
+    background:var(--fw-soft); padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .fw-name{font-family:'Bitter',serif; font-weight:700; font-size:19px; margin-bottom:6px;}
+  .fw-def{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:12px;}
+  .fw-example{
+    font-size:13px; margin-bottom:12px; padding:9px 12px;
+    background:rgba(0,0,0,.045); border-radius:7px; line-height:1.5;
+  }
+  .fw-example b{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);
+  }
+  .fw-card .prompt-chip{color:var(--fw);}
+  @media (max-width:720px){.fw-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CLOSING ---------- */
+  .closing{padding:70px 0 40px; text-align:center;}
+  .closing .stamp{font-size:26px; padding:14px 30px;}
+  .closing p{max-width:600px; margin:22px auto 0; color:var(--ink-soft); font-size:16px; line-height:1.6;}
+
+  @media (max-width:640px){
+    .t-row{grid-template-columns:70px 1px 1fr; grid-template-areas:"time bar label" ". . tag"; }
+    .t-tag{grid-area:tag; justify-self:start; margin-top:6px;}
+    .seal{display:none;}
+    .kv{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="s2-banner s3-banner"><span class="dot"></span>S9 · MASTERCLASS <span class="dot"></span> Selling Autonomous Delivery — Context for the Client Conversation</div>
+
+<header class="cover">
+  <div class="seal">CLAUDE<br>×<br>UST</div>
+  <div class="cover-inner">
+    <div class="folder-tabs">
+      <span>MEDDPICC</span><span>FAB</span><span>CHASM</span><span>SPIN</span><span>OBJECTIONS</span>
+    </div>
+    <div class="case-no">CASE FILE NO. S9 — OPENED 0:00</div>
+    <h1>Selling<br><em>Autonomous Delivery</em></h1>
+    <p class="sub">Sessions 7 and 8 gave you the narrative and the deck. This masterclass gives you the sales discipline underneath both: how to read the room you're actually in, how to make every value-add explicit instead of implied, how to turn a pilot into a portfolio, and a real deal that died — so you know exactly what "not enough" looks like.</p>
+    <div class="meta-row">
+      <div class="meta-chip"><b>Duration</b> · 150 min, extended masterclass</div>
+      <div class="meta-chip"><b>Case</b> · Autonomous AP (Sessions 7–8)</div>
+      <div class="meta-chip"><b>Format</b> · Frameworks + war story + applied lab</div>
+      <div class="meta-chip"><b>Frameworks</b> · MEDDPICC · FAB · Chasm · SPIN</div>
+    </div>
+    <div class="practitioner">
+      <div class="p-label">Practitioner-Led</div>
+      <div class="p-desc">External AI product seller / value consultant + Internal FDE — one voice for how the deal is actually won or lost, one for what's true about what we can actually deliver.</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- AGENDA -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">00</span><span class="eyebrow">Evidence log</span></div>
+    <h2 class="title">The 150-Minute Masterclass</h2>
+    <p class="lead">Four real sales frameworks, one real war story, and every technique run against the same Autonomous AP case from Sessions 7 and 8 — nothing here is generic sales training with the serial numbers filed off.</p>
+    <div class="timeline">
+      <div class="t-row"><div class="t-time">0:00</div><div class="t-bar"></div><div class="t-label">Welcome & Session Frame</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:05</div><div class="t-bar"></div><div class="t-label">Icebreaker — Who's Actually in the Room?</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:10</div><div class="t-bar"></div><div class="t-label">Concept — MEDDPICC: Context for the Client Conversation</div><div class="t-tag tag-s3">15 min</div></div>
+      <div class="t-row"><div class="t-time">0:25</div><div class="t-bar"></div><div class="t-label">War Story — The Deal That Died in Procurement</div><div class="t-tag tag-finance">20 min</div></div>
+      <div class="t-row"><div class="t-time">0:45</div><div class="t-bar"></div><div class="t-label">Pop Quiz #1</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">0:48</div><div class="t-bar"></div><div class="t-label">Break</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:53</div><div class="t-bar"></div><div class="t-label">Concept — Feature-Advantage-Benefit: Calling Out the Value Add</div><div class="t-tag tag-s3">12 min</div></div>
+      <div class="t-row"><div class="t-time">1:05</div><div class="t-bar"></div><div class="t-label">Applied Lab — FAB the AP Agent (Claude Desktop)</div><div class="t-tag tag-s2">18 min</div></div>
+      <div class="t-row"><div class="t-time">1:23</div><div class="t-bar"></div><div class="t-label">Pop Quiz #2</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:26</div><div class="t-bar"></div><div class="t-label">Concept — Crossing the Chasm: MVP to Commercial Story</div><div class="t-tag tag-s3">12 min</div></div>
+      <div class="t-row"><div class="t-time">1:38</div><div class="t-bar"></div><div class="t-label">Concept — SPIN Selling: The Client Conversation</div><div class="t-tag tag-s3">12 min</div></div>
+      <div class="t-row"><div class="t-time">1:50</div><div class="t-bar"></div><div class="t-label">Pop Quiz #3</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:53</div><div class="t-bar"></div><div class="t-label">Break</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">1:58</div><div class="t-bar"></div><div class="t-label">The Objection Library — Beyond Autonomy, Governance, Cost</div><div class="t-tag tag-s3">15 min</div></div>
+      <div class="t-row"><div class="t-time">2:13</div><div class="t-bar"></div><div class="t-label">Land and Expand — From Pilot to Portfolio</div><div class="t-tag tag-s3">10 min</div></div>
+      <div class="t-row"><div class="t-time">2:23</div><div class="t-bar"></div><div class="t-label">Pop Quiz #4</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">2:26</div><div class="t-bar"></div><div class="t-label">Synthesis & Close</div><div class="t-tag tag-mod">4 min</div></div>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER -->
+  <section class="block">
+    <div class="interject break">
+      <div class="interject-head"><span class="stamp break">Icebreaker</span><span class="timer">⏱ 5 min · whole room</span></div>
+      <h3>Who's Actually in the Room?</h3>
+      <p>Facilitator asks: in your last client conversation about an AI initiative, who held the budget, who held the veto, and were they the same person? Show of hands on how many people can actually answer that about their current deal. The gap between "I know the buyer" and "I know who signs" is exactly what today's first framework exists to close.</p>
+    </div>
+  </section>
+
+  <!-- CONCEPT 1: MEDDPICC -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">01</span><span class="eyebrow">Concept · 15 min · External Seller / Value Consultant</span></div>
+    <h2 class="title">MEDDPICC — Context for the Client Conversation</h2>
+    <p class="lead">The standard enterprise sales qualification framework, extended past the original MEDDIC to include Paper Process and Competition — eight questions that tell you whether a deal is real, and where it's actually going to get stuck.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">M — Metrics</div><div>The quantifiable outcome the buyer cares about. Not "AI will help" — $19,614/mo, 2.2-month payback, 61.6% touchless. Numbers a CFO can put in a board deck.</div>
+        <div class="k">E — Economic Buyer</div><div>Whoever actually releases budget — often not who you've been talking to. The AP Director who champions this pilot rarely has release authority above a threshold; that's usually a CFO or a Controller.</div>
+        <div class="k">D — Decision Criteria</div><div>The formal and informal bar the buying committee scores against — security review, TCO ceiling, integration complexity, governance sign-off. Half of this is written down; half of it you only learn by asking.</div>
+        <div class="k">D — Decision Process</div><div>The actual sequence of steps and approvals the deal must clear — pilot approval, security review, budget committee, executive sign-off — and who owns each step.</div>
+        <div class="k">P — Paper Process</div><div>The contracting mechanics: MSA, SOW, security questionnaires, procurement portal, invoicing terms. Rarely glamorous, frequently fatal — today's war story is exactly this.</div>
+        <div class="k">I — Identify Pain</div><div>The real, felt pain driving urgency — not "AP costs $25K/month" in the abstract, but a specific, recent, remembered moment: a duplicate payment that embarrassed someone in a leadership meeting.</div>
+        <div class="k">C — Champion</div><div>The internal person who sells for you when you're not in the room. Needs both power and motivation — a champion with motivation but no power can't move the deal; one with power but no motivation won't bother.</div>
+        <div class="k">C — Competition</div><div>Every alternative being weighed — including "do nothing" and "build it ourselves," which are the two most common competitors an autonomous-delivery pitch actually faces.</div>
+      </div>
+    </div>
+    <div class="value-add">
+      <div class="va-label">Value Add</div>
+      <p>Most technical pitches only ever answer Metrics and Identify Pain — the two easiest letters. The other six are where deals actually die, silently, months after the room seemed to love the demo.</p>
+    </div>
+  </section>
+
+  <!-- WAR STORY -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--finance);">WS</span><span class="eyebrow">War Story · 20 min</span><span class="voice-tag internal">Internal FDE</span></div>
+    <h2 class="title">The Deal That Died in Procurement</h2>
+    <p class="lead">Strong Metrics. Strong Pain. Strong Champion. Dead deal — because two letters of MEDDPICC were never touched.</p>
+    <div class="folder finance">
+      <div class="folder-top"><h3 style="color:#fff;">Deal Post-Mortem: Autonomous AP, Mid-Market Manufacturer</h3><span class="case-tag">Illustrative composite, based on a recurring real pattern</span></div>
+      <div class="folder-body">
+        <div class="kv">
+          <div class="k">What was strong</div><div>The AP Director championed hard. The ROI math (a near-identical shape to this program's own numbers) was airtight. A duplicate-payment incident six months earlier gave the pitch real, felt urgency.</div>
+          <div class="k">What was never mapped</div><div>Decision Process — nobody asked who besides the AP Director needed to sign off. Paper Process — nobody asked what the vendor security questionnaire required, or how long it typically took Legal to turn around a new SOW touching payment systems.</div>
+        </div>
+        <ul class="pm-timeline">
+          <li><span class="day">Week 2</span>Pilot demo lands extremely well. AP Director verbally commits, asks for a contract.</li>
+          <li><span class="day">Week 3</span>SOW sent. Nobody has asked which internal teams need to review a contract touching payment execution.</li>
+          <li><span class="day">Week 6</span>Security review surfaces for the first time — a step nobody on the seller side knew existed, because nobody had asked about Decision Process in week 1.</li>
+          <li><span class="day">Week 10</span>Security questionnaire (47 questions, none anticipated) completed. Routed to Legal for a vendor-risk assessment neither side had budgeted time for.</li>
+          <li><span class="day">Week 16</span>Legal flags a data-residency clause. Renegotiation begins. The AP Director, the champion, has no authority here and can't accelerate it.</li>
+          <li><span class="day">Week 22</span>Budget cycle closes. The deal — technically unchanged, commercially still attractive — falls into next fiscal year, and momentum never recovers.</li>
+        </ul>
+        <div class="verdict"><b>The numbers</b> 22 weeks from verbal commit to a deal that simply expired — not lost to a competitor, not killed by a rejected business case, just outlasted by a Decision Process and Paper Process nobody mapped in week one.</div>
+        <p class="lead" style="margin-top:14px; font-style:italic;">"We had the best answer to a question nobody on the buying committee was actually asking by week six." — Internal FDE</p>
+      </div>
+    </div>
+    <div class="value-add">
+      <div class="va-label">Value Add</div>
+      <p>Asking "who else needs to sign this, and what does your security review typically take" in week one costs you nothing and one slightly awkward moment. Not asking it costs you the deal, sixteen weeks later, for reasons that were entirely knowable on day one.</p>
+    </div>
+  </section>
+
+  <!-- QUIZ 1 -->
+  <section class="block">
+    <div class="interject quiz" id="q1">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 1</span></div>
+      <h3>What actually killed the deal in the war story?</h3>
+      <ul class="opts">
+        <li><b>A.</b> The ROI numbers were too weak</li>
+        <li><b>B.</b> The champion lost interest</li>
+        <li class="correct"><b>C.</b> Decision Process and Paper Process were never mapped up front</li>
+        <li><b>D.</b> A competitor offered a better price</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q1')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> Metrics, Pain, and Champion were all strong — the deal died on the two letters of MEDDPICC nobody asked about in week one.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 2: FAB -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">02</span><span class="eyebrow">Concept · 12 min</span></div>
+    <h2 class="title">Feature-Advantage-Benefit — Calling Out the Value Add</h2>
+    <p class="lead">The classic sales framework this entire masterclass is named for: every feature has to be walked, explicitly, all the way to a benefit — a sentence a buyer would actually care about. Stopping early is the single most common mistake technical people make in front of a client.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Feature</div><div>What it literally is. "Tier 4 requires an exact PO match, an established vendor, and an amount at or below $10,000."</div>
+        <div class="k">Advantage</div><div>What it does, in system terms. "61.6% of invoices need zero human touch." Most pitches stop exactly here — this is a fact about the system, not yet a reason to buy it.</div>
+        <div class="k">Benefit / Value Add</div><div>What it means for this specific buyer. "Your AP team's time moves from data entry to vendor negotiation and cash-flow forecasting — the work that actually needed a human in the first place."</div>
+      </div>
+      <p class="lead" style="margin-top:12px;"><b>The discipline:</b> after every technical sentence, silently ask "which means...?" and keep asking until the next sentence is something a CFO would repeat in their own board meeting. If you can't get there, you don't have a benefit yet — you have an advantage wearing a benefit's clothes.</p>
+    </div>
+    <div class="value-add">
+      <div class="va-label">Value Add</div>
+      <p>A buyer who has to compute their own benefit from your advantage will compute a smaller one than you would have stated — or won't bother computing it at all. Stating it explicitly isn't optional politeness; it's the entire second half of the sentence.</p>
+    </div>
+  </section>
+
+  <!-- LAB: FAB APPLIED -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L1</span><span class="eyebrow">Applied Lab · Claude Desktop · 18 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">FAB the AP Agent</h2>
+    <p class="lead">Take three real features from the Session 7 build and walk each one all the way to a stated benefit.</p>
+    <div class="folder s2">
+      <div class="folder-top"><h3 style="color:#fff;">Build: FAB Table</h3><span class="case-tag">Uses the Session 7/8 Autonomous AP case</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Feed Claude the raw features<span class="step-time">4 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Here are three features of our Autonomous AP agent: (1) governance audit log on every Tier 3/4 decision, (2) 5 automated governance tests run against real data, (3) new vendors never exceed Tier 2. For each, write the Feature, the Advantage, and stop there — do not write the Benefit yet."</span></div>
+          </li>
+          <li>
+            <div class="step-title">Push past the stopping point<span class="step-time">8 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Now for each Advantage, keep asking 'which means...?' until you reach a sentence a CFO or a Chief Risk Officer would actually repeat in their own meeting. Show the chain, not just the final sentence."</span></div>
+            <div class="expect"><b>Expect:</b> the audit-log feature should land somewhere near "your risk team can pass an audit without a special one-off review" — not "the system is transparent," which is still an advantage, not a benefit.</div>
+          </li>
+          <li>
+            <div class="step-title">Stress-test with the icebreaker's buyer<span class="step-time">6 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"If the Economic Buyer for this deal is a CFO who has never heard the word 'agent' before, which of these three benefits lands hardest with them specifically, and why?"</span></div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A 3-row FAB table where every Benefit is a sentence a named role would actually say out loud — not a restatement of the Advantage in slightly different words.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 2 -->
+  <section class="block">
+    <div class="interject quiz" id="q2">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 2</span></div>
+      <h3>In FAB, what's the most common mistake technical sellers make?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Skipping the Feature entirely</li>
+        <li class="correct"><b>B.</b> Stopping at the Advantage and never stating the Benefit</li>
+        <li><b>C.</b> Stating too many benefits per feature</li>
+        <li><b>D.</b> Using the word "agent" too often</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q2')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> "61.6% touchless" is a fact about the system. It only becomes a reason to buy once someone states what that time gets spent on instead.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 3: CROSSING THE CHASM -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">03</span><span class="eyebrow">Concept · 12 min</span></div>
+    <h2 class="title">Crossing the Chasm — MVP to Commercial Story</h2>
+    <p class="lead">Real framework: Geoffrey Moore's technology adoption model — Innovators, Early Adopters, then a chasm, then Early Majority, Late Majority, Laggards. The pilot narrative that won your first buyer is the wrong narrative for your next ten.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Early Adopters</div><div>Tolerate rough edges to be first. Sold on vision, novelty, competitive edge. "We automated 61.6% of invoices" is exactly this pitch — and it's an early-adopter pitch.</div>
+        <div class="k">The Chasm</div><div>Where most autonomous-delivery pitches actually die commercially — not on technical merit, but because the same pitch that won an early adopter actively repels a pragmatist.</div>
+        <div class="k">Early Majority (Pragmatists)</div><div>Buy proof, not vision. Need whole-product thinking — support, governance, references — and safety in numbers: "who else is running this."</div>
+      </div>
+      <p class="lead" style="margin-top:12px;"><b>The reframe:</b> the same underlying system, narrated differently. Not "we automated 61.6% of invoices" but "this is a governed, tested pattern already validated against 1,800 real invoices, with 5 of 5 governance guarantees passing — the same pattern is ready to run in your environment with the same audit trail."</p>
+    </div>
+    <div class="value-add">
+      <div class="va-label">Value Add</div>
+      <p>Pragmatist buyers don't need to be convinced the technology works — they need to be convinced it's already been de-risked by someone else. That reassurance is a value-add on top of the ROI, not a restatement of it.</p>
+    </div>
+  </section>
+
+  <!-- CONCEPT 4: SPIN SELLING -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">04</span><span class="eyebrow">Concept · 12 min</span></div>
+    <h2 class="title">SPIN Selling — The Client Conversation</h2>
+    <p class="lead">Real framework: Neil Rackham's SPIN — Situation, Problem, Implication, Need-payoff. A questioning sequence that gets the buyer to state their own pain and their own cost of inaction, instead of the seller asserting it for them.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Situation</div><div>"How many people currently touch an invoice before it's paid?" — neutral, fact-finding, low resistance.</div>
+        <div class="k">Problem</div><div>"Where do you see the most rework or delay in that process?" — surfaces pain without naming it for them.</div>
+        <div class="k">Implication</div><div>"What does that delay cost you when a vendor is upset enough to change payment terms?" — makes the cost concrete and felt, in their own words.</div>
+        <div class="k">Need-payoff</div><div>"If 60% of that volume required zero human touch, what would your team do with that time back?" — the buyer states the value themselves; you never had to claim it.</div>
+      </div>
+      <p class="lead" style="margin-top:12px;"><b>Why this matters for objection handling:</b> an objection raised against a benefit the buyer stated themselves in a Need-payoff question is much harder to sustain than an objection against a benefit you asserted on a slide.</p>
+    </div>
+    <div class="value-add">
+      <div class="va-label">Value Add</div>
+      <p>A benefit the buyer says out loud is a benefit they now have to argue against to reject — a fundamentally stronger position than a benefit you handed them on a slide.</p>
+    </div>
+  </section>
+
+  <!-- QUIZ 3 -->
+  <section class="block">
+    <div class="interject quiz" id="q3">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 3</span></div>
+      <h3>What do pragmatist (Early Majority) buyers need that early adopters don't?</h3>
+      <ul class="opts">
+        <li><b>A.</b> More features than early adopters got</li>
+        <li><b>B.</b> A lower price than early adopters paid</li>
+        <li class="correct"><b>C.</b> Whole-product thinking, references, and proof this has already worked elsewhere</li>
+        <li><b>D.</b> Nothing — the same pitch works on both groups</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q3')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> Pragmatists buy safety in numbers, not novelty — the exact opposite instinct of the early-adopter pitch that won your first deal.</div>
+    </div>
+  </section>
+
+  <!-- OBJECTION LIBRARY -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">05</span><span class="eyebrow">Concept · 15 min</span></div>
+    <h2 class="title">The Objection Library — Beyond Autonomy, Governance, Cost</h2>
+    <p class="lead">Session 7 covered the three objections every CIO raises. Real autonomous-delivery deals raise at least five more — each handled with the same Acknowledge → Reframe → Evidence structure.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">"Why not build in-house?"</div><div><b>Reframe:</b> the build isn't the hard part — the tested governance layer is. <b>Evidence:</b> point to the 5 governance tests and the fact that they took as long to write as the agent itself.</div>
+        <div class="k">"Isn't this just RPA with extra steps?"</div><div><b>Reframe:</b> RPA follows a fixed script and breaks on anything unexpected; this classifies risk and routes accordingly. <b>Evidence:</b> the Tier 2 "assisted" path — RPA has no equivalent, it either automates or it doesn't.</div>
+        <div class="k">"What happens when the model changes or hallucinates?"</div><div><b>Reframe:</b> the tier thresholds are hard-coded rules, not model judgment calls — the model never decides the dollar cap. <b>Evidence:</b> the Govern function from NIST AI RMF (Session 7) — thresholds live in versioned code, not runtime inference.</div>
+        <div class="k">"How is this different from [competitor]?"</div><div><b>Reframe:</b> ask what evidence the competitor offers for their governance claims, not just their feature list. <b>Evidence:</b> the test suite itself — invite direct comparison on this specific point.</div>
+        <div class="k">"What's our exit cost if this doesn't work out?"</div><div><b>Reframe:</b> the tiering logic and audit format aren't proprietary lock-in — they're portable business rules. <b>Evidence:</b> show the actual rule definitions in plain language, not obfuscated model weights.</div>
+      </div>
+    </div>
+    <div class="value-add">
+      <div class="va-label">Value Add</div>
+      <p>Every objection above gets answered with something the buyer can independently verify — a test, a rule, a document — never just a more confident version of the original claim. That's the same Trust Hierarchy discipline from the Context Layers track, now applied to a sales conversation instead of a codebase.</p>
+    </div>
+  </section>
+
+  <!-- LAND AND EXPAND -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">06</span><span class="eyebrow">Concept · 10 min</span></div>
+    <h2 class="title">Land and Expand — From Pilot to Portfolio</h2>
+    <p class="lead">Real growth motion: start narrow and low-risk, prove it, then expand — using the first deployment's governance-tested pattern as reusable evidence, not just reusable code.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li><b>Land:</b> Tier 4 only, the lowest-risk 61.6% of volume — small enough to approve fast, real enough to prove the pattern.</li>
+        <li><b>Prove:</b> 5/5 governance tests, real audit trail, a measured payback period — this becomes the reference case for every conversation after it.</li>
+        <li><b>Expand — same client:</b> Tier 3, then Tier 2 with agent-assisted recommendations, using the same tested pattern at a higher dollar threshold.</li>
+        <li><b>Expand — new domains:</b> claims adjudication, prior-authorization triage, procurement — different data, same tiered-autonomy shape, same governance discipline already proven once.</li>
+      </ul>
+    </div>
+    <div class="value-add">
+      <div class="va-label">Value Add</div>
+      <p>The second sale is structurally easier than the first, because "prove it's safe" — the hardest objection in Session 7 — is already answered by a working reference, not a projection. That's the UST-internal narrative from Session 8, now shown as a sales mechanism, not just a capability story.</p>
+    </div>
+  </section>
+
+  <!-- QUIZ 4 -->
+  <section class="block">
+    <div class="interject quiz" id="q4">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 4</span></div>
+      <h3>In Land and Expand, what's the strategic purpose of starting with a narrow pilot?</h3>
+      <ul class="opts">
+        <li><b>A.</b> It's cheaper to build than a full rollout</li>
+        <li class="correct"><b>B.</b> It proves the pattern at low risk, creating reusable evidence for every deal after it</li>
+        <li><b>C.</b> It avoids needing any governance review</li>
+        <li><b>D.</b> Clients generally prefer smaller invoices</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q4')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> The pilot isn't the whole deal — it's the evidence that makes every subsequent expansion, and every subsequent client, an easier sale.</div>
+    </div>
+  </section>
+
+  <!-- FIELD GUIDE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--fw);">FG</span><span class="eyebrow">Field guide · reference, not counted in the 150 min</span></div>
+    <h2 class="title">Frameworks Behind Today's Masterclass</h2>
+    <div class="fw-grid">
+      <div class="fw-card">
+        <span class="fw-cat">Qualification</span>
+        <div class="fw-name">MEDDPICC</div>
+        <div class="fw-def">Metrics, Economic Buyer, Decision Criteria, Decision Process, Paper Process, Identify Pain, Champion, Competition — eight questions that tell you where a real deal is headed and where it's likely to stall.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Walk this deal through all eight letters of MEDDPICC and tell me which ones we haven't actually answered yet."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Value</span>
+        <div class="fw-name">Feature-Advantage-Benefit</div>
+        <div class="fw-def">Every feature has to be walked, explicitly, all the way to a benefit a named buyer would say out loud — stopping at the advantage leaves the value-add for the buyer to compute themselves.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Take this feature and keep asking 'which means...?' until the sentence is something a CFO would repeat in their own meeting."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Narrative</span>
+        <div class="fw-name">Crossing the Chasm</div>
+        <div class="fw-def">Geoffrey Moore's adoption model — the pitch that wins an early adopter (novelty, vision) actively repels a pragmatist buyer, who needs proof, references, and whole-product thinking instead.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Rewrite this pitch for a pragmatist buyer who needs proof this has already worked elsewhere, not a vision of what it could do."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Conversation</span>
+        <div class="fw-name">SPIN Selling</div>
+        <div class="fw-def">Situation, Problem, Implication, Need-payoff — a question sequence that gets the buyer to state their own pain and their own value, rather than the seller asserting it.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Write a SPIN question sequence for this buyer that ends with them stating our core benefit in their own words."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Growth</span>
+        <div class="fw-name">Land and Expand</div>
+        <div class="fw-def">Start narrow and low-risk, prove the pattern, then expand — to more tiers with the same client, or to new domains that share the same risk shape.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Given this proven pilot, what's the next-smallest expansion that reuses the same governance pattern without re-litigating trust from zero?"</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Objections</span>
+        <div class="fw-name">Acknowledge → Reframe → Evidence</div>
+        <div class="fw-def">From Session 7, now applied to five objections beyond autonomy, governance, and cost — every response ends in something the buyer can independently verify, never just a more confident assertion.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Here's an objection I haven't heard before. Build an Acknowledge-Reframe-Evidence response using only things we can actually prove."</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <span class="stamp" style="color:var(--ink);">Case Closed</span>
+    <p>Every framework today does the same job from a different angle: make the value add explicit instead of implied, and know exactly which part of the room hasn't agreed to anything yet. MEDDPICC tells you who's actually in the room. FAB tells you what to say to them. The Chasm tells you which version of the story they need. SPIN gets them to say the benefit themselves. None of it works without the Sessions 7–8 evidence underneath it — and none of that evidence sells itself without this.</p>
+  </section>
+
+</div>
+
+<script>
+function toggleAnswer(id){
+  document.getElementById(id).classList.toggle('revealed');
+}
+</script>
+</body>
+</html>
