@@ -1,0 +1,24 @@
+# budget_config.yaml
+# Governance-as-code: these thresholds are the enforced policy, versioned here,
+# changed only through review -- not a runtime setting an agent or a script can drift.
+
+phase_budget_usd:
+  Spec: 12.00
+  Plan: 15.00
+  Implement: 30.00
+  Test: 18.00
+  Review: 35.00
+  Debug: 28.00
+
+
+
+# Flag any task costing more than this multiple of the average cost for its
+# complexity tier -- catches non-linear blowouts even within one complexity band.
+complexity_outlier_multiplier: 2.5
+
+# Which phases are eligible for routing to a cheaper "efficient" model instead
+# of the frontier model, and up to what complexity rating.
+hybrid_eligible_phases:
+  - Spec
+  - Plan
+hybrid_eligible_max_complexity: 2

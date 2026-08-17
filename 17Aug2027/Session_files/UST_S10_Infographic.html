@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File S10 — Concept + Demo: Spec-Driven, Governed, and Cost-Aware Delivery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bitter:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1E8D5;
+    --paper2:#E7D8B8;
+    --paper3:#DCCBA3;
+    --ink:#241D14;
+    --ink-soft:#5A4C3A;
+    --retail:#A8631B;
+    --retail-soft:#F0D9AF;
+    --health:#2F6F62;
+    --health-soft:#CFE3DC;
+    --quiz:#A23B2E;
+    --quiz-soft:#F1D3CC;
+    --break:#2B4570;
+    --break-soft:#D6E0EE;
+    --fw:#6B4FA0;
+    --fw-soft:#E6DEF2;
+    --s2:#C8551F;
+    --s2-soft:#F3D9C4;
+    --s3:#1C33C4;
+    --s3-soft:#DCE1FA;
+    --devops:#455568;
+    --devops-soft:#DDE3E9;
+    --finance:#7A6A1C;
+    --finance-soft:#EDE7C9;
+    --live:#1E7B4D;
+    --live-soft:#D2E8DA;
+    --dead-cat:#5A4C3A;
+    --dead-cat-soft:#E4DDC9;
+    --vestigial:#B5791E;
+    --vestigial-soft:#F1DFB8;
+    --zombie:#A23B2E;
+    --zombie-soft:#F1D3CC;
+    --line: rgba(36,29,20,0.22);
+    --gold:#C79A2E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05), transparent 45%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 80px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1.5px;background:var(--ink-soft);display:inline-block;}
+  h1,h2,h3{font-family:'Bitter', serif; margin:0; color:var(--ink);}
+
+  /* ---------- STAMP ---------- */
+  .stamp{
+    display:inline-block;
+    font-family:'Special Elite', monospace;
+    text-transform:uppercase;
+    border:3px solid currentColor;
+    border-radius:6px;
+    padding:6px 16px;
+    letter-spacing:.08em;
+    transform:rotate(-4deg);
+    position:relative;
+  }
+  .stamp::after{
+    content:"";
+    position:absolute; inset:3px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    opacity:.55;
+  }
+  .stamp.quiz{color:var(--quiz);}
+  .stamp.break{color:var(--break);}
+
+  /* ---------- TOP BANNER (session identity strip) ---------- */
+  .s2-banner{
+    background:var(--s2); color:#fff; padding:14px 28px;
+    font-family:'Bitter',serif; font-weight:700; font-size:15px; letter-spacing:.03em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s2-banner .dot{width:8px; height:8px; border-radius:50%; background:#fff; opacity:.85;}
+  .s3-banner{background:var(--s3);}
+  .s7-banner{background:var(--gold); color:var(--ink);}
+  .s7-banner .dot{background:var(--ink); opacity:.6;}
+
+  /* ---------- PRACTITIONER BYLINE ---------- */
+  .practitioner{
+    margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.3s;
+  }
+  .practitioner .p-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--s3); font-weight:700; margin-bottom:6px;
+  }
+  .practitioner .p-desc{font-style:italic; color:var(--ink-soft); font-size:14.5px;}
+  .voice-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase;
+    letter-spacing:.05em; padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .voice-tag.external{background:var(--s3-soft); color:var(--s3);}
+  .voice-tag.internal{background:var(--retail-soft); color:var(--retail);}
+
+  /* ---------- VALUE ADD CALLOUT ---------- */
+  .value-add{
+    margin-top:14px; padding:14px 18px; border-radius:10px;
+    background:linear-gradient(135deg, var(--gold-soft, #F3E3B8), transparent 140%);
+    background-color:#FBF1D6;
+    border:1.5px solid var(--gold); position:relative;
+  }
+  .value-add .va-label{
+    font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--dead-cat); display:flex; align-items:center; gap:6px; margin-bottom:5px;
+  }
+  .value-add .va-label::before{content:"$"; display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px; border-radius:50%; background:var(--gold); color:#fff; font-size:10px; font-weight:800;}
+  .value-add p{margin:0; font-size:14px; color:var(--ink); line-height:1.5;}
+
+  /* ---------- GHERKIN / POSTMORTEM / 5 WHYS ---------- */
+  .gherkin{
+    background:#10151C; color:#D7E1EA; border-radius:10px; padding:16px 20px;
+    font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.9; margin:14px 0;
+    overflow-x:auto; white-space:pre-wrap;
+  }
+  .gherkin .kw{color:#5FD9C4; font-weight:700;}
+  .gherkin .cm{color:#7A8A99; font-style:italic;}
+  .pm-timeline{list-style:none; margin:14px 0; padding:0;}
+  .pm-timeline li{display:grid; grid-template-columns:98px 1fr; gap:14px; padding:9px 0; border-top:1px dashed var(--line); font-size:14px; line-height:1.5;}
+  .pm-timeline li:first-child{border-top:none;}
+  .pm-timeline .day{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--s3); font-weight:700; padding-top:1px;}
+  .whys-chain{list-style:none; margin:14px 0; padding:0;}
+  .whys-chain li{padding:11px 0; border-top:1px dashed var(--line); font-size:14.5px; line-height:1.55;}
+  .whys-chain li:first-child{border-top:none;}
+  .whys-chain .why-q{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700;
+    color:var(--s3); text-transform:uppercase; letter-spacing:.06em;
+    display:inline-block; margin-bottom:5px; background:var(--s3-soft); padding:3px 9px; border-radius:20px;
+  }
+  .fw-subhead{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-soft); margin:26px 0 4px; padding-top:20px; border-top:1px solid var(--line);
+  }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:60px 28px;
+    border-bottom:6px double var(--ink);
+    overflow:hidden;
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(36,29,20,0.035) 0px, rgba(36,29,20,0.035) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+  .cover-inner{max-width:980px;margin:0 auto; width:100%; position:relative; z-index:1;}
+  .folder-tabs{display:flex; gap:8px; margin-bottom:28px;}
+  .folder-tabs span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.1em;
+    background:var(--paper3);
+    border:1px solid var(--line);
+    border-bottom:none;
+    padding:5px 12px 8px;
+    border-radius:6px 6px 0 0;
+    color:var(--ink-soft);
+    opacity:0; transform:translateY(10px);
+    animation:tabIn .5s ease forwards;
+  }
+  .folder-tabs span:nth-child(1){animation-delay:.05s;}
+  .folder-tabs span:nth-child(2){animation-delay:.15s;}
+  .folder-tabs span:nth-child(3){animation-delay:.25s;}
+  .folder-tabs span:nth-child(4){animation-delay:.35s;}
+  .folder-tabs span:nth-child(5){animation-delay:.42s;}
+  @keyframes tabIn{to{opacity:1; transform:translateY(0);}}
+
+  .case-no{
+    font-family:'Special Elite', monospace;
+    color:var(--quiz);
+    font-size:15px;
+    letter-spacing:.05em;
+    margin-bottom:14px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards; animation-delay:.4s;
+  }
+  .cover h1{
+    font-size:clamp(40px, 7vw, 84px);
+    line-height:0.98;
+    font-weight:900;
+    margin:6px 0 18px;
+    opacity:0;
+    transform:scale(.9) rotate(-1deg);
+    animation:stampIn .7s cubic-bezier(.2,1.6,.4,1) forwards;
+    animation-delay:.55s;
+  }
+  .cover h1 em{font-style:normal; color:var(--retail);}
+  @keyframes stampIn{
+    0%{opacity:0; transform:scale(1.35) rotate(-3deg);}
+    60%{opacity:1;}
+    100%{opacity:1; transform:scale(1) rotate(-1deg);}
+  }
+  .cover .sub{
+    font-size:clamp(16px,2.1vw,20px);
+    max-width:640px; color:var(--ink-soft); line-height:1.5;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:.95s;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-top:34px;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.15s;
+  }
+  .meta-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); background:rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:20px; color:var(--ink);
+  }
+  .meta-chip b{color:var(--ink);}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  .seal{
+    position:absolute; top:56px; right:40px;
+    width:118px; height:118px;
+    border:3px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; font-family:'Special Elite',monospace;
+    font-size:11px; color:var(--gold); letter-spacing:.05em;
+    transform:rotate(12deg) scale(0);
+    animation:sealIn .6s cubic-bezier(.3,1.7,.4,1) forwards; animation-delay:1.3s;
+  }
+  .seal::before{content:""; position:absolute; inset:8px; border:1px dashed var(--gold); border-radius:50%;}
+  @keyframes sealIn{to{transform:rotate(12deg) scale(1);}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block{padding:56px 0 8px; border-bottom:1px solid var(--line);}
+  .tag-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .idx{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    color:#fff; background:var(--ink); border-radius:5px; padding:4px 9px;
+  }
+  h2.title{font-size:clamp(26px,3.6vw,38px); font-weight:700; margin-top:6px;}
+  .lead{color:var(--ink-soft); font-size:16.5px; max-width:680px; margin-top:8px; line-height:1.55;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{display:flex; flex-direction:column; gap:0; margin-top:26px;}
+  .t-row{
+    display:grid; grid-template-columns:96px 1px 1fr auto;
+    align-items:center; gap:18px; padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .t-row:first-child{border-top:none;}
+  .t-time{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-soft);}
+  .t-bar{width:1px; height:34px; background:var(--line);}
+  .t-label{font-weight:600; font-size:16px;}
+  .t-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    padding:5px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
+  }
+  .tag-mod{background:var(--paper3); color:var(--ink-soft);}
+  .tag-retail{background:var(--retail-soft); color:var(--retail);}
+  .tag-health{background:var(--health-soft); color:var(--health);}
+  .tag-quiz{background:var(--quiz-soft); color:var(--quiz);}
+  .tag-break{background:var(--break-soft); color:var(--break);}
+  .tag-fw{background:var(--fw-soft); color:var(--fw);}
+  .tag-s2{background:var(--s2-soft); color:var(--s2);}
+  .tag-s3{background:var(--s3-soft); color:var(--s3);}
+  .tag-devops{background:var(--devops-soft); color:var(--devops);}
+  .tag-finance{background:var(--finance-soft); color:var(--finance);}
+  .tag-gold{background:var(--gold); color:var(--ink);}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:rgba(255,255,255,.4);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 28px;
+    margin-top:22px;
+    position:relative;
+  }
+  .card .pin{
+    position:absolute; top:-10px; left:26px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--gold); box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .points{margin:14px 0 0; padding:0; list-style:none;}
+  .points li{
+    padding:8px 0 8px 22px; position:relative; line-height:1.5; font-size:15.5px;
+  }
+  .points li::before{content:"—"; position:absolute; left:0; color:var(--ink-soft);}
+
+  /* ---------- ICEBREAKER / QUIZ CARDS ---------- */
+  .interject{
+    margin-top:26px; border-radius:12px; padding:26px 28px 24px;
+    border:2px dashed currentColor;
+  }
+  .interject.break{color:var(--break); background:var(--break-soft);}
+  .interject.quiz{color:var(--quiz); background:var(--quiz-soft);}
+  .interject-head{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .interject h3{color:var(--ink); font-size:20px;}
+  .interject p, .interject .opts{color:var(--ink); font-size:15.5px;}
+  .timer{
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    background:rgba(255,255,255,.6); padding:4px 10px; border-radius:20px; color:var(--ink);
+  }
+  .opts{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:8px;}
+  .opts li{
+    background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.12);
+    border-radius:8px; padding:9px 14px; font-size:15px;
+    transition:background .25s ease, border-color .25s ease, opacity .25s ease;
+  }
+  .opts li b{font-family:'IBM Plex Mono',monospace; margin-right:8px;}
+  .reveal-btn{
+    margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+    background:var(--ink); color:#fff; border:none; border-radius:20px;
+    padding:9px 18px; transition:transform .15s ease;
+  }
+  .reveal-btn:hover{transform:translateY(-1px);}
+  /* correct option + explanation stay neutral until the quiz container is marked revealed */
+  .interject.revealed .opts li.correct{
+    background:#DCF3E3; border-color:#2F7D4F; color:#1C4D31; font-weight:600;
+  }
+  .interject.revealed .opts li.correct::after{
+    content:" ✓ Correct"; font-weight:800; color:#2F7D4F; margin-left:6px;
+  }
+  .interject.revealed .opts li:not(.correct){opacity:.5;}
+  .answer{
+    margin-top:14px; padding:12px 16px; border-radius:8px;
+    background:rgba(255,255,255,.7); border-left:4px solid var(--ink);
+    font-size:15px; display:none;
+  }
+  .interject.revealed .answer{display:block; animation:fadeUp .35s ease;}
+  .answer b{color:var(--quiz);}
+
+  /* ---------- DEMO / CASE FOLDER ---------- */
+  .folder{
+    margin-top:24px; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+  }
+  .folder-top{padding:20px 26px; display:flex; align-items:center; gap:14px; color:#fff;}
+  .folder.retail .folder-top{background:var(--retail);}
+  .folder.health .folder-top{background:var(--health);}
+  .folder.s3 .folder-top{background:var(--s3);}
+  .folder.devops .folder-top{background:var(--devops);}
+  .folder.finance .folder-top{background:var(--finance);}
+  .folder.gold .folder-top{background:var(--gold);}
+  .folder-top .case-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em;
+    background:rgba(255,255,255,.22); padding:4px 10px; border-radius:20px;
+  }
+  .folder-body{background:rgba(255,255,255,.45); padding:24px 26px;}
+  .kv{display:grid; grid-template-columns:140px 1fr; gap:8px 16px; font-size:15px; margin-bottom:16px;}
+  .kv .k{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; padding-top:2px;}
+  .steps{counter-reset:step; list-style:none; margin:14px 0 0; padding:0;}
+  .steps li{
+    counter-increment:step; position:relative; padding:9px 0 9px 34px; font-size:15px; line-height:1.5;
+    border-top:1px dashed var(--line);
+  }
+  .steps li:first-child{border-top:none;}
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:8px;
+    width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; display:flex; align-items:center; justify-content:center;
+  }
+  .verdict{
+    margin-top:16px; padding:14px 18px; border-radius:8px; font-size:15px;
+    background:rgba(0,0,0,.05); border-left:4px solid var(--ink);
+  }
+  .verdict b{font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-size:12px; letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);}
+
+  /* ---------- STEP DETAIL (prompts inside demo steps) ---------- */
+  .steps li{padding-bottom:16px;}
+  .step-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15.5px; margin-bottom:8px;}
+  .step-time{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); background:rgba(0,0,0,.06); padding:2px 9px; border-radius:10px; white-space:nowrap;}
+  .prompt-chip{
+    background:rgba(255,255,255,.75); border-radius:7px; padding:10px 14px;
+    font-size:14px; margin:0 0 8px; line-height:1.5;
+    border-left:3px solid currentColor;
+  }
+  .folder.retail .prompt-chip{color:var(--retail);}
+  .folder.health .prompt-chip{color:var(--health);}
+  .folder.s3 .prompt-chip{color:var(--s3);}
+  .folder.devops .prompt-chip{color:var(--devops);}
+  .folder.finance .prompt-chip{color:var(--finance);}
+  .folder.gold .prompt-chip{color:var(--dead-cat);}
+  .prompt-label{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:10.5px; letter-spacing:.07em; margin-right:8px;}
+  .prompt-chip .prompt-text{color:var(--ink); font-style:italic;}
+  .expect{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:2px;}
+  .expect b{color:var(--ink); font-weight:700;}
+  .fw-used{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.04em;
+    background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.12);
+    padding:6px 12px; border-radius:20px; color:var(--ink);
+  }
+  .fw-used b{color:var(--fw); text-transform:uppercase;}
+  .handson-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:rgba(255,255,255,.9); color:var(--s2); border:1px solid var(--s2);
+    padding:3px 9px; border-radius:20px;
+  }
+  .feature-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:var(--s3); color:#fff;
+    padding:4px 11px; border-radius:20px;
+  }
+  .class-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700;
+    padding:3px 10px; border-radius:20px;
+  }
+  .class-tag.live{background:var(--live-soft); color:var(--live);}
+  .class-tag.dead{background:var(--dead-cat-soft); color:var(--dead-cat);}
+  .class-tag.vestigial{background:var(--vestigial-soft); color:var(--vestigial);}
+  .class-tag.zombie{background:var(--zombie-soft); color:var(--zombie);}
+  .class-table{width:100%; border-collapse:collapse; margin-top:14px; font-size:13.5px;}
+  .class-table td{padding:9px 10px; border-top:1px solid var(--line); vertical-align:top;}
+  .class-table tr:first-child td{border-top:none;}
+  .class-table td.fn{font-family:'IBM Plex Mono',monospace; font-size:12px;}
+
+  /* ---------- FIELD GUIDE ---------- */
+  .fw-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px;}
+  .fw-card{
+    background:rgba(255,255,255,.5); border:1px solid var(--line); border-radius:12px;
+    padding:22px 24px; position:relative;
+  }
+  .fw-cat{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--fw);
+    background:var(--fw-soft); padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .fw-name{font-family:'Bitter',serif; font-weight:700; font-size:19px; margin-bottom:6px;}
+  .fw-def{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:12px;}
+  .fw-example{
+    font-size:13px; margin-bottom:12px; padding:9px 12px;
+    background:rgba(0,0,0,.045); border-radius:7px; line-height:1.5;
+  }
+  .fw-example b{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);
+  }
+  .fw-card .prompt-chip{color:var(--fw);}
+  @media (max-width:720px){.fw-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CLOSING ---------- */
+  .closing{padding:70px 0 40px; text-align:center;}
+  .closing .stamp{font-size:26px; padding:14px 30px;}
+  .closing p{max-width:600px; margin:22px auto 0; color:var(--ink-soft); font-size:16px; line-height:1.6;}
+
+  @media (max-width:640px){
+    .t-row{grid-template-columns:70px 1px 1fr; grid-template-areas:"time bar label" ". . tag"; }
+    .t-tag{grid-area:tag; justify-self:start; margin-top:6px;}
+    .seal{display:none;}
+    .kv{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="s2-banner s7-banner"><span class="dot"></span>S10 · CONCEPT + DEMO <span class="dot"></span> Spec-Driven, Governed, and Cost-Aware Delivery</div>
+
+<header class="cover">
+  <div class="seal">CLAUDE<br>×<br>UST</div>
+  <div class="cover-inner">
+    <div class="folder-tabs">
+      <span>SPEC-DRIVEN</span><span>GOVERN</span><span>TOKEN SPEND</span><span>COSTGUARD</span><span>SDLC</span>
+    </div>
+    <div class="case-no">CASE FILE NO. S10 — OPENED 0:00</div>
+    <h1>The Spec Is<br><em>the Source of Truth</em></h1>
+    <p class="sub">What industry actually does today, not a forecast: specs as the versioned artifact that governs autonomous coding agents, governance that watches actions instead of reading every line of generated code, and a real, working budget-enforcement tool for the cost center nobody's watching — token spend, broken down by SDLC phase.</p>
+    <div class="meta-row">
+      <div class="meta-chip"><b>Duration</b> · 120 min</div>
+      <div class="meta-chip"><b>Tools</b> · Claude Desktop + Claude Code CLI</div>
+      <div class="meta-chip"><b>Grounded in</b> · 2025–2026 industry practice, cited</div>
+      <div class="meta-chip"><b>Demo</b> · CostGuard, a real governance-as-code tool</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- AGENDA -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">00</span><span class="eyebrow">Evidence log</span></div>
+    <h2 class="title">The 120-Minute Case</h2>
+    <p class="lead">Three real industry shifts, then one working tool that operationalizes the third of them — every number in the demo is reproducible, not illustrative.</p>
+    <div class="timeline">
+      <div class="t-row"><div class="t-time">0:00</div><div class="t-bar"></div><div class="t-label">Welcome & Session Frame</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:05</div><div class="t-bar"></div><div class="t-label">Icebreaker — Guess the Phase</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:10</div><div class="t-bar"></div><div class="t-label">Spec-Driven Development — Why the Spec Became the Code</div><div class="t-tag tag-gold">15 min</div></div>
+      <div class="t-row"><div class="t-time">0:25</div><div class="t-bar"></div><div class="t-label">Pop Quiz #1</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">0:28</div><div class="t-bar"></div><div class="t-label">Governing Agents, Not Code</div><div class="t-tag tag-s3">15 min</div></div>
+      <div class="t-row"><div class="t-time">0:43</div><div class="t-bar"></div><div class="t-label">Pop Quiz #2</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">0:46</div><div class="t-bar"></div><div class="t-label">Break</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:51</div><div class="t-bar"></div><div class="t-label">Token Spend by SDLC Phase — The New Cloud Bill</div><div class="t-tag tag-finance">15 min</div></div>
+      <div class="t-row"><div class="t-time">1:06</div><div class="t-bar"></div><div class="t-label">Pop Quiz #3</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:09</div><div class="t-bar"></div><div class="t-label">DEMO — CostGuard, End to End (Claude Desktop + CLI)</div><div class="t-tag tag-devops">40 min</div></div>
+      <div class="t-row"><div class="t-time">1:49</div><div class="t-bar"></div><div class="t-label">Pop Quiz #4</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:52</div><div class="t-bar"></div><div class="t-label">Field Guide Walkthrough</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">1:57</div><div class="t-bar"></div><div class="t-label">Synthesis & Close</div><div class="t-tag tag-mod">3 min</div></div>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER -->
+  <section class="block">
+    <div class="interject break">
+      <div class="interject-head"><span class="stamp break">Icebreaker</span><span class="timer">⏱ 5 min · whole room</span></div>
+      <h3>Guess the Phase</h3>
+      <p>Facilitator asks: across a typical agentic coding task — Spec, Plan, Implement, Test, Review, Debug — which single phase do you think burns the most tokens? Show of hands per phase. Most rooms vote Implement. Hold that vote; the real 2026 data says otherwise, and you'll see the actual number in about 45 minutes.</p>
+    </div>
+  </section>
+
+  <!-- CONCEPT 1: SDD -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--gold); color:var(--ink);">01</span><span class="eyebrow">Concept · 15 min</span></div>
+    <h2 class="title">Spec-Driven Development — Why the Spec Became the Code</h2>
+    <p class="lead">By 2026, spec-driven development (SDD) is mainstream: an executable, version-controlled specification — not the code — is the source of truth. The team writes the spec, derives a plan, breaks it into tasks, and only then generates code. When requirements change, you edit the spec and regenerate.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li><b>The origin:</b> a direct reaction to "vibe coding" — the term Andrej Karpathy popularized in early 2025 for loosely prompting an agent and shipping whatever comes back. Fine for a throwaway prototype, unmaintainable at production scale.</li>
+        <li><b>The founding argument:</b> Sean Grove (OpenAI), "The New Code," AI Engineer World's Fair 2025 — specs are the versioned, testable home of intent. Code becomes a generated, verifiable artifact rather than the thing humans directly author.</li>
+        <li><b>The four-phase workflow</b> popularized by GitHub Spec Kit — now the de facto standard, agent-agnostic across 30+ tools: <b>/specify → /plan → /tasks → /implement.</b></li>
+        <li><b>Real tooling landscape today:</b> GitHub Spec Kit (open source, CLI-first), AWS Kiro (GA with CLI — requirements.md, design.md, tasks.md as first-class files, not an add-on), Claude Code Skills (an SDD workflow packaged as a reusable slash command), plus OpenSpec, BMAD-METHOD, Tessl, Google Antigravity, and Cursor's own rule files.</li>
+        <li><b>EARS</b> (Easy Approach to Requirements Syntax) — a real, borrowed-from-aerospace format for writing acceptance criteria precisely: <i>"WHEN [trigger], the [system] SHALL [response]."</i> Turns a vague requirement into something an agent — or a test — can check mechanically.</li>
+      </ul>
+    </div>
+    <h3 style="margin-top:18px; font-weight:700; color:var(--ink);">The Maturity Model — How Much Should the Spec Actually Own?</h3>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Spec-anchored</div><div>Specs come before code and constrain what an agent generates. Code remains the primary deliverable — most teams' default in 2026.</div>
+        <div class="k">Spec-as-source</div><div>The furthest end of the spectrum: specs literally become the source code, regenerated on every change. Powerful, but the antipattern ThoughtWorks warns about below lives here.</div>
+      </div>
+      <p class="lead" style="margin-top:10px;"><b>The honest caveat:</b> the ThoughtWorks Technology Radar (Vol. 33, 2025) places SDD in its "Assess" ring — not "Adopt" — and explicitly warns against "a bias toward heavy up-front specification and big-bang releases." SDD is a real discipline, not a silver bullet; over-specifying before you understand the problem recreates the worst parts of waterfall with extra ceremony.</p>
+    </div>
+  </section>
+
+  <!-- QUIZ 1 -->
+  <section class="block">
+    <div class="interject quiz" id="q1">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 1</span></div>
+      <h3>In the GitHub Spec Kit workflow, what comes right before /implement?</h3>
+      <ul class="opts">
+        <li><b>A.</b> /specify</li>
+        <li><b>B.</b> /plan</li>
+        <li class="correct"><b>C.</b> /tasks</li>
+        <li><b>D.</b> /review</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q1')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> The full sequence is /specify → /plan → /tasks → /implement — the spec becomes a plan, the plan becomes atomic tasks, and only then does code generation start.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 2: GOVERNING AGENTS -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s3);">02</span><span class="eyebrow">Concept · 15 min</span></div>
+    <h2 class="title">Governing Agents, Not Code</h2>
+    <p class="lead">Traditional software governance reviews code, line by line, PR by PR. That doesn't scale once an agent can generate thousands of lines in minutes. The industry's real answer in 2026 isn't more review — it's moving governance to a different layer entirely.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li><b>The Productivity-Reliability Paradox</b> (Farrag, cited in 2026 research on regulated-domain agentic engineering): "review everything" creates velocity collapse — Atlassian's own deployment of human-in-the-loop coding agents found the cost of human feedback consumed the entire productivity benefit. "Review nothing" creates unauditable code and real regulatory exposure.</li>
+        <li><b>The resolution — govern the spec and the action, not the diff:</b> a 2026 paper on institutional AI governance formalizes this as "Governing Actions, Not Agents" — an agent retains full autonomy over planning and reasoning, but holds no execution authority over designated high-risk, irreversible actions (merge to main, deploy, delete a migration). Sound familiar — it's the same HITL-gate pattern from tiered autonomy, now applied specifically to the SDLC itself.</li>
+        <li><b>Governance as code:</b> policy defined programmatically — versioned thresholds, RBAC on shared specs, an eval gate before a spec change ships — the same discipline infrastructure-as-code brought to deployment, now brought to the specs governing agent behavior.</li>
+        <li><b>The practical mechanism, in one line</b> (industry practitioner framing, 2026): "compliance defines the required tests, automation checks them, and a human reviews only the exceptions." This is Gherkin-as-guardrail again — the spec's acceptance criteria are the enforcement layer, not a document a human re-reads on every change.</li>
+      </ul>
+    </div>
+    <div class="value-add">
+      <div class="va-label">Value Add</div>
+      <p>An agent that can draft anything but execute nothing consequential without a gate isn't a slower agent — it's the only shape of "fast" that survives a regulator, an auditor, or a bad day, asking how a specific line of production code actually got there.</p>
+    </div>
+  </section>
+
+  <!-- QUIZ 2 -->
+  <section class="block">
+    <div class="interject quiz" id="q2">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 2</span></div>
+      <h3>Per the "Governing Actions, Not Agents" pattern, what does an agent retain full autonomy over even in a governed system?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Executing irreversible, high-risk actions</li>
+        <li class="correct"><b>B.</b> Planning and reasoning</li>
+        <li><b>C.</b> Bypassing required tests</li>
+        <li><b>D.</b> Merging directly to production</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q2')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> The gate sits at consequential execution, not at thinking — the agent can reason and draft freely; it just can't act on the highest-risk categories alone.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 3: TOKEN SPEND -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--finance);">03</span><span class="eyebrow">Concept · 15 min</span></div>
+    <h2 class="title">Token Spend by SDLC Phase — The New Cloud Bill</h2>
+    <p class="lead">"Token spend is the new cloud bill" is a genuine 2026 framing — and the organizations blindsided by cloud overruns in 2018 are on track to repeat the exact pattern with AI token spend, for the exact same reason: nobody was watching where it went.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li><b>The scale is real:</b> GitHub Copilot completed its move to token-based billing in mid-2026. A 100-developer organization mixing inline and agentic tools can reach $400,000–$600,000/year before any governance is applied — and roughly 80% of companies exceed their AI coding budget because spend stays invisible without structured tracking.</li>
+        <li><b>Token cost is non-linear:</b> a 2026 enterprise assessment found that 3× task complexity can produce up to 27× token spend — most ROI models still assume linear scaling, and they're wrong every time a "slightly harder" ticket lands.</li>
+        <li><b>The counterintuitive finding:</b> a 2026 empirical study of a multi-agent software development framework found the <b>Code Review stage</b> — not initial Implementation — accounted for the largest share of total token consumption, driven by iteration loops: re-checking, re-explaining context, re-generating after feedback.</li>
+        <li><b>Agentic overhead compounds:</b> agentic workflows consume 5–30× more tokens per task than a simple chat exchange, because every step re-carries system prompts, tool definitions, and full context. Output tokens cost 4–6× more than input tokens across major providers — a real, concrete lever: shorter, tighter outputs save disproportionately.</li>
+        <li><b>The fix that's actually working — hybrid model routing:</b> Paul Gauthier's published Aider benchmark (Jan 2025) combined a cheap reasoning model for planning with a frontier model for precise execution and hit state-of-the-art results at 14× less cost than a frontier-only approach. Planning tokens are 5–20× cheaper than execution tokens when tiered correctly, and good planning cuts execution retries by 40–60%.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- QUIZ 3 -->
+  <section class="block">
+    <div class="interject quiz" id="q3">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 3</span></div>
+      <h3>Which SDLC phase did the real 2026 findings show consumes the most tokens?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Implement</li>
+        <li><b>B.</b> Spec</li>
+        <li class="correct"><b>C.</b> Review</li>
+        <li><b>D.</b> Plan</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q3')">Reveal answer</button>
+      <div class="answer"><b>Answer: C.</b> Iteration loops in Review compound in a way the first draft in Implement doesn't — check the icebreaker vote against this before moving on.</div>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--devops);">DEMO</span><span class="eyebrow">CostGuard · Claude Desktop + CLI · 40 min</span></div>
+    <h2 class="title">CostGuard — Governance-as-Code for Token Spend</h2>
+    <p class="lead">A real, working budget-enforcement tool, applying the same governance-as-code discipline from Concept 2 to the cost problem from Concept 3. Every number below was reproduced by actually running this.</p>
+    <div class="folder devops">
+      <div class="folder-top"><h3 style="color:#fff;">Repo: costguard-demo</h3><span class="case-tag">50 tasks · 300 phase-records · $138.29 total spend</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Claude Desktop — read the governance config first<span class="step-time">6 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Read budget_config.yaml. Explain what each threshold controls, and which SDLC phase you'd predict is closest to breaching its cap, based on what we just covered about Review-phase iteration loops."</span></div>
+            <div class="expect"><b>Expect:</b> Claude should reason toward Review being the likely risk before ever seeing the data — testing whether the concept actually landed, not just running a script.</div>
+          </li>
+          <li>
+            <div class="step-title">Claude Code CLI — run CostGuard<span class="step-time">8 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">RUN</span><span class="prompt-text">python3 costguard.py sdlc_token_log.csv budget_config.yaml</span></div>
+            <div class="expect"><b>Verified output:</b> Review flagged OVER BUDGET at $48.63 against a $35.00 cap — the only phase breach. Every other phase (Spec, Plan, Implement, Test, Debug) reports within budget.</div>
+          </li>
+          <li>
+            <div class="step-title">Claude Code CLI — prove the tool isn't just alarmist<span class="step-time">8 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">RUN</span><span class="prompt-text">python3 -m pytest test_costguard.py -v</span></div>
+            <div class="expect"><b>Verified:</b> 4/4 tests pass — including one proving a genuinely within-budget task raises zero flags. A governance tool that always alarms is exactly as useless as one that never does.</div>
+          </li>
+          <li>
+            <div class="step-title">Claude Desktop — read the non-linear scaling for real<span class="step-time">8 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Using code execution on sdlc_token_log.csv, compute average token spend in the Implement phase for complexity 1 versus complexity 3. How does the ratio compare to the '3x complexity, 27x tokens' finding from Concept 3?"</span></div>
+            <div class="expect"><b>Verified:</b> a ratio of ~26.3x — this dataset was deliberately calibrated to reproduce the real cited pattern, not to manufacture a convenient number after the fact.</div>
+          </li>
+          <li>
+            <div class="step-title">Claude Desktop — find the recoverable waste<span class="step-time">6 min</span></div>
+            <div class="prompt-chip"><span class="prompt-label">TYPE THIS</span><span class="prompt-text">"Based on CostGuard's hybrid-routing output, write a two-sentence recommendation to an engineering lead: what changed, what it costs to leave unfixed, and what it takes to fix."</span></div>
+            <div class="expect"><b>Verified figures to use:</b> 24 task-phases routed to the frontier model when eligible for the efficient model; $0.75 recoverable, a 92% reduction on those specific task-phases — small in this 50-task classroom sample, but the same percentage at a 100-developer org's real monthly volume is a materially different number.</div>
+          </li>
+          <li>
+            <div class="step-title">Debrief<span class="step-time">4 min</span></div>
+            <div class="expect"><b>Discuss:</b> CostGuard didn't stop any agent from working. It made three things visible that were previously invisible — a budget breach, a non-linear cost outlier, and a routing mistake — and left the decision to a human. That's governing the spend, not the agent.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Verdict</b> One phase over budget (Review, exactly where the cited industry research says to look), zero complexity outliers beyond the configured threshold, and a real, quantified hybrid-routing recommendation — all reproducible from a single command each.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 4 -->
+  <section class="block">
+    <div class="interject quiz" id="q4">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 4</span></div>
+      <h3>In the CostGuard demo, what was the actual recoverable savings from hybrid-routing waste?</h3>
+      <ul class="opts">
+        <li class="correct"><b>A.</b> $0.75 — a 92% reduction on the 24 eligible task-phases</li>
+        <li><b>B.</b> $50.00 across the board</li>
+        <li><b>C.</b> Nothing was recoverable</li>
+        <li><b>D.</b> The full $138.29 total spend</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q4')">Reveal answer</button>
+      <div class="answer"><b>Answer: A.</b> Small in absolute terms on a 50-task classroom sample — the percentage, not the dollar figure, is what scales to a real monthly volume.</div>
+    </div>
+  </section>
+
+  <!-- FIELD GUIDE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--fw);">FG</span><span class="eyebrow">Field guide · reference, not counted in the 120 min</span></div>
+    <h2 class="title">Frameworks Behind Today's Session</h2>
+    <div class="fw-grid">
+      <div class="fw-card">
+        <span class="fw-cat">Spec</span>
+        <div class="fw-name">EARS Syntax</div>
+        <div class="fw-def">"WHEN [trigger], the [system] SHALL [response]." A borrowed-from-aerospace format for acceptance criteria precise enough for an agent — or a test — to check mechanically, not interpret.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Rewrite this requirement in EARS format: WHEN [trigger], the [system] SHALL [response]."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Governance</span>
+        <div class="fw-name">Governing Actions, Not Agents</div>
+        <div class="fw-def">Gate consequential, irreversible actions — not the agent's reasoning process. Full autonomy over planning, zero autonomy over designated high-risk execution.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"List every irreversible action this agent could take. Which ones need a human gate, and which are safe to fully automate?"</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Cost</span>
+        <div class="fw-name">Non-Linear Token Scaling</div>
+        <div class="fw-def">Complexity doesn't scale token spend linearly — a 3x harder task can cost 27x more. Every ROI model built on linear assumptions underestimates the tail.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Given these task complexity ratings and token costs, is spend scaling linearly, or is there a non-linear pattern I should budget for?"</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Cost</span>
+        <div class="fw-name">Hybrid Model Routing</div>
+        <div class="fw-def">Cheap, fast model for planning; frontier model for precise execution. Gauthier's Aider benchmark: 14x cost reduction at state-of-the-art quality.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Which phases of this workflow are precision-critical, and which could run on a cheaper model without quality loss?"</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <span class="stamp" style="color:var(--ink);">Case Closed</span>
+    <p>The spec is the source of truth. Governance watches the gate, not the diff. And the bill that used to be invisible — token spend, by phase — is now a number with a config file and a test suite behind it. None of this is a forecast. It's what the tooling landscape, the research, and the budgets already look like in 2026.</p>
+  </section>
+
+</div>
+
+<script>
+function toggleAnswer(id){
+  document.getElementById(id).classList.toggle('revealed');
+}
+</script>
+</body>
+</html>
