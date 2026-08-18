@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Context Health Dashboard — notification-service</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F14; --panel:#121821; --panel2:#161E29; --line:rgba(255,255,255,.08);
+    --ink:#EAF0F5; --ink-soft:#8FA3B5;
+    --live:#22D3B0; --live-soft:rgba(34,211,176,.14);
+    --dead:#8FA3B5; --dead-soft:rgba(143,163,181,.14);
+    --vestigial:#F5A623; --vestigial-soft:rgba(245,166,35,.14);
+    --zombie:#FF6B5E; --zombie-soft:rgba(255,107,94,.14);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:
+      radial-gradient(circle at 15% 0%, rgba(34,211,176,.08), transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(255,107,94,.06), transparent 45%), var(--bg);
+    color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:960px; margin:0 auto; padding:44px 26px 70px;}
+  .badge{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--live); background:var(--live-soft); border:1px solid rgba(34,211,176,.3);
+    padding:5px 12px; border-radius:20px; display:inline-block;}
+  h1{font-family:'Space Grotesk',sans-serif; font-size:clamp(24px,4vw,34px); margin:14px 0 6px; font-weight:700;}
+  .subtitle{color:var(--ink-soft); font-size:14.5px; max-width:600px; line-height:1.5;}
+  .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:28px 0 24px;}
+  .stat{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 16px;}
+  .stat-label{font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin-bottom:8px;}
+  .stat-value{font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:700;}
+  .stat.live .stat-value{color:var(--live);}
+  .stat.dead .stat-value{color:var(--dead);}
+  .stat.vestigial .stat-value{color:var(--vestigial);}
+  .stat.zombie .stat-value{color:var(--zombie);}
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:24px 26px; margin-bottom:20px;}
+  .panel h2{font-family:'Space Grotesk',sans-serif; font-size:16px; margin:0 0 16px; font-weight:700;}
+  table{width:100%; border-collapse:collapse;}
+  td,th{padding:10px 8px; font-size:13px; border-top:1px solid var(--line); text-align:left; vertical-align:top;}
+  th{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); border-top:none;}
+  .tag{font-family:'IBM Plex Mono',monospace; font-size:10.5px; padding:3px 9px; border-radius:20px; font-weight:700;}
+  .tag.live{background:var(--live-soft); color:var(--live);}
+  .tag.dead{background:var(--dead-soft); color:var(--dead);}
+  .tag.vestigial{background:var(--vestigial-soft); color:var(--vestigial);}
+  .tag.zombie{background:var(--zombie-soft); color:var(--zombie);}
+  .foot{margin-top:24px; padding-top:18px; border-top:1px solid var(--line); font-size:11.5px; color:var(--ink-soft); line-height:1.7;}
+  .foot b{color:var(--ink);}
+  @media(max-width:640px){.stat-row{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="badge">● notification-service · verified via dead_code_scan.py</span>
+  <h1>Context Health Dashboard</h1>
+  <p class="subtitle">What a naive scan flags vs. what the Diagnostic Lens (Functional + System + Data context) actually confirms — computed from a real AST scan of this repo, not estimated.</p>
+
+  <div class="stat-row">
+    <div class="stat live"><div class="stat-label">Live</div><div class="stat-value">3</div></div>
+    <div class="stat dead"><div class="stat-label">Dead — safe to delete</div><div class="stat-value">2</div></div>
+    <div class="stat vestigial"><div class="stat-label">Vestigial</div><div class="stat-value">1</div></div>
+    <div class="stat zombie"><div class="stat-label">Zombie — needs a human</div><div class="stat-value">1</div></div>
+  </div>
+
+  <div class="panel">
+    <h2>Naive Scan vs. Diagnostic Lens</h2>
+    <table>
+      <tr><th>Metric</th><th>Value</th></tr>
+      <tr><td>Functions defined in src/</td><td>7 (excluding __init__)</td></tr>
+      <tr><td>Flagged "dead" by naive single-file scan</td><td>5 of 7 (71%)</td></tr>
+      <tr><td>Still flagged after whole-repo scan</td><td>5 of 7 — scope alone doesn't clear the false positive</td></tr>
+      <tr><td>Actually safe to delete, per the Diagnostic Lens</td><td>3 of 7 (43%) — Dead + Vestigial</td></tr>
+      <tr><td>False positive the naive scan got wrong</td><td>1 of 7 — <code>_provider_send()</code>, called indirectly via a variable</td></tr>
+      <tr><td>Needs a human conversation before touching it</td><td>1 of 7 — <code>get_notification_status()</code>, a real external API entry point</td></tr>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Full Classification</h2>
+    <table>
+      <tr><th>Function</th><th>Naive Scan Says</th><th>Diagnostic Lens Says</th><th>Why</th></tr>
+      <tr><td>send()</td><td>Dead (single-file) / Live (whole-repo)</td><td><span class="tag live">LIVE</span></td><td>Called from tests/test_notification_service.py — scope mattered.</td></tr>
+      <tr><td>describe()</td><td>Live</td><td><span class="tag live">LIVE</span></td><td>Called from __main__ blocks in both modules.</td></tr>
+      <tr><td>_provider_send()</td><td>Dead</td><td><span class="tag live">LIVE</span></td><td>False positive — called indirectly via send_fn = self._provider_send, then send_fn(...).</td></tr>
+      <tr><td>_legacy_exponential_backoff_retry()</td><td>Dead</td><td><span class="tag dead">DEAD</span></td><td>Superseded 2026-04-30 per CHANGELOG.md. Never called anywhere. Safe to delete.</td></tr>
+      <tr><td>limit_for()</td><td>Dead</td><td><span class="tag dead">DEAD</span></td><td>Genuinely unreachable — no caller anywhere in the repo. Safe to delete.</td></tr>
+      <tr><td>_send_via_legacy_gateway()</td><td>Dead</td><td><span class="tag vestigial">VESTIGIAL</span></td><td>Gated by LEGACY_SMS_GATEWAY_ENABLED = False, permanently. Safe to delete once the flag's removal is confirmed.</td></tr>
+      <tr><td>get_notification_status()</td><td>Dead</td><td><span class="tag zombie">ZOMBIE</span></td><td>No caller in this repo — but it's a real external API entry point. Do not delete without checking outside the repo first.</td></tr>
+    </table>
+  </div>
+
+  <div class="foot"><b>Method:</b> ast-based name reachability across src/*.py and tests/*.py (dead_code_scan.py), cross-referenced against CHANGELOG.md (Functional context), call sites across the whole repo (System context), and the feature-flag state in config (Data context). No claim on this dashboard was accepted from the naive scan alone.</div>
+</div>
+</body>
+</html>

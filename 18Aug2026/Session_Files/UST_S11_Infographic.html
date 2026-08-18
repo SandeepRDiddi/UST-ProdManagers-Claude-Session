@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File S11 — Hands-On + Value Articulation: The Build Sprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bitter:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1E8D5;
+    --paper2:#E7D8B8;
+    --paper3:#DCCBA3;
+    --ink:#241D14;
+    --ink-soft:#5A4C3A;
+    --retail:#A8631B;
+    --retail-soft:#F0D9AF;
+    --health:#2F6F62;
+    --health-soft:#CFE3DC;
+    --quiz:#A23B2E;
+    --quiz-soft:#F1D3CC;
+    --break:#2B4570;
+    --break-soft:#D6E0EE;
+    --fw:#6B4FA0;
+    --fw-soft:#E6DEF2;
+    --s2:#C8551F;
+    --s2-soft:#F3D9C4;
+    --s3:#1C33C4;
+    --s3-soft:#DCE1FA;
+    --devops:#455568;
+    --devops-soft:#DDE3E9;
+    --finance:#7A6A1C;
+    --finance-soft:#EDE7C9;
+    --live:#1E7B4D;
+    --live-soft:#D2E8DA;
+    --dead-cat:#5A4C3A;
+    --dead-cat-soft:#E4DDC9;
+    --vestigial:#B5791E;
+    --vestigial-soft:#F1DFB8;
+    --zombie:#A23B2E;
+    --zombie-soft:#F1D3CC;
+    --line: rgba(36,29,20,0.22);
+    --gold:#C79A2E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05), transparent 45%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 80px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1.5px;background:var(--ink-soft);display:inline-block;}
+  h1,h2,h3{font-family:'Bitter', serif; margin:0; color:var(--ink);}
+
+  /* ---------- STAMP ---------- */
+  .stamp{
+    display:inline-block;
+    font-family:'Special Elite', monospace;
+    text-transform:uppercase;
+    border:3px solid currentColor;
+    border-radius:6px;
+    padding:6px 16px;
+    letter-spacing:.08em;
+    transform:rotate(-4deg);
+    position:relative;
+  }
+  .stamp::after{
+    content:"";
+    position:absolute; inset:3px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    opacity:.55;
+  }
+  .stamp.quiz{color:var(--quiz);}
+  .stamp.break{color:var(--break);}
+
+  /* ---------- TOP BANNER (session identity strip) ---------- */
+  .s2-banner{
+    background:var(--s2); color:#fff; padding:14px 28px;
+    font-family:'Bitter',serif; font-weight:700; font-size:15px; letter-spacing:.03em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .s2-banner .dot{width:8px; height:8px; border-radius:50%; background:#fff; opacity:.85;}
+  .s3-banner{background:var(--s3);}
+  .s7-banner{background:var(--gold); color:var(--ink);}
+  .s7-banner .dot{background:var(--ink); opacity:.6;}
+
+  /* ---------- PRACTITIONER BYLINE ---------- */
+  .practitioner{
+    margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.3s;
+  }
+  .practitioner .p-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--s3); font-weight:700; margin-bottom:6px;
+  }
+  .practitioner .p-desc{font-style:italic; color:var(--ink-soft); font-size:14.5px;}
+  .voice-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase;
+    letter-spacing:.05em; padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .voice-tag.external{background:var(--s3-soft); color:var(--s3);}
+  .voice-tag.internal{background:var(--retail-soft); color:var(--retail);}
+
+  /* ---------- VALUE ADD CALLOUT ---------- */
+  .value-add{
+    margin-top:14px; padding:14px 18px; border-radius:10px;
+    background:linear-gradient(135deg, var(--gold-soft, #F3E3B8), transparent 140%);
+    background-color:#FBF1D6;
+    border:1.5px solid var(--gold); position:relative;
+  }
+  .value-add .va-label{
+    font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--dead-cat); display:flex; align-items:center; gap:6px; margin-bottom:5px;
+  }
+  .value-add .va-label::before{content:"$"; display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px; border-radius:50%; background:var(--gold); color:#fff; font-size:10px; font-weight:800;}
+  .value-add p{margin:0; font-size:14px; color:var(--ink); line-height:1.5;}
+
+  /* ---------- GHERKIN / POSTMORTEM / 5 WHYS ---------- */
+  .gherkin{
+    background:#10151C; color:#D7E1EA; border-radius:10px; padding:16px 20px;
+    font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.9; margin:14px 0;
+    overflow-x:auto; white-space:pre-wrap;
+  }
+  .gherkin .kw{color:#5FD9C4; font-weight:700;}
+  .gherkin .cm{color:#7A8A99; font-style:italic;}
+  .pm-timeline{list-style:none; margin:14px 0; padding:0;}
+  .pm-timeline li{display:grid; grid-template-columns:98px 1fr; gap:14px; padding:9px 0; border-top:1px dashed var(--line); font-size:14px; line-height:1.5;}
+  .pm-timeline li:first-child{border-top:none;}
+  .pm-timeline .day{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--s3); font-weight:700; padding-top:1px;}
+  .whys-chain{list-style:none; margin:14px 0; padding:0;}
+  .whys-chain li{padding:11px 0; border-top:1px dashed var(--line); font-size:14.5px; line-height:1.55;}
+  .whys-chain li:first-child{border-top:none;}
+  .whys-chain .why-q{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700;
+    color:var(--s3); text-transform:uppercase; letter-spacing:.06em;
+    display:inline-block; margin-bottom:5px; background:var(--s3-soft); padding:3px 9px; border-radius:20px;
+  }
+  .fw-subhead{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--ink-soft); margin:26px 0 4px; padding-top:20px; border-top:1px solid var(--line);
+  }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:60px 28px;
+    border-bottom:6px double var(--ink);
+    overflow:hidden;
+  }
+  .cover::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(36,29,20,0.035) 0px, rgba(36,29,20,0.035) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+  }
+  .cover-inner{max-width:980px;margin:0 auto; width:100%; position:relative; z-index:1;}
+  .folder-tabs{display:flex; gap:8px; margin-bottom:28px;}
+  .folder-tabs span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:.1em;
+    background:var(--paper3);
+    border:1px solid var(--line);
+    border-bottom:none;
+    padding:5px 12px 8px;
+    border-radius:6px 6px 0 0;
+    color:var(--ink-soft);
+    opacity:0; transform:translateY(10px);
+    animation:tabIn .5s ease forwards;
+  }
+  .folder-tabs span:nth-child(1){animation-delay:.05s;}
+  .folder-tabs span:nth-child(2){animation-delay:.15s;}
+  .folder-tabs span:nth-child(3){animation-delay:.25s;}
+  .folder-tabs span:nth-child(4){animation-delay:.35s;}
+  .folder-tabs span:nth-child(5){animation-delay:.42s;}
+  @keyframes tabIn{to{opacity:1; transform:translateY(0);}}
+
+  .case-no{
+    font-family:'Special Elite', monospace;
+    color:var(--quiz);
+    font-size:15px;
+    letter-spacing:.05em;
+    margin-bottom:14px;
+    opacity:0;
+    animation:fadeUp .6s ease forwards; animation-delay:.4s;
+  }
+  .cover h1{
+    font-size:clamp(40px, 7vw, 84px);
+    line-height:0.98;
+    font-weight:900;
+    margin:6px 0 18px;
+    opacity:0;
+    transform:scale(.9) rotate(-1deg);
+    animation:stampIn .7s cubic-bezier(.2,1.6,.4,1) forwards;
+    animation-delay:.55s;
+  }
+  .cover h1 em{font-style:normal; color:var(--retail);}
+  @keyframes stampIn{
+    0%{opacity:0; transform:scale(1.35) rotate(-3deg);}
+    60%{opacity:1;}
+    100%{opacity:1; transform:scale(1) rotate(-1deg);}
+  }
+  .cover .sub{
+    font-size:clamp(16px,2.1vw,20px);
+    max-width:640px; color:var(--ink-soft); line-height:1.5;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:.95s;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-top:34px;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1.15s;
+  }
+  .meta-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1px solid var(--line); background:rgba(255,255,255,.35);
+    padding:8px 14px; border-radius:20px; color:var(--ink);
+  }
+  .meta-chip b{color:var(--ink);}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  .seal{
+    position:absolute; top:56px; right:40px;
+    width:118px; height:118px;
+    border:3px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; font-family:'Special Elite',monospace;
+    font-size:11px; color:var(--gold); letter-spacing:.05em;
+    transform:rotate(12deg) scale(0);
+    animation:sealIn .6s cubic-bezier(.3,1.7,.4,1) forwards; animation-delay:1.3s;
+  }
+  .seal::before{content:""; position:absolute; inset:8px; border:1px dashed var(--gold); border-radius:50%;}
+  @keyframes sealIn{to{transform:rotate(12deg) scale(1);}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block{padding:56px 0 8px; border-bottom:1px solid var(--line);}
+  .tag-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .idx{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px;
+    color:#fff; background:var(--ink); border-radius:5px; padding:4px 9px;
+  }
+  h2.title{font-size:clamp(26px,3.6vw,38px); font-weight:700; margin-top:6px;}
+  .lead{color:var(--ink-soft); font-size:16.5px; max-width:680px; margin-top:8px; line-height:1.55;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{display:flex; flex-direction:column; gap:0; margin-top:26px;}
+  .t-row{
+    display:grid; grid-template-columns:96px 1px 1fr auto;
+    align-items:center; gap:18px; padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .t-row:first-child{border-top:none;}
+  .t-time{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink-soft);}
+  .t-bar{width:1px; height:34px; background:var(--line);}
+  .t-label{font-weight:600; font-size:16px;}
+  .t-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    padding:5px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
+  }
+  .tag-mod{background:var(--paper3); color:var(--ink-soft);}
+  .tag-retail{background:var(--retail-soft); color:var(--retail);}
+  .tag-health{background:var(--health-soft); color:var(--health);}
+  .tag-quiz{background:var(--quiz-soft); color:var(--quiz);}
+  .tag-break{background:var(--break-soft); color:var(--break);}
+  .tag-fw{background:var(--fw-soft); color:var(--fw);}
+  .tag-s2{background:var(--s2-soft); color:var(--s2);}
+  .tag-s3{background:var(--s3-soft); color:var(--s3);}
+  .tag-devops{background:var(--devops-soft); color:var(--devops);}
+  .tag-finance{background:var(--finance-soft); color:var(--finance);}
+  .tag-gold{background:var(--gold); color:var(--ink);}
+
+  /* ---------- CARDS ---------- */
+  .card{
+    background:rgba(255,255,255,.4);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 28px;
+    margin-top:22px;
+    position:relative;
+  }
+  .card .pin{
+    position:absolute; top:-10px; left:26px;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--gold); box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .points{margin:14px 0 0; padding:0; list-style:none;}
+  .points li{
+    padding:8px 0 8px 22px; position:relative; line-height:1.5; font-size:15.5px;
+  }
+  .points li::before{content:"—"; position:absolute; left:0; color:var(--ink-soft);}
+
+  /* ---------- ICEBREAKER / QUIZ CARDS ---------- */
+  .interject{
+    margin-top:26px; border-radius:12px; padding:26px 28px 24px;
+    border:2px dashed currentColor;
+  }
+  .interject.break{color:var(--break); background:var(--break-soft);}
+  .interject.quiz{color:var(--quiz); background:var(--quiz-soft);}
+  .interject-head{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .interject h3{color:var(--ink); font-size:20px;}
+  .interject p, .interject .opts{color:var(--ink); font-size:15.5px;}
+  .timer{
+    margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    background:rgba(255,255,255,.6); padding:4px 10px; border-radius:20px; color:var(--ink);
+  }
+  .opts{list-style:none; margin:14px 0 0; padding:0; display:grid; gap:8px;}
+  .opts li{
+    background:rgba(255,255,255,.55); border:1px solid rgba(0,0,0,.12);
+    border-radius:8px; padding:9px 14px; font-size:15px;
+    transition:background .25s ease, border-color .25s ease, opacity .25s ease;
+  }
+  .opts li b{font-family:'IBM Plex Mono',monospace; margin-right:8px;}
+  .reveal-btn{
+    margin-top:16px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer;
+    background:var(--ink); color:#fff; border:none; border-radius:20px;
+    padding:9px 18px; transition:transform .15s ease;
+  }
+  .reveal-btn:hover{transform:translateY(-1px);}
+  /* correct option + explanation stay neutral until the quiz container is marked revealed */
+  .interject.revealed .opts li.correct{
+    background:#DCF3E3; border-color:#2F7D4F; color:#1C4D31; font-weight:600;
+  }
+  .interject.revealed .opts li.correct::after{
+    content:" ✓ Correct"; font-weight:800; color:#2F7D4F; margin-left:6px;
+  }
+  .interject.revealed .opts li:not(.correct){opacity:.5;}
+  .answer{
+    margin-top:14px; padding:12px 16px; border-radius:8px;
+    background:rgba(255,255,255,.7); border-left:4px solid var(--ink);
+    font-size:15px; display:none;
+  }
+  .interject.revealed .answer{display:block; animation:fadeUp .35s ease;}
+  .answer b{color:var(--quiz);}
+
+  /* ---------- DEMO / CASE FOLDER ---------- */
+  .folder{
+    margin-top:24px; border-radius:12px; overflow:hidden; border:1px solid var(--line);
+  }
+  .folder-top{padding:20px 26px; display:flex; align-items:center; gap:14px; color:#fff;}
+  .folder.retail .folder-top{background:var(--retail);}
+  .folder.health .folder-top{background:var(--health);}
+  .folder.s3 .folder-top{background:var(--s3);}
+  .folder.devops .folder-top{background:var(--devops);}
+  .folder.finance .folder-top{background:var(--finance);}
+  .folder.gold .folder-top{background:var(--gold);}
+  .folder-top .case-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.1em;
+    background:rgba(255,255,255,.22); padding:4px 10px; border-radius:20px;
+  }
+  .folder-body{background:rgba(255,255,255,.45); padding:24px 26px;}
+  .kv{display:grid; grid-template-columns:140px 1fr; gap:8px 16px; font-size:15px; margin-bottom:16px;}
+  .kv .k{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; padding-top:2px;}
+  .steps{counter-reset:step; list-style:none; margin:14px 0 0; padding:0;}
+  .steps li{
+    counter-increment:step; position:relative; padding:9px 0 9px 34px; font-size:15px; line-height:1.5;
+    border-top:1px dashed var(--line);
+  }
+  .steps li:first-child{border-top:none;}
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:8px;
+    width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:11px; display:flex; align-items:center; justify-content:center;
+  }
+  .verdict{
+    margin-top:16px; padding:14px 18px; border-radius:8px; font-size:15px;
+    background:rgba(0,0,0,.05); border-left:4px solid var(--ink);
+  }
+  .verdict b{font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-size:12px; letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);}
+
+  /* ---------- STEP DETAIL (prompts inside demo steps) ---------- */
+  .steps li{padding-bottom:16px;}
+  .step-title{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15.5px; margin-bottom:8px;}
+  .step-time{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); background:rgba(0,0,0,.06); padding:2px 9px; border-radius:10px; white-space:nowrap;}
+  .prompt-chip{
+    background:rgba(255,255,255,.75); border-radius:7px; padding:10px 14px;
+    font-size:14px; margin:0 0 8px; line-height:1.5;
+    border-left:3px solid currentColor;
+  }
+  .folder.retail .prompt-chip{color:var(--retail);}
+  .folder.health .prompt-chip{color:var(--health);}
+  .folder.s3 .prompt-chip{color:var(--s3);}
+  .folder.devops .prompt-chip{color:var(--devops);}
+  .folder.finance .prompt-chip{color:var(--finance);}
+  .folder.gold .prompt-chip{color:var(--dead-cat);}
+  .prompt-label{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:10.5px; letter-spacing:.07em; margin-right:8px;}
+  .prompt-chip .prompt-text{color:var(--ink); font-style:italic;}
+  .expect{font-size:13.5px; color:var(--ink-soft); line-height:1.5; padding-left:2px;}
+  .expect b{color:var(--ink); font-weight:700;}
+  .fw-used{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.04em;
+    background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.12);
+    padding:6px 12px; border-radius:20px; color:var(--ink);
+  }
+  .fw-used b{color:var(--fw); text-transform:uppercase;}
+  .handson-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:rgba(255,255,255,.9); color:var(--s2); border:1px solid var(--s2);
+    padding:3px 9px; border-radius:20px;
+  }
+  .feature-badge{
+    display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em;
+    background:var(--s3); color:#fff;
+    padding:4px 11px; border-radius:20px;
+  }
+  .class-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700;
+    padding:3px 10px; border-radius:20px;
+  }
+  .class-tag.live{background:var(--live-soft); color:var(--live);}
+  .class-tag.dead{background:var(--dead-cat-soft); color:var(--dead-cat);}
+  .class-tag.vestigial{background:var(--vestigial-soft); color:var(--vestigial);}
+  .class-tag.zombie{background:var(--zombie-soft); color:var(--zombie);}
+  .class-table{width:100%; border-collapse:collapse; margin-top:14px; font-size:13.5px;}
+  .class-table td{padding:9px 10px; border-top:1px solid var(--line); vertical-align:top;}
+  .class-table tr:first-child td{border-top:none;}
+  .class-table td.fn{font-family:'IBM Plex Mono',monospace; font-size:12px;}
+
+  /* ---------- FIELD GUIDE ---------- */
+  .fw-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px;}
+  .fw-card{
+    background:rgba(255,255,255,.5); border:1px solid var(--line); border-radius:12px;
+    padding:22px 24px; position:relative;
+  }
+  .fw-cat{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--fw);
+    background:var(--fw-soft); padding:3px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .fw-name{font-family:'Bitter',serif; font-weight:700; font-size:19px; margin-bottom:6px;}
+  .fw-def{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:12px;}
+  .fw-example{
+    font-size:13px; margin-bottom:12px; padding:9px 12px;
+    background:rgba(0,0,0,.045); border-radius:7px; line-height:1.5;
+  }
+  .fw-example b{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:.05em; display:block; margin-bottom:4px; color:var(--ink-soft);
+  }
+  .fw-card .prompt-chip{color:var(--fw);}
+  @media (max-width:720px){.fw-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CLOSING ---------- */
+  .closing{padding:70px 0 40px; text-align:center;}
+  .closing .stamp{font-size:26px; padding:14px 30px;}
+  .closing p{max-width:600px; margin:22px auto 0; color:var(--ink-soft); font-size:16px; line-height:1.6;}
+
+  @media (max-width:640px){
+    .t-row{grid-template-columns:70px 1px 1fr; grid-template-areas:"time bar label" ". . tag"; }
+    .t-tag{grid-area:tag; justify-self:start; margin-top:6px;}
+    .seal{display:none;}
+    .kv{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="s2-banner"><span class="dot"></span>S11 · HANDS-ON + VALUE ARTICULATION <span class="dot"></span> The Build Sprint</div>
+
+<header class="cover">
+  <div class="seal">CLAUDE<br>×<br>UST</div>
+  <div class="cover-inner">
+    <div class="folder-tabs">
+      <span>THE BRIEF</span><span>THE SPRINT</span><span>THE DASHBOARD</span><span>COST/FEATURE</span><span>REAL BUG</span>
+    </div>
+    <div class="case-no">CASE FILE NO. S11 — OPENED 0:00</div>
+    <h1>Ship the Fix.<br><em>Show the Math.</em></h1>
+    <p class="sub">Not a synthetic exercise: notification-service — the same real codebase from Sessions 4 and 6 — has an actual unpatched reliability bug in it right now. Today you fix it, for real, using the exact SDD workflow from Session 10, and turn your own session's real cost data into a business case.</p>
+    <div class="meta-row">
+      <div class="meta-chip"><b>Duration</b> · 120 min, fully hands-on</div>
+      <div class="meta-chip"><b>Tools</b> · Claude Code CLI + Claude Desktop</div>
+      <div class="meta-chip"><b>Codebase</b> · notification-service (Sessions 4/6/10)</div>
+      <div class="meta-chip"><b>Cost data</b> · your own real Claude Code /cost output</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- AGENDA -->
+  <section class="block">
+    <div class="tag-row"><span class="idx">00</span><span class="eyebrow">Evidence log</span></div>
+    <h2 class="title">The 120-Minute Build</h2>
+    <p class="lead">A real spec, a real bug, your own real cost data — this is deliberately not a dataset I handed you. It's the same pattern Session 10 taught, run on something that matters.</p>
+    <div class="timeline">
+      <div class="t-row"><div class="t-time">0:00</div><div class="t-bar"></div><div class="t-label">Welcome & Session Frame</div><div class="t-tag tag-mod">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:05</div><div class="t-bar"></div><div class="t-label">Icebreaker — Have You Shipped This Bug?</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:10</div><div class="t-bar"></div><div class="t-label">Concept — The Real Gap: Retries Without Idempotency</div><div class="t-tag tag-mod">8 min</div></div>
+      <div class="t-row"><div class="t-time">0:18</div><div class="t-bar"></div><div class="t-label">LAB 1 — Run an Autonomous Build Sprint on the Brief (Claude Code CLI)</div><div class="t-tag tag-s2">27 min</div></div>
+      <div class="t-row"><div class="t-time">0:45</div><div class="t-bar"></div><div class="t-label">Pop Quiz #1</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">0:48</div><div class="t-bar"></div><div class="t-label">Break</div><div class="t-tag tag-break">5 min</div></div>
+      <div class="t-row"><div class="t-time">0:53</div><div class="t-bar"></div><div class="t-label">Concept — From Session Cost to a Real ROI Number</div><div class="t-tag tag-mod">8 min</div></div>
+      <div class="t-row"><div class="t-time">1:01</div><div class="t-bar"></div><div class="t-label">LAB 2 — Build the Token-ROI Dashboard (Claude Desktop)</div><div class="t-tag tag-s2">22 min</div></div>
+      <div class="t-row"><div class="t-time">1:23</div><div class="t-bar"></div><div class="t-label">Pop Quiz #2</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:26</div><div class="t-bar"></div><div class="t-label">Concept — Cost Per Shippable Feature (and the Real Counter-Argument)</div><div class="t-tag tag-mod">8 min</div></div>
+      <div class="t-row"><div class="t-time">1:34</div><div class="t-bar"></div><div class="t-label">LAB 3 — Frame Cost Per Feature for a Business Audience</div><div class="t-tag tag-s2">18 min</div></div>
+      <div class="t-row"><div class="t-time">1:52</div><div class="t-bar"></div><div class="t-label">Pop Quiz #3</div><div class="t-tag tag-quiz">3 min</div></div>
+      <div class="t-row"><div class="t-time">1:55</div><div class="t-bar"></div><div class="t-label">Field Guide + Synthesis & Close</div><div class="t-tag tag-mod">5 min</div></div>
+    </div>
+  </section>
+
+  <!-- ICEBREAKER -->
+  <section class="block">
+    <div class="interject break">
+      <div class="interject-head"><span class="stamp break">Icebreaker</span><span class="timer">⏱ 5 min · whole room</span></div>
+      <h3>Have You Shipped This Bug?</h3>
+      <p>Show of hands: has anyone in this room ever had a customer get the same email, SMS, or order confirmation twice because a retry fired after the first attempt actually succeeded? Nearly every room has hands up. This isn't a contrived teaching example — it's one of the most common reliability bugs in production software, and it's sitting unpatched in the exact codebase you've been working in since Session 4.</p>
+    </div>
+  </section>
+
+  <!-- CONCEPT 1: THE REAL GAP -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">01</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">The Real Gap: Retries Without Idempotency</h2>
+    <p class="lead">notification-service's send() retries up to 2 times on failure — correct for one failure mode, dangerous for another.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <ul class="points">
+        <li><b>Failure mode 1 (retry is correct):</b> the provider never received the request. Retrying is exactly right.</li>
+        <li><b>Failure mode 2 (retry causes a bug):</b> the provider processed the request successfully, but the response was lost — a timeout, a dropped connection. send() can't tell these two cases apart today, so it retries both the same way, and failure mode 2 means the customer gets duplicated.</li>
+        <li><b>The real, standard fix:</b> the client supplies an idempotency key — a string generated once per logical request. The server recognizes a repeat key and returns the prior result instead of repeating the side effect. This is the exact pattern Stripe, AWS, and Twilio all use publicly for this exact reason.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- LAB 1 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L1</span><span class="eyebrow">Lab 1 · Claude Code CLI · 27 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Run an Autonomous Build Sprint on the Brief</h2>
+    <p class="lead">The real SDD workflow from Session 10 — /specify → /plan → /tasks → /implement — run on a real spec, in the real codebase.</p>
+    <div class="folder s2">
+      <div class="folder-top"><h3 style="color:#fff;">Brief: requirements.md, design.md, tasks.md</h3><span class="case-tag">In session4-demo/ — read requirements.md first, before anything else</span></div>
+      <div class="folder-body">
+        <div class="fw-used">Framework used: <b>Spec-Driven Development</b> (Session 10) · <b>EARS acceptance criteria</b></div>
+        <ol class="steps">
+          <li>
+            <div class="step-title">Read the brief, don't skip to code<span class="step-time">4 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Read requirements.md, design.md, and tasks.md. Summarize the 5 EARS requirements in your own words, and tell me which one you think is easiest to accidentally get wrong."</span></div>
+            <div class="expect"><b>Expect:</b> most rooms land on R5 (don't cache a failure) — it's the requirement people forget because it's about what NOT to do.</div>
+          </li>
+          <li>
+            <div class="step-title">Check your session cost right now<span class="step-time">1 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">RUN</span><span class="prompt-text">/cost</span></div>
+            <div class="expect"><b>This is real, not simulated:</b> Claude Code's built-in /cost command shows your actual session's token usage and dollar estimate so far. Note this number — it's your baseline before implementation starts.</div>
+          </li>
+          <li>
+            <div class="step-title">Build it, following tasks.md<span class="step-time">15 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Implement this feature following tasks.md in order. Don't look at src/idempotency_store.py or the modified send() if they already exist in this repo — build your own version first."</span></div>
+            <div class="expect"><b>Expect:</b> a new IdempotencyStore class, a modified send() with an idempotency_key parameter, wired together per design.md.</div>
+          </li>
+          <li>
+            <div class="step-title">Write the 5 tests — the real Definition of Done<span class="step-time">5 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Write one test per requirement, R1 through R5, in tests/test_idempotency.py. Then run the full test suite, including the existing tests — nothing should regress."</span></div>
+            <div class="expect"><b>Expect:</b> your own 5 tests plus the pre-existing 8 all passing — 13/13. If something regresses, that's real signal your implementation touched something it shouldn't have.</div>
+          </li>
+          <li>
+            <div class="step-title">Check your session cost again<span class="step-time">2 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">RUN</span><span class="prompt-text">/cost</span></div>
+            <div class="expect"><b>Record this number.</b> The difference between this and your Step 2 baseline is what this feature actually cost, in real tokens and real dollars, on your own machine. This is Lab 2's raw material — nobody can hand you this number in advance.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A working idempotency feature, 13/13 tests passing, and two real /cost readings — before and after — that are entirely your own. Compare your implementation against the reference in the repo only after you're done, not before.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 1 -->
+  <section class="block">
+    <div class="interject quiz" id="q1">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 1</span></div>
+      <h3>In the reference implementation, where does the idempotency check happen?</h3>
+      <ul class="opts">
+        <li><b>A.</b> After the retry loop finishes</li>
+        <li class="correct"><b>B.</b> At the very top of send(), before the retry loop starts</li>
+        <li><b>C.</b> Only inside the IdempotencyStore class</li>
+        <li><b>D.</b> Only when a send fails</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q1')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> Checking first means a cache hit never touches the provider at all — the whole point of the feature is avoiding the call, not cleaning up after it.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 2: FROM SESSION COST TO ROI -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">02</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">From Session Cost to a Real ROI Number</h2>
+    <p class="lead">Your two /cost readings from Lab 1 are the actual spend for this feature — the same number a real engineering org would pull to compare agentic build cost against manual build cost.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">Real published rates</div><div>Claude Sonnet: ~$3 per million input tokens, ~$15 per million output tokens — output costs roughly 5x input across major providers.</div>
+        <div class="k">Real benchmark to compare against</div><div>Real-world enterprise data shows an average of about $13 per developer per active day, with 90% of users staying under $30/day — use this to sanity-check whether your session looks typical.</div>
+        <div class="k">Illustrative worked example</div><div>A feature of this size, at roughly 60,000 input + 15,000 output tokens, costs about $0.40 at published rates — against a manual baseline of roughly $332.50 (3.5 hours at a $95/hr fully-loaded rate). Replace both numbers with your own real figures — your session's actual tokens, and your own honest estimate of the manual hours.</div>
+      </div>
+      <p class="lead" style="margin-top:10px;"><b>The honest caveat:</b> real 2026 research on agentic engineering found gross productivity gains of 30–45% compress to a net 8–15% once rework, governance overhead, and failure loops are counted. A dramatic per-feature ratio like the one above is real for a well-specified, well-scoped feature — it is not the number you get once you average in every messy, under-specified ticket across a whole quarter.</p>
+    </div>
+  </section>
+
+  <!-- LAB 2 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L2</span><span class="eyebrow">Lab 2 · Claude Desktop · 22 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Build the Token-ROI Dashboard</h2>
+    <p class="lead">Using your own two /cost readings from Lab 1 — not a file I hand you.</p>
+    <div class="folder s2">
+      <div class="folder-top"><h3 style="color:#fff;">Build: token_roi_dashboard.html</h3><span class="case-tag">Input: your own before/after /cost readings</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Hand Claude your real numbers<span class="step-time">5 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Here are my two /cost readings from before and after building the idempotency feature: [paste your Step 2 and Step 5 numbers from Lab 1]. Calculate the actual token and dollar cost of just this feature."</span></div>
+          </li>
+          <li>
+            <div class="step-title">Build the dashboard<span class="step-time">12 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Create a single self-contained HTML dashboard showing: the actual cost of this feature, a comparison against a manual-build estimate I'll give you, and where this session falls relative to the real $13/day industry average. No external dependencies."</span></div>
+          </li>
+          <li>
+            <div class="step-title">Stress-test the honesty of the comparison<span class="step-time">5 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Add a caveat section: what would make this ratio look worse in a real, messier ticket — vague requirements, a larger codebase, more review cycles?"</span></div>
+            <div class="expect"><b>Expect:</b> the dashboard should not read as a one-sided sales pitch — a dashboard that only shows the best-case ratio is exactly the kind of number a sharp CFO will (correctly) distrust.</div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A real dashboard built from your own real numbers — every dollar figure on it traces back to something you personally measured in Lab 1, not a number handed to you.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 2 -->
+  <section class="block">
+    <div class="interject quiz" id="q2">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 2</span></div>
+      <h3>Why is a failed send deliberately NOT cached under its idempotency key?</h3>
+      <ul class="opts">
+        <li><b>A.</b> To save storage space</li>
+        <li class="correct"><b>B.</b> So a fresh request with the same key can still succeed on a later retry</li>
+        <li><b>C.</b> Failures are too rare to matter</li>
+        <li><b>D.</b> It actually is cached — this is a trick</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q2')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> Caching a failure would permanently freeze that key as broken — the customer's request would never be able to succeed, even on a legitimate later retry.</div>
+    </div>
+  </section>
+
+  <!-- CONCEPT 3: COST PER FEATURE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">03</span><span class="eyebrow">Concept · 8 min</span></div>
+    <h2 class="title">Cost Per Shippable Feature (and the Real Counter-Argument)</h2>
+    <p class="lead">A real, current (2026) FinOps metric layer, and a real, current pushback worth knowing before you present either one as settled.</p>
+    <div class="card">
+      <div class="pin"></div>
+      <div class="kv">
+        <div class="k">The metric stack</div><div>Cost per inference (one model call) &rarr; aggregated into Cost per Feature (every inference tied to one capability) &rarr; aggregated into Cost per Customer &rarr; combined with infrastructure into Cost-to-Serve. Different stakeholders care about different layers — engineering watches inference cost, finance watches cost-to-serve.</div>
+        <div class="k">The counter-argument</div><div>A real, current pushback in the industry: hard per-developer spending caps optimize the wrong thing. The metric that actually matters is developer throughput — features shipped, incidents avoided — not the size of the token bill. A team that under-spends on tokens by capping aggressively can easily cost more in slower delivery and missed fixes than it saves in API spend.</div>
+      </div>
+      <p class="lead" style="margin-top:10px;"><b>Both are legitimate — that tension is the actual content of this concept, not a mistake to resolve before Lab 3.</b> Your framing in Lab 3 should acknowledge it, not pretend one side won.</p>
+    </div>
+  </section>
+
+  <!-- LAB 3 -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--s2);">L3</span><span class="eyebrow">Lab 3 · Claude Desktop · 18 min</span><span class="handson-badge">You build this</span></div>
+    <h2 class="title">Frame Cost Per Feature for a Business Audience</h2>
+    <p class="lead">Translate your Lab 1/Lab 2 numbers into language a non-technical stakeholder would actually find persuasive — and honest.</p>
+    <div class="folder s2">
+      <div class="folder-top"><h3 style="color:#fff;">Build: The Business Narrative</h3><span class="case-tag">Uses your own real numbers from Labs 1–2</span></div>
+      <div class="folder-body">
+        <ol class="steps">
+          <li>
+            <div class="step-title">Draft the case-per-feature statement<span class="step-time">8 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Write 3 sentences a VP of Engineering could say to a CFO about this feature's cost — no jargon, lead with the comparison to manual cost, and name where this single feature sits in a broader cost-per-feature tracking practice."</span></div>
+          </li>
+          <li>
+            <div class="step-title">Represent the counter-argument fairly<span class="step-time">6 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Now write 2 sentences representing the throughput counter-argument — why a CFO shouldn't over-index on this one favorable ratio when setting policy for the whole engineering org."</span></div>
+            <div class="expect"><b>Expect:</b> a genuinely balanced pair of statements, not a strawman version of the counter-argument that's easy to dismiss.</div>
+          </li>
+          <li>
+            <div class="step-title">Compress to one sentence<span class="step-time">4 min</span></div>
+            <div class="prompt-chip" style="color:var(--s2);"><span class="prompt-label">YOU TYPE</span><span class="prompt-text">"Compress the whole case into one sentence for a Slack message — include a real number, not just a claim."</span></div>
+          </li>
+        </ol>
+        <div class="verdict"><b>Checkpoint</b> A short, honest business narrative built entirely from numbers you personally measured — and a fair statement of the case against over-relying on them.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ 3 -->
+  <section class="block">
+    <div class="interject quiz" id="q3">
+      <div class="interject-head"><span class="stamp quiz">Pop Quiz · 3</span></div>
+      <h3>Per the real 2026 industry debate, what's the counter-argument to hard token spending caps?</h3>
+      <ul class="opts">
+        <li><b>A.</b> Caps are always correct, there's no real downside</li>
+        <li class="correct"><b>B.</b> The metric that actually matters is developer throughput, not the size of the token bill</li>
+        <li><b>C.</b> There's no real debate — everyone in the industry agrees on caps</li>
+        <li><b>D.</b> Caps should be set even stricter than proposed</li>
+      </ul>
+      <button class="reveal-btn" onclick="toggleAnswer('q3')">Reveal answer</button>
+      <div class="answer"><b>Answer: B.</b> A team that caps spend aggressively can lose far more in slower delivery and missed fixes than it saves on the API bill — the same tension CostGuard's design in Session 10 was built to inform, not resolve unilaterally.</div>
+    </div>
+  </section>
+
+  <!-- FIELD GUIDE -->
+  <section class="block">
+    <div class="tag-row"><span class="idx" style="background:var(--fw);">FG</span><span class="eyebrow">Field guide · reference, not counted in the 120 min</span></div>
+    <h2 class="title">Frameworks Behind Today's Sprint</h2>
+    <div class="fw-grid">
+      <div class="fw-card">
+        <span class="fw-cat">Reliability</span>
+        <div class="fw-name">Idempotency Keys</div>
+        <div class="fw-def">A client-supplied key that lets a server recognize a repeated request and return the prior result instead of repeating a side effect. The real pattern Stripe, AWS, and Twilio all use publicly.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Where else in this codebase could a retry cause a duplicate side effect? Find every candidate, not just the one we just fixed."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">FinOps</span>
+        <div class="fw-name">Cost Per Feature</div>
+        <div class="fw-def">Aggregate every inference tied to one product capability to see which features are expensive to operate — the layer between raw token cost and per-customer profitability.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Given these per-feature costs, which capability is the most expensive to keep running, and is that expense actually justified by its usage?"</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Balance</span>
+        <div class="fw-name">Throughput vs. Token Bill</div>
+        <div class="fw-def">A real, current counter-argument to hard spending caps: over-restricting token spend can cost more in lost delivery speed than it saves in API cost.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">"Before recommending a spending cap, estimate what it would cost us in delayed features if the cap slows this kind of sprint down."</span></div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-cat">Method</span>
+        <div class="fw-name">/cost as the Real Measurement</div>
+        <div class="fw-def">Claude Code's built-in session cost command — the actual tool practitioners use today to see real token consumption and dollar estimate for a session, no third-party tool required.</div>
+        <div class="prompt-chip"><span class="prompt-label">RUN WITH CLAUDE</span><span class="prompt-text">/cost (a real Claude Code command, not a prompt)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing">
+    <span class="stamp" style="color:var(--ink);">Case Closed</span>
+    <p>Nothing in this session was invented for the classroom. The bug was real, the spec was real, the fix is tested, and the cost numbers on your dashboard are the ones your own terminal actually printed. That's the whole point — this is what running a governed, cost-aware build sprint looks like when it isn't a demo.</p>
+  </section>
+
+</div>
+
+<script>
+function toggleAnswer(id){
+  document.getElementById(id).classList.toggle('revealed');
+}
+</script>
+</body>
+</html>
